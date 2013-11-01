@@ -361,7 +361,7 @@ if(isset($_GET["m"]) && trim($_GET["m"]) !== "") {
 				update();
 				update_ninux(map, vectors, markers, lon, lat);
 				refresh(layers);
-			}, 48000);
+			}, <?php print $config["Meteo Station"]["update_interval"]; ?>000);
 		});
 		</script>
 	<?php } else { ?>

@@ -7,10 +7,10 @@
 	<Developer>The Ninux Software Team</Developer>
 
 	<Contact>contatti@ninux.org</Contact>
-	<Url type="text/html" method="GET" template="https://192.168.36.200/?q={searchTerms}"/>
+	<Url type="text/html" method="GET" template="{SERVER_ADDR}/?q={searchTerms}"/>
 	<Url type="application/opensearchdescription+xml" rel="self" template="osd.xml"/>
 
-	<Image height="16" width="16" type="image/x-icon">https://192.168.36.200/common/media/favicon.ico</Image>
+	<Image height="16" width="16" type="image/x-icon">{FULL_URI_TO}/favicon.ico</Image>
 	<Attribution>Ninux</Attribution>
 	<SyndicationRight>open</SyndicationRight>
 	<AdultContent>false</AdultContent>
