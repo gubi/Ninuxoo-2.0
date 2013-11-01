@@ -13,7 +13,7 @@ Thus this is a first decentralized approach to solve this issue...
 Most NAS has a preinstalled Server software - sometimes also in light version - that can solve the main efficiency problem: the scanning of files.<br />
 Therefore, why not leave them this tiring work?
 
-In this way, local servers periodically scan its files and export a list in `./API` directory, so the Main Server need only to scan and diff a text file, not a recursion on a directory tree.<br />
+In this way, local servers periodically scan its files and export a list in `https://github.com/gubi/Ninuxoo-Semantic-Decentralized/blob/master/API` directory, so the Main Server need only to scan and diff a text file, not a recursion on a directory tree.<br />
 Otherwise - and better - the Main Server no longer needs to scan else, because the local decentralized server can also send data to the main which listens.<br />
 Owners of the NAS are encouraged to use the local version of Ninuxoo because is also "personal" search engine, first, and then with the plugins like the local Meteo map, which works also without Meteo Station sensors.
 
@@ -34,7 +34,19 @@ or via browser: [http://LOCALHOST/scan.php](http://LOCALHOST/scan.php)
 
 This script check samba directories specified in the `config.ini` file, then start a scan recursion and save the listing in the API folder also specified in the `config.ini`.
 
-Remind to configure [`osd.xml`](./blob/master/osd.xml) to add Ninuxoo to browser's Search Engines.
+### Configure Cron
+Add these lines to your crontab:
+```bash
+$ crontab -e
+```
+```cron
+# Ninuxoo Local scan job
+00 */6 * * * root /usr/bin/php /var/www/scan.php
+```
+
+## Note
+* Remind to configure [`osd.xml`](./blob/master/osd.xml) to add Ninuxoo to browser's Search Engines
+* The script [`scan.php`](https://github.com/gubi/Ninuxoo-Semantic-Decentralized/blob/master/scan.php) can be launched manually or via cron, as described above
 
 
 ## Note for the owner of the Main Server
