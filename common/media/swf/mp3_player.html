@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<title>Simple MP3 Player</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	</head>
+
+
+	<body bgcolor="#DDDDDD" style="margin:0;padding:0;" scroll="yes">
+
+        <script type="text/javascript" src="js/swfobject.js"></script>
+		<script type="text/javascript">
+
+			// JAVASCRIPT VARS
+			// cache buster
+			var cacheBuster = "?t=" + Date.parse(new Date());
+            
+            // swf path
+            var swfPath = "mp3_player.swf";
+            //swfPath += cacheBuster; // uncomment this line to activate the cache buster
+            
+			
+			// stage dimensions
+			var stageW = 281;//560;//"100%";
+			var stageH = 78;//300;//"100%";
+			
+			
+			// ATTRIBUTES
+		    var attributes = {};
+		    attributes.id = 'FlabellComponent';
+		    attributes.name = attributes.id;
+		    
+			// PARAMS
+			var params = {};
+			params.allowfullscreen = "true";
+			params.allowScriptAccess = "always";
+			params.bgcolor = "#ffffff";
+			params.wmode = "transparent";
+			
+
+		    /* FLASH VARS */
+			var flashvars = {};				
+			
+			/// if commented / delete these lines, the component will take the stage dimensions defined 
+			/// above in "JAVASCRIPT SECTIONS" section or those defined in the settings xml			
+			flashvars.componentWidth = stageW-1;//281; // define these dimensions different then the stage dimension only for preview because the component is samller then the stage
+			flashvars.componentHeight = stageH-1;//78;
+			
+			/// path to the content folder(where the xml files, images or video are nested)
+			/// if you want to use absolute paths(like "http://domain.com/images/....") then leave it empty("")
+			flashvars.pathToFiles = "player/";
+			flashvars.xmlPath = "xml/settings.xml";
+			
+			// other vars
+			flashvars.artistName = " ";
+			flashvars.songName = " ";
+			flashvars.songURL = "";			
+						
+			
+			/** EMBED THE SWF**/
+			swfobject.embedSWF(swfPath, attributes.id, stageW, stageH, "9.0.124", "js/expressInstall.swf", flashvars, params);
+		</script>
+	
+		<table width="100%" height="100%" cellpadding="0" cellspacing="0">
+			<td align="center">	
+				<div id="FlabellComponent">
+					<p>In order to view this object you need Flash Player 9+ support!</p>
+					<a href="http://www.adobe.com/go/getflashplayer">
+						<img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player"/>
+					</a>
+				</div>
+			
+			</td>
+		</table>
+	
+	</body>
+	
+</html>

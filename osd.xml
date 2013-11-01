@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+	<ShortName>Ninuxoo NAS <NAME></ShortName>
+	<LongName>Ninuxoo NAS <NAME></LongName>
+	<Description>Il motore di ricerca della Community Ninux ~ NAS di <NAME></Description>
+	<Tags></Tags>
+	<Developer>The Ninux Software Team</Developer>
+
+	<Contact>contatti@ninux.org</Contact>
+	<Url type="text/html" method="GET" template="http://192.168.36.200/?q={searchTerms}"/>
+	<Url type="application/opensearchdescription+xml" rel="self" template="osd.xml"/>
+
+	<Image height="16" width="16" type="image/x-icon">http://<YOUR_IP>/common/media/favicon.ico</Image>
+	<Attribution>Ninux</Attribution>
+	<SyndicationRight>open</SyndicationRight>
+	<AdultContent>false</AdultContent>
+	<Language>it</Language>
+	<OutputEncoding>UTF-8</OutputEncoding>
+	<InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>
