@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
-	<ShortName>Ninuxoo NAS LittleGym</ShortName>
-	<LongName>Ninuxoo NAS LittleGym</LongName>
-	<Description>Il motore di ricerca della Community Ninux ~ NAS LittleGym</Description>
+	<ShortName>Ninuxoo {NAME}</ShortName>
+	<LongName>Ninuxoo {NAME}</LongName>
+	<Description>Il motore di ricerca della Community Ninux ~ NAS {NAME}</Description>
 	<Tags></Tags>
-	<Developer>The Ninux Software Team</Developer>
+	<Developer>The Ninux Wireless Community Network</Developer>
 
 	<Contact>contatti@ninux.org</Contact>
 	<Url type="text/html" method="GET" template="{SERVER_ADDR}/?q={searchTerms}"/>
 	<Url type="application/opensearchdescription+xml" rel="self" template="osd.xml"/>
 
-	<Image height="16" width="16" type="image/x-icon">{FULL_URI_TO}/favicon.ico</Image>
+	<Image height="16" width="16" type="image/x-icon">{FULL_URL_TO}/favicon.ico</Image>
 	<Attribution>Ninux</Attribution>
 	<SyndicationRight>open</SyndicationRight>
 	<AdultContent>false</AdultContent>
