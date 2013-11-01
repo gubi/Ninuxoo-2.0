@@ -34,6 +34,9 @@ or via browser: [http://LOCALHOST/scan.php](http://LOCALHOST/scan.php)
 
 This script check samba directories specified in the `config.ini` file, then start a scan recursion and save the listing in the API folder also specified in the `config.ini`.
 
+Remind to configure [`osd.xml`](./blob/master/osd.xml) to add Ninuxoo to browser's Search Engines.
+
+
 ## Note for the owner of the Main Server
 If you want that your server checks remote NAS, just point the crawler to `config.ini` file for retrieve further instructions about listing output position.<br />
 The script `scan.php` generates three files type of listing:
