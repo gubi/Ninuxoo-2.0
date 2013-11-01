@@ -1,0 +1,196 @@
+html, body {
+	background-image: none;
+}
+body {
+	background-image: linear-gradient(top, #fff 75%, #f0f0f0);
+	background-image: -moz-linear-gradient(top, #fff 75%, #f0f0f0);
+	background-image: -o-linear-gradient(top, #fff 75%, #f0f0f0);
+	background-image: -webkit-linear-gradient(top, #fff 75%, #f0f0f0);
+	background-image: -ms-linear-gradient(top, #fff 75%, #f0f0f0);
+	font-family: Ubuntu, Arial, Helvetica;
+}
+span.error {
+	color: #990000 !important;
+}
+#loader:after {
+    content: "Acquisizione dati..." !important;
+}
+#top_menu {
+	position: relative;
+	box-shadow: 0 0 10px #000;
+	z-index: 1;
+}
+#map {
+	position: fixed;
+	top: 29px;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+#temp {
+	position: absolute;
+	font-size: 100px;
+	top: 8px;
+	right: 20px;
+	opacity: 0.75;
+	text-shadow: 0 0 36px #000;
+	text-align: right;
+	line-height: 0.75em;
+	z-index: 3;
+	display: none;
+}
+#forecast {
+	background-image: radial-gradient(center 43% , closest-side, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0) 81%);
+    background-image: -moz-radial-gradient(center 43% , closest-side, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0) 81%);
+	background-image: -o-radial-gradient(center 43% , closest-side, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0) 81%);
+	background-image: -webkit-radial-gradient(center 43% , closest-side, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0) 81%);
+	background-image: -ms-radial-gradient(center 43% , closest-side, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0) 81%);
+	position: absolute;
+	font-size: 100px;
+	top: 30px;
+	left: 50px;
+	text-shadow: 0 0 36px #000;
+	text-align: center;
+	line-height: 0.75em;
+	padding: 0 10px 20px 10px;
+	min-width: 220px;
+	z-index: 3;
+	display: none;
+}
+#temp cite, #forecast cite {
+	font-size: 35px;
+	display: block;
+	font-style: normal;
+	font-weight: bold;
+	margin-top: 20px;
+}
+#forecast cite {
+    text-shadow: 0 0 27px #000;
+	font-size: 25px;
+	margin: 0;
+	line-height: 15px;
+	opacity: 0.75;
+}
+#temp div {
+	display: block;
+	font-size: 40px;
+	line-height: 0.8em;
+}
+#temp div.error, #temp div.localStation, #temp div.OWStation {
+	display: block;
+	font-size: 15px !important;
+	font-style: italic;
+	color: #990000;
+}
+#temp div.OWStation {
+	font-size: 15px !important;
+	color: #ffd100;
+    margin-top: -10px;
+    margin-bottom: 25px;
+}
+#temp div.localStation {
+	font-size: 15px !important;
+	color: #121212;
+    margin-top: -10px;
+    margin-bottom: 25px;
+}
+#temp div.temperature {
+	font-size: 90px !important;
+	margin-top: -30px;
+	font-weight: bold;
+}
+#temp div > sup {
+	margin-top: -15px;
+	font-weight: normal;
+}
+#temp #wind {
+	font-size: 40px;
+	margin-top: 8px;
+	background-image: radial-gradient(center, ellipse farthest-corner, #333, transparent 72%);
+	background-image: -moz-radial-gradient(center, ellipse farthest-corner, #333, transparent 72%);
+	background-image: -o-radial-gradient(center, ellipse farthest-corner, #333, transparent 72%);
+	background-image: -webkit-radial-gradient(center, ellipse farthest-corner, #333, transparent 72%);
+	background-image: -ms-radial-gradient(center, ellipse farthest-corner, #333, transparent 72%);
+	background-position: center top;
+    background-repeat: no-repeat;
+    background-size: 100% 3px;
+}
+#temp #arrow {
+	display: inline;
+	margin-right: 15px;
+}
+#temp #wind_desc {
+	font-size: 25px;
+	font-style: italic;
+	line-height: 1em;
+}
+#station_data {
+	background-image: radial-gradient(center, ellipse farthest-corner, rgba(255, 255, 255, 0), #fff);
+	background-image: -moz-radial-gradient(center, ellipse farthest-corner, rgba(255, 255, 255, 0), #fff);
+	background-image: -o-radial-gradient(center, ellipse farthest-corner, rgba(255, 255, 255, 0), #fff);
+	background-image: -webkit-radial-gradient(center, ellipse farthest-corner, rgba(255, 255, 255, 0), #fff);
+	background-image: -ms-radial-gradient(center, ellipse farthest-corner, rgba(255, 255, 255, 0), #fff);
+	box-shadow: 0 0 9px #ccc inset;
+	font-size: 15px;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	padding: 0 15px 15px 15px;
+	border-top-right-radius: 45px;
+	text-align: left;
+	z-index: 3;
+}
+#station_data h1 {
+	font-size: 18px;
+	padding-top: 5px;
+	text-shadow: 0 0 9px #fff;
+}
+#station_data ul {
+	padding: 0 0 0 15px;
+	margin: 0;
+}
+#station_data ul li {
+	color: #666;
+}
+#station_data ul li span {
+	color: #000;
+	text-shadow: 0 0 6px #fff;
+}
+#station_status {
+	color: #185f0c;
+	font-weight: bold;
+}
+
+div.olControlZoom {
+	padding: 3px;
+	border-radius: 9px;
+	margin-top: 20px;
+}
+div.olControlZoom a {
+	padding: 3px;
+	background-color: #000 !important;
+	opacity: 0.6;
+}
+a.olControlZoomIn {
+	border-top-left-radius: 9px;
+	border-top-right-radius: 9px;
+}
+a.olControlZoomOut {
+	border-bottom-left-radius: 9px;
+	border-bottom-right-radius: 9px;
+}
+div.olControlAttribution {
+	position: fixed !important;
+	right: 15px;
+	bottom: 15px;
+}
+
+.olPopup {
+	z-index: 2147483647 !important;
+	background-color: rgba(0, 0, 0, 0.6) !important;
+	color: #fff;
+	margin: 15px;
+	border-radius: 3px;
+	text-align: center;
+	border: #666;
+}

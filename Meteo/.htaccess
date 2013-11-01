@@ -1,0 +1,12 @@
+#RewriteEngine on
+#RewriteBase /
+
+#RewriteCond %{SERVER_PORT} !^443$
+#RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R,L]
+	
+# ----------- CONVERSIONE URI -----------
+#
+	# Conversione delle chiavi get in "/"
+	#RewriteRule ^([^/\.]+)/?$ Meteo/index.php?m=$1 [L]
+	#RewriteRule ^([^/\.]+)/([^/]+)/?$ Meteo/index.php?m=$1&id=$2 [L]
+	#RewriteRule ^([^/\.]+)/([^/]+)/([^/\.]+)/?$ Meteo/index.php?m=$1&id=$2&q=$3 [L]
