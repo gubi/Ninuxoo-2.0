@@ -17,3 +17,24 @@ In this way, local servers periodically scan its files and export a list in `./A
 Otherwise - and better - the Main Server no longer needs to scan else, because the local decentralized server can also send data to the main which listens.<br />
 Owners of the NAS are encouraged to use the local version of Ninuxoo because is also "personal" search engine, first, and then with the plugins like the local Meteo map, which works also without Meteo Station sensors.
 
+## Istalling and configuring
+First you need to clone this repo:
+```bash
+$ git clone git@github.com:gubi/Ninuxoo-Semantic-Decentralized.git
+```
+
+Then, create and edit a [`config.ini`](./blob/master/config.ini) file, which contains all data required to run.<br />
+Once you have configured samba directories, you can launch [scan.php](./blob/master/scan.php) via terminal
+
+```bash
+$ php scan.php
+```
+
+or via browser: [http://LOCALHOST/scan.php](http://LOCALHOST/scan.php)
+
+Enjoy :)
+
+## License
+This is an Open Source Project.<br />
+Feel free to edit and improve as you like.<br />
+For further info, please see the [License](./blob/master/LICENSE) section.
