@@ -44,12 +44,12 @@ $ crontab -e
 00 */6 * * * root /usr/bin/php /var/www/scan.php
 ```
 
-## Note
+## Notes
 * Remind to configure [`osd.xml`](./blob/master/osd.xml) to add Ninuxoo to browser's Search Engines
 * The script [`scan.php`](https://github.com/gubi/Ninuxoo-Semantic-Decentralized/blob/master/scan.php) can be launched manually or via cron, as described above
 
 
-## Note for the owner of the Main Server
+### Note for the owner of the Main Server
 If you want that your server checks remote NAS, just point the crawler to `config.ini` file for retrieve further instructions about listing output position.<br />
 The script `scan.php` generates three files type of listing:
 * `listing` (simple list)
