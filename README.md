@@ -23,6 +23,10 @@ First you need to clone this repo:
 $ git clone git@github.com:gubi/Ninuxoo-Semantic-Decentralized.git
 ```
 
+### Automatic - via installer
+Simply launch your `localhost` from browser, the installer will provide to create all config files.
+
+### Manual installation
 Then, create and edit a [`config.ini`](./blob/master/config.ini) file, which contains all data required to run.<br />
 Once you have configured samba directories, you can launch [scan.php](./blob/master/scan.php) via terminal
 
@@ -45,7 +49,6 @@ $ crontab -e
 ```
 
 ## Notes
-* Remind to configure [`osd.xml`](./blob/master/osd.xml) to add Ninuxoo to browser's Search Engines
 * The script [`scan.php`](https://github.com/gubi/Ninuxoo-Semantic-Decentralized/blob/master/scan.php) can be launched manually or via cron, as described above
 
 
