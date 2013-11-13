@@ -5,7 +5,7 @@ This is a beta version of the new Ninuxoo Search Engine.<br />
 Ninuxoo is a Search Engine and Indexer made by [Clauz](https://github.com/cl4u2) for the [Ninux Wireless Community Network](https://github.com/ninuxorg).
 
 ## Difference for other versions
-The primary version of Ninuxoo, explore the Comunitarian Net (WCN) from a centralized Server in search of NAS (Network Attached Storage) to be scanned.<br />
+The primary version of Ninuxoo, explore the Wireless Comunity Network from a centralized Server in search of NAS to be scanned.<br />
 This application is much useful but lot expensive and not sustainable when the network counts a lot of nodes and NAS to be scanned.<br />
 Thus this is a first decentralized approach to solve this issue...
 
@@ -13,9 +13,8 @@ Thus this is a first decentralized approach to solve this issue...
 Most NAS has a preinstalled Server software - sometimes also in light version - that can solve the main efficiency problem: the scanning of files.<br />
 Therefore, why not leave them this tiring work?
 
-In this way, local servers periodically scan its files and export a list in `https://github.com/gubi/Ninuxoo-Semantic-Decentralized/blob/master/API` directory, so the Main Server need only to scan and diff a text file, not a recursion on a directory tree.<br />
-Otherwise - and better - the Main Server no longer needs to scan else, because the local decentralized server can also send data to the main which listens.<br />
-Owners of the NAS are encouraged to use the local version of Ninuxoo because is also "personal" search engine, first, and then with the plugins like the local Meteo map, which works also without Meteo Station sensors.
+In this way, local servers periodically scan itself and export the tree list in `https://github.com/gubi/Ninuxoo-Semantic-Decentralized/blob/master/API` directory, so the Main Server need only to load a siple text file: no more remote directory-tree recursion!.<br />
+Obviously, owners of the decentralized NAS are also encouraged to use the local version of Ninuxoo because first is also a "personal" search engine, and then with the plugins like the local Meteo map, which works also without Meteo Station sensors.
 
 ## Istalling and configuring
 First you need to clone this repo:
