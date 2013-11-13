@@ -312,8 +312,6 @@ class local_search {
 			if($this->get_response_code("code") == 200){
 				// Retrieve relative root path
 				$config["root_dir"] = (isset($params["root_dir"]) ? $params["root_dir"] : $this->get_root_path());
-				// Retrieve replace uri
-				$config["replace_uri"] = (isset($params["replace_uri"]) ? $params["replace_uri"] : "smb://" . $_SERVER["SERVER_ADDR"] . "/");
 				
 				foreach($params as $pk => $pv){
 					$config[$pk] = $pv;
@@ -524,10 +522,9 @@ class local_search {
 			$i = -1;
 			$tree = array();
 			foreach($scanned_files_lines as $line){
-				$linee = str_replace($this->params["replace_path"], $this->params["replace_uri"], $line);
 				@ob_flush();
 				usleep(100);
-				$arrr[$linee] = $linee;
+				$arrr[$line] = $line;
 			}
 			if(is_array($arrr)){
 				krsort($arrr);
@@ -546,8 +543,7 @@ header ("Content-type: text/plain; charset=utf-8");
 $conf = parse_ini_file("../../../config.ini", true);
 $local_search = new local_search();
 $local_search->set_params(array(
-					"replace_path" => $conf["NAS"]["replace_remote_dir_with"] . "/",
-					"config_ini_file" => "config.ini",
+					/*"config_ini_file" => "config.ini",*/
 					"op" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["op"]))),
 					"path" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["path"]))),
 					"q" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["q"]))),

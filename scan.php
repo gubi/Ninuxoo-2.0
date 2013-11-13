@@ -1,40 +1,16 @@
 <?php
+require("php_error.php");
+if (function_exists('\php_error\reportErrors')) {
+	\php_error\reportErrors();
+}
 header("Content-type: text/plain");
 // Scan samba shares directories
-require_once("common/include/funcs/parse_conf_file.php");
-require_once("common/include/lib/JSON.php");
-if(!function_exists("json_encode")) {
-	function json_encode($data) {
-		$json = new Services_JSON();
-		return $json->encode($data);
-	}
-}
-if(!function_exists("json_decode")) {
-	function json_decode($data) {
-		$json = new Services_JSON();
-		return $json->decode($data);
-	}
-}
-function change_conf($Setting, $replace, $INI_PATH) {
-	require_once("common/include/lib/PEAR/File/SearchReplace.php");
-	
-	$files_to_search = array($INI_PATH) ;
-	$search_string  = "/" . $Setting . ".*/";
-	if(!is_numeric($replace)){
-		$replace = "\"" . $replace . "\"";
-	}
-	$replace_string = $Setting . " = " . $replace . "";
-	 
-	$snr = new File_SearchReplace($search_string,
-				      $replace_string,
-				      $files_to_search,
-				      '', // directorie(s) to search
-				      false) ;
-	
-	$snr->setSearchFunction("preg");
-	$snr->doSearch();
-}
+set_include_path("/var/www/common/include/funcs/_ajax");
+ini_set("include_path", "/var/www/common/include/funcs/_ajax");
+require_once("json_service.php");
+require_once("common/include/classes/manage_conf_file.class.php");
 
+$conf = new manage_conf_file();
 // Start execution time statistics
 $mtime = microtime();
 $mtime = explode(" ", $mtime);
@@ -46,46 +22,33 @@ $current_dir = str_replace("scan.php", "", $_SERVER["SCRIPT_FILENAME"]);
 
 // Check for Ninuxoo conf file
 if (!file_exists("config.ini")) {
-	// Search for samba conf file
-	$smb_conf_file = trim(shell_exec('find / -maxdepth 3 -name "smb.conf"')) . "smb.conf";
-	// Write Ninuxoo conf file
-	$conf_file = fopen("config.ini", "w+");
-	// Content of file
-	$conf_content = "; Ninuxoo Configuration file\n";
-	$conf_content .= ";;NOTE: Remember that comment hash is \"\;\" not \"#\" \;)\n\n";
-	$conf_content .= "[NAS]\n";
-	$conf_content .= "smb_conf_dir = \"" . trim(str_replace("smb.conf", "", $smb_conf_file)) . " ;Absolute directory where smb.conf file is placed\"\n";
+	print "Error: no `config.ini` file.\nPlease, run setup before.\n\nNothing to scan.\nExit";
+	exit();
 } else {
 	// Get data from Ninuxoo conf file
 	$conf_file = parse_ini_file("config.ini", true);
 	$smb_conf_file = trim(preg_replace("/;(.*?)$/i", "", $conf_file["NAS"]["smb_conf_dir"])) . "smb.conf";
-	//unlink("config.ini");
-}
-// Check for osd.xml file
-if (!file_exists("osd.xml")) {
-	require_once("common/include/funcs/generate_osd.php");
 }
 // Moves to root
 chdir("/");
 // Read smb.conf file
-$smb_conf = parse_conf_file($smb_conf_file);
+$smb_conf = $conf->parse($smb_conf_file);
 
 // Match Samba shares
-foreach($smb_conf as $conf => $conf_arr){
-	foreach($conf_arr as $k => $v){
-		if($k == "path" && !strstr($v, "%")){
-			$paths[] = str_replace($conf_file["NAS"]["replace_remote_dir"], $conf_file["NAS"]["replace_remote_dir_with"], $v);
-		}
-	}
+foreach($conf_file["NAS"]["smb_shares"] as $v) {
+	$info = pathinfo($v);
+	$paths[] = trim(shell_exec('find / -name "' . $info["basename"] . '" -type d -print 2>/dev/null -quit'));
 }
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Scan dirs
-print str_repeat("-", 100) . "\n";
-print "# NinuXoo Local scanning \n";
-print "# " . date("Y-m-d H:i:s") . "\n";
-print str_repeat("-", 100) . "\n";
-print "Start scanning...\n";
-print "This may take a bit of time. Take a coffee break... ;)\n";
+if(!isset($_GET["ajax"])) {
+	print str_repeat("-", 100) . "\n";
+	print "# NinuXoo Local scanning \n";
+	print "# " . date("Y-m-d H:i:s") . "\n";
+	print str_repeat("-", 100) . "\n";
+	print "Start scanning...\n";
+	print "This may take a bit of time. Please, take a coffee break... ;)\n";
+}
 foreach($paths as $scan_dir){
 	$share_ = array();
 	if(strpos($scan_dir, "%") === false){
@@ -100,20 +63,21 @@ foreach($paths as $scan_dir){
 		}
 		$share_dir[] = implode("/", $share_);
 		$cdir = trim(str_replace(array("./", $main_dir), "", substr(strrchr($scan_dir, "/"), 1)));
+		$replace_dir = str_replace($cdir, "", implode("/", $share_));
 		$curr_dir[] = $cdir;
 		$listing_list[$cdir] = implode("/", $share_);
 		
 		$ll = shell_exec("find " . str_replace(" ", "\ ", escapeshellcmd($scan_dir)) . " -mindepth 1");
 		if(strlen($ll) > 3){
-			$listing .= str_replace($conf_file["NAS"]["smb_conf_dir"], "", trim(str_replace("./", trim(str_replace(array("./", $main_dir), "", $scan_dir)) . "/", $ll))) . "\n";
-			$c_c = pathinfo(str_replace($conf_file["NAS"]["smb_conf_dir"], "", trim(str_replace(array("./", ".\n", ".\r\n"), array(trim(str_replace(array("./", $main_dir), "", $scan_dir)) . "/", "{~}\n", "{~}\n"), $ll))));
-			
-			$listing_arr[$cdir] = str_replace($conf_file["NAS"]["smb_conf_dir"], "", trim(str_replace(array("./", ".\n", ".\r\n"), array(trim(str_replace(array("./", $main_dir), "", $scan_dir)) . "/", "{~}\n", "{~}\n"), $ll)));
+			$listing .= "/" . str_replace($replace_dir, "", trim(str_replace("./", trim(str_replace(array("./", $main_dir), "", $scan_dir)) . "/", $ll))) . "\n";
+			$listing_arr[$cdir] = str_replace($replace_dir, "", trim(str_replace(array("./", ".\n", ".\r\n"), array(trim(str_replace(array("./", $main_dir), "", $scan_dir)) . "/", "{~}\n", "{~}\n"), $ll)));
 		}
 	}
 }
-print "\n" . count($share_dir) . " directories in samba shares:\n";
-print " -> " . implode("\n -> ", $curr_dir) . "\n";
+if(!isset($_GET["ajax"])) {
+	print "\n" . count($share_dir) . " directories in samba shares:\n";
+	print " -> " . implode("\n -> ", $curr_dir) . "\n";
+}
 // listing.list file
 foreach($listing_list as $type => $absolute_path){
 	foreach(explode("\n", $listing_arr[$type]) as $kk => $vv){
@@ -144,39 +108,67 @@ if (strlen($conf_content) > 0) {
 	$conf_content .= "last_items_count = " . count($scanned) . "\n";
 } else {
 	chdir($current_dir);
-	change_conf("last_scan_date", date("Y-m-d"), "config.ini");
-	change_conf("last_items_count", count($scanned), "config.ini");
+	$conf->conf_replace("last_scan_date", date("Y-m-d"), "config.ini");
+	$conf->conf_replace("last_items_count", count($scanned), "config.ini");
 }
 
 // Create listing file
 if(!file_exists("API")){
-	print "\nThe 'API/' folder does not exists. Okay, I've created it.\n";
+	if(!isset($_GET["ajax"])) {
+		print "\nThe 'API/' folder does not exists. Okay, I've created it.\n";
+	}
 	if(mkdir("API")){
 		chmod("API", 0777);
 	}
 }
 if(!file_exists("API/~listing_history")){
-	print "\nThe 'API/~listing_history/' folder does not exists. Okay, I've created it.\n";
+	if(!isset($_GET["ajax"])) {
+		print "\nThe 'API/~listing_history/' folder does not exists. Okay, I've created it.\n";
+	}
 	mkdir("API/~listing_history", 0777);
 	chmod("API/~listing_history", 0777);
 }
 
-// Archive history
-print "\nArchiving previous listing files...";
-if (@copy("API/listing", "API/~listing_history/listing_" . date("Y-m-d_H:i:s"))) {
-	@copy("API/listing.list", "API/~listing_history/listing_" . date("Y-m-d_H:i:s") . ".list");
-	@copy("API/listing.json", "API/~listing_history/listing_" . date("Y-m-d_H:i:s") . ".json");
-	if ($handle = opendir("API/~listing_history")) {
-		while (false !== ($filename = readdir($handle))){ 
-			//  Delete older than 1 week
-			if ($filename != '.' &&  $filename != '..'  && eregi("listing", $filename) &&  filemtime("API/~listing_history/" . $filename) < strtotime("-1 week")){
-				@unlink("API/~listing_history/" . $filename) ;
+function mostRecentModifiedFileTime($dirName, $doRecursive) {
+	$d = dir($dirName);
+	$lastModified = 0;
+	while($entry = $d->read()) {
+		if ($entry != "." && $entry != "..") {
+			if (!is_dir($dirName."/".$entry)) {
+				$currentModified = filemtime($dirName."/".$entry);
+			} else if ($doRecursive && is_dir($dirName."/".$entry)) {
+				$currentModified = mostRecentModifiedFileTime($dirName."/".$entry,true);
+			}
+			if ($currentModified > $lastModified){
+				$lastModified = $currentModified;
 			}
 		}
-		closedir($handle); 
 	}
+	$d->close();
+	return $entry;
 }
-print " done.\n";
+// Archive history
+if(!isset($_GET["ajax"])) {
+	print "\nArchiving previous listing files...";
+}
+if ($handle = opendir("API/~listing_history")) {
+	while (false !== ($filename = readdir($handle))){ 
+		//  Delete older files
+		if ($filename != '.' &&  $filename != '..'  && preg_match("/listing/", $filename)){
+			@unlink("API/~listing_history/" . $filename) ;
+		}
+	}
+	closedir($handle); 
+}
+// Copy the last version of files
+@copy("API/listing", "API/~listing_history/listing_" . date("Y-m-d_H:i:s"));
+@copy("API/listing.list", "API/~listing_history/listing_" . date("Y-m-d_H:i:s") . ".list");
+@copy("API/listing.json", "API/~listing_history/listing_" . date("Y-m-d_H:i:s") . ".json");
+
+/*
+SAVE LISTINGS
+*/
+
 // Simple listing file
 $simple_listing_file = fopen("API/listing", "w+");
 fwrite($simple_listing_file, implode("\n", $scanned));
@@ -226,8 +218,12 @@ $totaltime = round($endtime - $starttime, 5);
 		chmod("config.ini", 0777);
 	} else {
 		chdir($current_dir);
-		change_conf("last_scanning_time", $totaltime, "config.ini");
+		$conf->conf_replace("last_scanning_time", $totaltime, "config.ini");
 	}
 // Display output
-print "\n" . count($scanned) . " files listed in:\n   - " . getcwd() . "/API/listing\n   - " . getcwd() . "/API/listing.list\n   - " . getcwd() . "/API/listing.json\n\nElapsed time: " . $totaltime . " seconds\n" . str_repeat("-", 100) . "\nGoodbye.\n\n";
+if(!isset($_GET["ajax"])) {
+	print "\n" . count($scanned) . " files listed in:\n   - " . getcwd() . "/API/listing\n   - " . getcwd() . "/API/listing.list\n   - " . getcwd() . "/API/listing.json\n\nElapsed time: " . $totaltime . " seconds\n" . str_repeat("-", 100) . "\nGoodbye.\n\n";
+} else {
+	print " done.\n";
+}
 ?>

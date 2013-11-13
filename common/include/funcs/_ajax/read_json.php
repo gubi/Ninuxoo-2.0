@@ -7,16 +7,18 @@ foreach($_GET as $k => $v){
 }
 if(isset($_GET["uri"]) && trim($_GET["uri"]) !== ""){
 	$uri = str_replace(" ", "%20", urldecode($_GET["uri"]));
-	
+	if(isset($_GET["debug"])) {
+		print $uri . "\n\n";
+	}
 	$contents = shell_exec("curl " . $uri);
 	//$contents = browse($uri);
 	if(strlen($contents) > 0){
-		print "jqueryCallback(" . $contents . ")";
+		print $contents;
 	} else {
-		print 'jqueryCallback({"error": "no file"})';
+		print '{"error": "no file"}';
 	}
 } else {
 	$uri = "http://ninuxoo.ninux.org/cgi-bin/json.cgi?";
-	print "jqueryCallback(" . @file_get_contents($uri . implode("&", $query)) . ")";
+	print @file_get_contents($uri . implode("&", $query));
 }
 ?>

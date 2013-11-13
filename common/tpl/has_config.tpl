@@ -128,7 +128,7 @@ function get_stats(){
 	$.getJSON("common/include/classes/local_search.class.php", {op: "resourcestats"}, function(resource) {
 		$("#resstats").html();
 		$("#resstats").fadeOut(300, function(){
-			$(this).html(resource.result + " files indicizzati in questo Server (<?php print $config["NAS"]["name"]; ?>)").fadeIn(300);
+			$(this).html(resource.result + " files indicizzati in questa risorsa locale (<?php print $config["NAS"]["name"]; ?>)").fadeIn(300);
 		});
 	});
 }
@@ -245,7 +245,7 @@ $(document).ready(function() {
 					if($._GET("filetype") != undefined){
 						more_search_data += "&filetype=" + $._GET("filetype");
 					}
-					$("#top_menu tr:first").append('<td rowspan="2"><div id="search"><table cellspacing="0" cellpadding="0"><tr><td><form id="searchform" action="" method="get">' + $("#searchform").html() + '</form></td><td><a href="?s=advanced' + more_search_data + '&q=' + $("#search_input").val() + '" title="Ricerca avanzata"></a></td></tr></table></div></td>');
+					$("#top_menu").append('<div id="search"><form id="searchform" action="" method="get">' + $("#searchform").html() + '</a></form></div>');
 					$("#searchform input[type=search]").val(query);
 					//Clear data
 					$("#main_search").remove();
