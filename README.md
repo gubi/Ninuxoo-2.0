@@ -6,7 +6,7 @@ Ninuxoo is a Search Engine and Indexer made by [Clauz](https://github.com/cl4u2)
 
 ## Difference for other versions
 The primary version of Ninuxoo, explore the Comunitarian Net (WCN) from a centralized Server in search of NAS (Network Attached Storage) to be scanned.<br />
-This application is much useful but lot expensive and not sustainable when the network counts a lot of nodes to pass to and NAS to be scanned.<br />
+This application is much useful but lot expensive and not sustainable when the network counts a lot of nodes and NAS to be scanned.<br />
 Thus this is a first decentralized approach to solve this issue...
 
 ## Working principle
