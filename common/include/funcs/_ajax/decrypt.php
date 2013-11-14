@@ -77,7 +77,15 @@ if(isset($_GET["getPublicKey"])) {
 	}
 	
 	parse_str($data, $output);
-		
-	require_once("install.generate_smb_conf.php");
+	
+	$type = (isset($_GET["type"]) && trim($_GET["type"]) !== "") ? $_GET["type"] : $_POST["type"];
+	switch($type) {
+		case "get_samba":
+			require_once("install.smb_conf.php");
+			break;
+		case "install":
+			require_once("install.generate_smb_conf.php");
+			break;
+	}
 }
 ?>

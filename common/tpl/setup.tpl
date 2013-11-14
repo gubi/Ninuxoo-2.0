@@ -39,11 +39,12 @@
 		$("#meteo_owid").val("");
 		$("#meteo_altitude_mt").val("");
 		$("#meteo_altitude_ft").val("");
-		$("select").chosen({
+		$("#node_name").chosen({
 			disable_search_threshold: 5,
 			no_results_text: "Nessun nodo rilevato per",
 			allow_single_deselect: true
 		});
+		$("#node_type, #meteo_altitude_unit").chosen();
 		check_internet();
 		
 		$("#nlloader").show();

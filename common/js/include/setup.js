@@ -128,30 +128,43 @@ function get_samba(remote_nas) {
 	if (remote_nas == undefined) {
 		var remote_nas = "";
 	}
-	$.get("common/include/funcs/_ajax/install.smb_conf.php", {file: remote_nas}, function(result) {
-		$("#lloader").remove();
-		if(remote_nas == "" && !result["valid_smb_conf"]) {
-			get_samba("/mnt/NAS/");
-			$("#info_mount_btn").show();
-		} else {
-			if(result["file"].valid_smb_conf) {
-				var paths = "";
-				$("#remote_nas").attr("checked", true);
-				$("#smb_conf_dir").val("/mnt/NAS/");
-				$("#info_mount_btn").show();
-				$.each(result["file"].smb_shares, function(key, val) {
-					paths += val + "\n";
-				});
-				$("#smb_conf_paths").val(paths).attr("disabled", false);
-				$("#smb_conf_dir_error").remove();
-			} else {
-				$("#info_mount_btn").hide();
-				$("#remote_nas").attr("checked", false);
-				$("#smb_conf_dir").after('<span id="smb_conf_dir_error" class="error">&nbsp;&nbsp;&nbsp;&nbsp;Attenzione: nessun file smb.conf rilevato in questo percorso</span>');
-				$("smb_conf_paths").attr("disabled", false);
+	var password = makeid();	
+	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+		var encryptedString = $.jCryption.encrypt(remote_nas, password);
+		
+		$.ajax({
+			url: "common/include/funcs/_ajax/decrypt.php",
+			dataType: "json",
+			type: "POST",
+			data: {
+				jCryption: encryptedString,
+				type: "get_samba"
+			},
+			success: function(result) {
+				$("#lloader").remove();
+				if(result["error"] == false) {
+					$.each(result["smb"], function(item, data) {
+						if(data["valid_smb_conf"]) {
+							var paths = "";
+							$("#remote_nas").attr("checked", true);
+							$("#smb_conf_dir").val("/mnt/NAS/");
+							$("#info_mount_btn").show();
+							$.each(data["smb_shares"], function(key, val) {
+								paths += val + "\n";
+							});
+							$("#smb_conf_paths").val(paths).attr("disabled", false);
+							$("#smb_conf_dir_error").remove();
+						}
+					});
+				} else {
+					$("#info_mount_btn").hide();
+					$("#remote_nas").attr("checked", false);
+					$("#smb_conf_dir").after('<span id="smb_conf_dir_error" class="error">&nbsp;&nbsp;&nbsp;&nbsp;' + result["error"] + '</span>');
+					$("smb_conf_paths").attr("disabled", false);
+				}
 			}
-		}
-	}, "json");
+		});
+	});
 }
 function calculate_meteo_data(latitude, longitude) {
 	String.prototype.multi_replace = function (hash) {
@@ -165,7 +178,7 @@ function calculate_meteo_data(latitude, longitude) {
 	$("#meteo_lat").attr("disabled", false).val(latitude);
 	$("#meteo_lng").attr("disabled", false).val(longitude);
 	
-	$.get("http://nominatim.openstreetmap.org/reverse?format=json", {lat: latitude, lon: longitude}, function(geodata) {
+	$.get("common/include/funcs/_ajax/read_json.php?uri=http://nominatim.openstreetmap.org/reverse?format=json%26lat=" + latitude + "%26lon=" + longitude, function(geodata) {
 		var hash = {
 			"Via dello": "",
 			"Via della": "",
@@ -229,7 +242,8 @@ function install() {
 					dataType: "json",
 					type: "POST",
 					data: {
-						jCryption: encryptedString
+						jCryption: encryptedString,
+						type: "install"
 					},
 					success: function(response) {
 						if (response["data"] !== "ok") {
