@@ -101,7 +101,6 @@ $.ultrie = function(resourcetrie, resuri, realuri) {
 	}
 	$.each(resourcetrie.children, function(index, child) {
 		if(child.label.indexOf('smb:') != 0 && child.label.indexOf('ftp:') != 0) {
-		console.log(resourcetrie.children);
 			if(child.resources.length < nres) {
 				res1 += $.ultrie(child, "/" + child.label, realuri + "/" + child.label);
 			} else {
