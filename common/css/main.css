@@ -422,7 +422,7 @@ table.grid td {
 #top_menu > div:first-child {
     display: table-row;
     float: left;
-    width: 67%;
+    width: 100%;
 }
 #top_menu ul {
 	margin: 0;
@@ -498,6 +498,7 @@ table.grid td {
 #search form, #main_search form {
 	width: 100%;
 	display: table-row;
+	text-align: center;
 }
 #search form input {
 	background-color: #fff;
@@ -523,8 +524,8 @@ table.grid td {
 }
 #main_search input {
 	border-top: #aaa 1px solid;
-	font-size: 1.2em;
-	width: 90%;
+	font-size: 22px;
+	width: 75%;
 	display: table-cell;
 }
 #search a, #main_search a {
@@ -543,7 +544,8 @@ table.grid td {
 }
 #main_search a {
 	margin-left: -1px;
-	padding: 7px 15px 5px;
+	margin-top: 1px;
+	padding: 7px 15px 4px;
 	border-top-right-radius: 6px;
 	-moz-border-radius-topright: 6px;
 	-webkit-border-top-right-radius: 6px;
@@ -572,6 +574,7 @@ table.grid td {
 }
 #header {
 	padding-top: 0;
+	font-size: 75%;
 }
 #main_header table td, #header table td {
 	text-align: center;
@@ -603,6 +606,7 @@ table.grid td {
 	-webkit-transform: rotate(-12deg);
 	-o-transform: rotate(-12deg);
 	-ms-transform: rotate(-12deg);
+	font-size: 2em;
 }
 
 #main_container {
@@ -897,7 +901,8 @@ ul#denied_list li img {
 	margin-top: 10px;
 	padding-bottom: 15px;
 	font-size: 11px;
-	color: #ddd;
+	color: #bbb;
+	text-shadow: 1px 1px 1px #fff;
 }
 #footer a {
 	color: #ccc;

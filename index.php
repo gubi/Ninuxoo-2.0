@@ -36,6 +36,7 @@ if(!$has_config) {
 <head>
 	<title><?php print $config["NAS"]["name"]; ?></title>
 	
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"">
 	<base href="./" />
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="author" content="Ninux.org Community - the Ninux Software Team" />
@@ -43,6 +44,7 @@ if(!$has_config) {
 	
 	<link rel="shortcut icon" href="common/media/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="common/css/main.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="common/css/device.css" type="text/css" media="screen" />
 	<link rel="search" type="application/opensearchdescription+xml" title="Ninuxoo" href="osd.xml" />
 	
 	<script type="text/javascript" src="common/js/jquery-1.7.2.min.js"></script>

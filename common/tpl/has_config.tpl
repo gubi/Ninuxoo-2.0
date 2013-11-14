@@ -101,6 +101,7 @@ $.ultrie = function(resourcetrie, resuri, realuri) {
 	}
 	$.each(resourcetrie.children, function(index, child) {
 		if(child.label.indexOf('smb:') != 0 && child.label.indexOf('ftp:') != 0) {
+		console.log(resourcetrie.children);
 			if(child.resources.length < nres) {
 				res1 += $.ultrie(child, "/" + child.label, realuri + "/" + child.label);
 			} else {
@@ -245,7 +246,7 @@ $(document).ready(function() {
 					if($._GET("filetype") != undefined){
 						more_search_data += "&filetype=" + $._GET("filetype");
 					}
-					$("#top_menu").append('<div id="search"><form id="searchform" action="" method="get">' + $("#searchform").html() + '</a></form></div>');
+					$("#top_menu").append('<div id="search"><form id="searchform" action="" method="get">' + $("#searchform").html() + '</a></form></div>').find("div:first-child").css({"width": "67%"});
 					$("#searchform input[type=search]").val(query);
 					//Clear data
 					$("#main_search").remove();
