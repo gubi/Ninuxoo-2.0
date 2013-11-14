@@ -1,5 +1,5 @@
 # Semantic Decentralized Ninuxoo
-<center>![Ninuxoo claim](https://raw.github.com/gubi/Ninuxoo-Semantic-Decentralized/master/common/media/img/ninuxoo_claim.png)</center>
+![Ninuxoo claim](https://raw.github.com/gubi/Ninuxoo-Semantic-Decentralized/master/common/media/img/ninuxoo_claim.png)
 
 This is a beta version of the new Ninuxoo Search Engine.<br />
 Ninuxoo is a Search Engine and Indexer made by [Clauz](https://github.com/cl4u2) for the [Ninux Wireless Community Network](https://github.com/ninuxorg).
