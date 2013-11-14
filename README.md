@@ -4,7 +4,7 @@
 This is a beta version of the new Ninuxoo Search Engine.<br />
 Ninuxoo is a Search Engine and Indexer made by [Clauz](https://github.com/cl4u2) for the [Ninux Wireless Community Network](https://github.com/ninuxorg).
 
-## Difference for other versions
+## Difference with other versions
 The primary version of Ninuxoo, explore the Wireless Comunity Network from a centralized Server in search of NAS to be scanned.<br />
 This application is much useful but lot expensive and not sustainable when the network counts a lot of nodes and NAS to be scanned.<br />
 Thus this is a first decentralized approach to solve this issue...
