@@ -1,5 +1,5 @@
 <?php
-require("php_error.php");
+//require("php_error.php");
 if (function_exists('\php_error\reportErrors')) {
 	\php_error\reportErrors();
 }
