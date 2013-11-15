@@ -1,6 +1,9 @@
 <?php
 header("Content-type: text/plain");
+
+$output["smb_conf_dir"] = str_replace("//", "/", $output["smb_conf_dir"] . "/");
 $output["server_root"] = str_replace("//", "/", $output["server_root"] . "/");
+$output["api_dir"] = str_replace("//", "/", $output["api_dir"] . "/");
 
 $smb_conf = '; NINUXOO CONFIGURATION FILE' . "\n\n";
 
@@ -39,7 +42,7 @@ $smb_conf .= 'city = "' . $output["meteo_city"] . '"' . "\n";
 $smb_conf .= 'region = "' . $output["meteo_region"] . '"' . "\n";
 $smb_conf .= 'country = "' . $output["meteo_country"] . '"' . "\n";
 $smb_conf .= 'OpenWeatherID = ' . $output["meteo_owid"] . ' ;OpenWeatherMap city ID. Find yours to http://openweathermap.org/data/2.1/find/name?q=CITY_NAME' . "\n";
-$smb_conf .= 'source_data_uri = "' . $output["api_dir"] . '/station.php"' . "\n";
+$smb_conf .= 'source_data_uri = "' . $output["api_dir"] . 'station.php"' . "\n";
 $smb_conf .= 'http_root = "' . $output["uri_address"] . '/Meteo/" ;NAS Meteo Station web uri' . "\n\n"; 
 
 $smb_conf .= ';If you want to get this data, please visit http://www.earthtools.org/' . "\n";
@@ -78,6 +81,9 @@ if($fp = fopen($output["server_root"] . "config.ini", "w")) {
 			
 			$data = "ok";
 		}
+		
+		// Symbolic link for http (securely) shares
+		exec("ln -s " . $output["smb_conf_dir"] . " " . $output["server_root"]" . shared/");
 	} else {
 		$data = "error::Non si gode dei permessi sufficienti per creare il file di config per il database MySQL.\nInstallazione parzialmente riuscita :/";
 	}
