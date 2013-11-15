@@ -48,6 +48,8 @@ if(!$has_config) {
 	<link rel="search" type="application/opensearchdescription+xml" title="Ninuxoo" href="osd.xml" />
 	
 	<script type="text/javascript" src="common/js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="common/js/Apprise/apprise-1.5.full.js"></script>
+	<link rel="stylesheet" href="common/js/Apprise/apprise.css" type="text/css">
 	<?php
 	if($has_config) {
 		require_once("common/tpl/has_config.tpl");
@@ -55,6 +57,13 @@ if(!$has_config) {
 		//
 	}
 	?>
+	<script type="text/javascript">
+	(function() {
+		window.alert = function(string, args, callback) {
+			return apprise(string, args, callback);
+		};
+	})();
+	</script>
 </head>
 <body>
 	<?php
