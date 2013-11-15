@@ -197,10 +197,36 @@ function calculate_meteo_data(latitude, longitude) {
 			"Via": "",
 			"Vicolo": ""
 		};
+		var regioni = new Array();
+		regioni["ABR"] = "Abruzzo";
+		regioni["BAS"] = "Basilicata";
+		regioni["CAL"] = "Calabria";
+		regioni["CAM"] = "Campania";
+		regioni["EMI"] = "Emilia-Romagna";
+		regioni["EMR"] = "Emilia-Romagna";
+		regioni["ERO"] = "Emilia-Romagna";
+		regioni["FVG"] = "Friuli-Venezia Giulia";
+		regioni["FRI"] = "Friuli-Venezia Giulia";
+		regioni["LAZ"] = "Lazio";
+		regioni["LIG"] = "Liguria";
+		regioni["LOM"] = "Lombardia";
+		regioni["MAR"] = "Marche";
+		regioni["MOL"] = "Molise";
+		regioni["PIE"] = "Piemonte";
+		regioni["PUG"] = "Puglia";
+		regioni["SAR"] = "Sardegna";
+		regioni["SIC"] = "Sicilia";
+		regioni["TOS"] = "Toscana";
+		regioni["TAA"] = "Trentino-AltoAdige";
+		regioni["TRE"] = "Trentino-Alto] Adige";
+		regioni["UMB"] = "Umbria";
+		regioni["VDA"] = "Valle d'Aosta";
+		regioni["VAO"] = "Valle d'Aosta";
+		regioni["VEN"] = "Veneto";
 		var zona = (geodata["address"].suburb != undefined) ? geodata["address"].suburb : (geodata["address"].bus_stop != undefined) ? geodata["address"].bus_stop.replace(/via /gi, "") : geodata["address"].road.multi_replace(hash);
 		$("#meteo_name").val("Meteo " + $.trim($("#node_name").val()) + " (" + geodata["address"].city + " ~ " + $.trim(zona) + ")");
 		$("#meteo_city").attr("disabled", false).val(geodata["address"].city);
-		$("#meteo_region").attr("disabled", false).val(geodata["address"].state);
+		$("#meteo_region").attr("disabled", false).val(regioni[geodata["address"].state]);
 		$("#meteo_country").attr("disabled", false).val(geodata["address"].country);
 		
 		$.get("common/include/funcs/_ajax/read_json.php?uri=http://openweathermap.org/data/2.1/find/name?q=" + geodata["address"].city, function(data) {
