@@ -397,6 +397,7 @@ table.grid td {
 	display: none;
 	opacity:0.9;
 	filter:alpha(opacity=90);
+	cursor: wait;
 }
 #setup_loader h1 {
 	color: #ef531d;

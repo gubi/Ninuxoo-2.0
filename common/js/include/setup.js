@@ -281,7 +281,11 @@ function install() {
 							$("#setup_loader > span").text("Scansione dei files...");
 							$.get("scan.php", {ajax: "true"}, function(scan_return) {
 								if($.trim(scan_return) == "done.") {
-									location.reload();
+									alert("Ho creato il file \"config.ini\".<br />Ho creato il file di connessione al database.<br />Ho configurato il cronjob e fatto una scansione dei files...<br /><br />Non resta che ricaricare la pagina e Ninuxoo &egrave; pronto per l'uso...<br />Grazie per la pazienza <tt>:)</tt>", {icon: "success", title: "Installazione avvenuta con successo!", textOk: "Prego"}, function(r) {
+										if(r) {
+											location.reload();
+										}
+									});
 								} else {
 									alert("Si &egrave; verificato un errore durante l'installazione:\n" + scan_return, {icon: "error", title: "Ouch!"});
 								}
