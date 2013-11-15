@@ -99,7 +99,7 @@ function get_nodes() {
 						});
 						$("#node_type").trigger("liszt:updated");
 						if($("#form.frm").css("display") != "none") {
-							$("#node_name_chzn > .chzn-single").mousedown();
+							$("#nas_name").focus();
 						}
 						$("#nas_name").focus();
 					} else {

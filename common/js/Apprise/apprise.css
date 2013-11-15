@@ -33,6 +33,14 @@
 	color:#333;
 	text-shadow:0px 1px 0px #fff;
 	}
+.appriseInner h1, 
+.appriseInner h2, 
+.appriseInner h3, 
+.appriseInner h4, 
+.appriseInner h5, 
+.appriseInner h6 {
+	color: #454545;
+}
 .appriseInner button
 	{
 	border:1px solid #bbb;
