@@ -275,7 +275,7 @@ function install() {
 						if (response["data"] !== "ok") {
 							var risp = response["data"].split("::");
 							if(risp[0] == "error") {
-								alert("Si e' verificato un errore durante l'installazione:\n" + risp[1]);
+								alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
 							}
 						} else {
 							$("#setup_loader > span").text("Scansione dei files...");
@@ -283,7 +283,7 @@ function install() {
 								if($.trim(scan_return) == "done.") {
 									location.reload();
 								} else {
-									alert("Si e' verificato un errore durante l'installazione:\n" + scan_return);
+									alert("Si &egrave; verificato un errore durante l'installazione:\n" + scan_return, {icon: "error", title: "Ouch!"});
 								}
 							});
 						}
@@ -293,7 +293,7 @@ function install() {
 				$("#setup_loader").fadeOut(300);
 				$("#setup_loader > h1").text("");
 				$("#setup_loader > span").text("");
-				alert("Si e' verificato un errore durante l'installazione:\nErrore di autenticazione.");
+				alert("Si &egrave; verificato un errore durante l'installazione:\nErrore di autenticazione.", {icon: "error", title: "Ouch!"});
 			});
 		});
 	} else {

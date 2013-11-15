@@ -41,6 +41,12 @@
 .appriseInner h6 {
 	color: #454545;
 }
+.appriseInner h2 {
+	margin-top: 0;
+}
+.appriseInner table td:first-child {
+	padding-right: 20px;
+}
 .appriseInner button
 	{
 	border:1px solid #bbb;

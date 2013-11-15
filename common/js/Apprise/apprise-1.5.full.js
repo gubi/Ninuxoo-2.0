@@ -16,12 +16,15 @@ function apprise(string, args, callback) {
 		    'textCancel': 'Cancel', // Cancel button default text
 		    'textYes': 'Yes', 	// Yes button default text
 		    'textNo': 'No', 	// No button default text
-		    'position': 'center'// position center (y-axis) any other option will default to 100 top
+		    'position': 'center',// position center (y-axis) any other option will default to 100 top
+		    'icon': '',
+		     'title': ''
 		}
 
     if (args) {
-        for (var index in default_args)
-        { if (typeof args[index] == "undefined") args[index] = default_args[index]; }
+        for (var index in default_args) {
+		if (typeof args[index] == "undefined") args[index] = default_args[index];
+	}
     }
 
     var aHeight = $(window).height(),
@@ -37,12 +40,44 @@ function apprise(string, args, callback) {
         .fadeIn(100,function(){$(this).css('filter','alpha(opacity=70)');});
 
     apprise.appendTo('body');
-
-    inner.append(string)
-		.appendTo(apprise);
+	
+	if (!args || !args['icon']) {
+		inner.append(string).appendTo(apprise);
+	}
 
     
 
+    if (args) {
+        if (args['icon']) {
+	   if (args['title'].length > 0) {
+		var title = '<h2>' + args['title'] + '</h2>';
+	    } else {
+		 var title = "";
+	    }
+	    var table_open = '<table cellspacing="0" cellpadding="0"><tr>';
+	    var table_close = '</td></tr></table>';
+           
+	    if (args['icon'] == 'success') {
+		if(title == "") {
+			title = '<h2>Oh yeah!</h2>';
+		}
+                inner.prepend(table_open + '<td><img src="common/media/img/accept_128_ccc.png" /></td><td valign="top">' + title + '<p>' + string + '</p>' + table_close).appendTo(apprise);
+            }
+            if (args['icon'] == 'warning') {
+		if(title == "") {
+			title = '<h2>Attenzione</h2>';
+		}
+                inner.prepend(table_open + '<td><img src="common/media/img/warning_128_ccc.png" /></td><td valign="top">' + title + '<p>' + string + '</p>' + table_close).appendTo(apprise);
+            }
+            if (args['icon'] == 'error') {
+		if(title == "") {
+			title = '<h2>Si &egrave; verificato un problema</h2>';
+		}
+                inner.prepend(table_open + '<td><img src="common/media/img/cancel_128_ccc.png" /></td><td valign="top">' + title + '<p>' + string + '</p>' + table_close).appendTo(apprise);
+            }
+        }
+    }
+    
     if (args) {
         if (args['input']) {
             if (typeof (args['input']) == 'string') {
@@ -74,7 +109,11 @@ function apprise(string, args, callback) {
 
     // position after adding buttons
 
-    apprise.css("left", ($(window).width() - $('.appriseOuter').width()) / 2 + $(window).scrollLeft() + "px");
+    if (!args || !args['icon']) {
+	apprise.css("left", (($(window).width() - $('.appriseOuter').width()) / 2 + $(window).scrollLeft()) - 10 + "px");
+    } else {
+	apprise.css("left", ($(window).width() - $('.appriseOuter').width()) / 2 + $(window).scrollLeft() + "px");
+    }
     // get center
     if (args) {
         if (args['position'] && args['position'] === 'center') {
