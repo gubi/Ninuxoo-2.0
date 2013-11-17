@@ -83,7 +83,7 @@ if($fp = fopen($output["server_root"] . "config.ini", "w")) {
 		}
 		
 		// Symbolic link for http (securely) shares
-		exec("ln -s " . $output["smb_conf_dir"] . " " . $output["server_root"]" . shared/");
+		exec("ln -s " . $output["smb_conf_dir"] . " " . $output["server_root"] . "shared/");
 	} else {
 		$data = "error::Non si gode dei permessi sufficienti per creare il file di config per il database MySQL.\nInstallazione parzialmente riuscita :/";
 	}
