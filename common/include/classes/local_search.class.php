@@ -223,6 +223,7 @@ class local_search {
 		}
 		$results_array["nresults"] = count($array);
 		$results_array["resourcetrie"] = $this->plotTree($resourcetry);
+		
 		$response = $results_array;
 		
 		$results_array["resourcetrie"];
@@ -518,7 +519,6 @@ class local_search {
 				break;
 			}
 			$scanned_files_lines = array_filter(explode("\n", $scanned_files));
-			//print_r($scanned_files_lines);
 			$i = -1;
 			$tree = array();
 			foreach($scanned_files_lines as $line){
