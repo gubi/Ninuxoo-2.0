@@ -70,10 +70,28 @@ if(isset($_GET["token"]) && trim($_GET["token"]) !== "") {
 			$Btoken = $rsa->get_token($Bkey);
 			$log->write("notice", "[A1] Public key received with token " . $Btoken);
 			
-			$knower = fopen($trusted_dir . $Btoken . ".pem~", "wb");
-			$log->write("notice", "[A1] NAS " . $Btoken . " added to '" . $trusted_dir . $Btoken . ".pem~' as KNOWER");
-			fwrite($knower, $Bkey);
-			fclose($knower);
+			// Check if is already trusted
+			foreach(glob($trusted_dir . "*.pem") as $filename) {
+				$ctokens[] = str_replace(array($trusted_dir, ".pem"), "", $filename);
+			}
+			if(is_array($ctokens)) {
+				$log->write("notice", "[A1] Check if '" . $Btoken . "' is already trusted...");
+				if(in_array($Btoken, $ctokens)) {
+					$exists = true;
+					$log->write("notice", "[A1] " . $Btoken . " is already trusted");
+				} else {
+					$exists = false;
+				}
+			} else {
+				$exists = false;
+				$log->write("error", "[A1] " . $Btoken . " is no knower and no trusted. Aborting... It will need to repeat all process");
+			}
+			if(!$exists) {
+				$knower = fopen($trusted_dir . $Btoken . ".pem~", "wb");
+				$log->write("notice", "[A1] NAS " . $Btoken . " added to '" . $trusted_dir . $Btoken . ".pem~' as KNOWER");
+				fwrite($knower, $Bkey);
+				fclose($knower);
+			}
 			
 			$encrypted_A_response = $rsa->public_encrypt($main_dir, "trusted/"  . $Atoken . ".pem~", "rsa_2048_pub.pem", $time_limit);
 			if($encrypted_A_response) {
