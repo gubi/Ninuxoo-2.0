@@ -1,9 +1,9 @@
 <?php
 header("Content-type: text/plain");
-require_once("../../classes/logging.class.php");
+require_once("common/include/classes/logging.class.php");
 
 $log = new Logging();
-$log->file("../common/include/log/ninuxoo.log");
+$log->file("common/include/common/include/log/ninuxoo.log");
 $log->write("notice", "[install] Started");
 
 $output["smb_conf_dir"] = str_replace("//", "/", $output["smb_conf_dir"] . "/");
