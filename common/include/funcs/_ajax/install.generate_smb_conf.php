@@ -90,9 +90,6 @@ if($fp = fopen($output["server_root"] . "common/include/conf/config.ini", "w")) 
 			}
 			$data = "ok";
 		}
-		
-		// Symbolic link for http (securely) shares
-		exec("ln -s " . $output["smb_conf_dir"] . " " . $output["server_root"] . "shared/");
 	} else {
 		$log->write("error", "[install] Can't create '.db.conf' in 'common/include/conf/'. Install malformed");
 		$data = "error::Non si gode dei permessi sufficienti per creare il file di config per il database MySQL.\nInstallazione parzialmente riuscita :/";
