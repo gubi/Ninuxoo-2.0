@@ -1,5 +1,10 @@
 <?php
 header("Content-type: text/plain");
+require_once("../../classes/logging.class.php");
+
+$log = new Logging();
+$log->file("../common/include/log/ninuxoo.log");
+$log->write("notice", "[install] Started");
 
 $output["smb_conf_dir"] = str_replace("//", "/", $output["smb_conf_dir"] . "/");
 $output["server_root"] = str_replace("//", "/", $output["server_root"] . "/");
@@ -65,29 +70,35 @@ $mysql_conf .= 'tables = "' . $output["mysql_db_table"] . '"';
 if($fp = fopen($output["server_root"] . "common/include/conf/config.ini", "w")) {
 	fwrite($fp, $smb_conf . PHP_EOL);
 	fclose($fp);
+	$log->write("notice", "[install] The file 'config.ini' is created in 'common/include/conf/'");
 	
 	// Database config file
 	if($fdb = fopen($output["server_root"] . "common/include/conf/.db.conf", "w")) {
 		fwrite($fdb, $mysql_conf . PHP_EOL);
 		fclose($fdb);
+		$log->write("notice", "[install] The file '.db.conf' is created in 'common/include/conf/'");
 		
 		// Crontab
 		$fc = fopen($output["server_root"] . "crontab", "w+");
 		if(fwrite($fc, "# Ninuxoo Local scan job\n00 */6 * * * root /usr/bin/php " . $output["server_root"] . "scan.php" . PHP_EOL) === false) {
+			$log->write("error", "[install] Can't create 'crontab' file in '" . $output["server_root"] . "'. Install malformed");
 			$data = "error::Sono stati riscontrati dei problemi nella creazione del crontab.\nInstallazione avvenuta con successo.\nInstallare il cronjob manualmente.\nConsultare la documentazione per maggiori informazioni.";
 		} else {
 			fclose($fc);
-			exec("crontab " . $output["server_root"] . "crontab");
-			
+			if(!exec("crontab " . $output["server_root"] . "crontab")) {
+				$log->write("notice", "[warning] A problem has occurred during installation of crontab. Please open and copy '" . $output["server_root"] . "crontab' and paste in '$ (sudo) crontab -e' manually.");
+			}
 			$data = "ok";
 		}
 		
 		// Symbolic link for http (securely) shares
 		exec("ln -s " . $output["smb_conf_dir"] . " " . $output["server_root"] . "shared/");
 	} else {
+		$log->write("error", "[install] Can't create '.db.conf' in 'common/include/conf/'. Install malformed");
 		$data = "error::Non si gode dei permessi sufficienti per creare il file di config per il database MySQL.\nInstallazione parzialmente riuscita :/";
 	}
 } else {
+	$log->write("error", "[install] Can't create 'config.ini' in 'common/include/conf/'. Install aborted");
 	$data = "error::Non si gode dei permessi sufficienti per creare il file di config.\nInstallazione non riuscita :(";
 }
 
