@@ -62,7 +62,7 @@ $mysql_conf .= 'tables = "' . $output["mysql_db_table"] . '"';
 
 // Files creation
 // Main config file
-if($fp = fopen($output["server_root"] . "config.ini", "w")) {
+if($fp = fopen($output["server_root"] . "common/include/conf/config.ini", "w")) {
 	fwrite($fp, $smb_conf . PHP_EOL);
 	fclose($fp);
 	

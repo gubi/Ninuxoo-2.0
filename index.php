@@ -13,7 +13,7 @@ if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 	}
 }
 // Check if config exist else start setup
-$has_config = (!file_exists("config.ini")) ? false : true;
+$has_config = (!file_exists("common/include/conf/config.ini")) ? false : true;
 if(!$has_config) {
 	if(!isset($_GET["setup"])) {
 		header("Location: ./?setup");
@@ -26,7 +26,7 @@ if(!$has_config) {
 		header("Location: ./");
 	}
 	
-	$config = parse_ini_file("config.ini", 1);
+	$config = parse_ini_file("common/include/conf/config.ini", 1);
 	$NAS_absolute_uri = preg_replace("{/$}", "", $config["NAS"]["http_root"]);
 	$NAS_IP = $config["NAS"]["ipv4"];
 }
