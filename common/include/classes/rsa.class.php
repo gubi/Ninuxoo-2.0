@@ -63,6 +63,17 @@ class rsa {
 	public function simple_decrypt($text) {
 		return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, SALT, base64_decode($text), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
 	}
+	public function simple_private_encrypt($string) {
+		shell_exec("echo '" . $string . "' | openssl rsautl -encrypt -inkey ../../conf/rsa_2048_priv.pem > ../../conf/message.encrypted");
+		$encrypted = shell_exec('cat ../../conf/message.encrypted | base64 - && rm ../../conf/message.encrypted');
+		return $encrypted;
+	}
+	public function simple_private_decrypt($string) {
+		shell_exec('echo "' . $string . '" | base64 -d - > common/include/conf/message.encrypted');
+		shell_exec("cat common/include/conf/message.encrypted | openssl rsautl -decrypt -inkey common/include/conf/rsa_2048_priv.pem > common/include/conf/message.decrypted && rm common/include/conf/message.encrypted");
+		$decrypted = shell_exec('cat common/include/conf/message.decrypted && rm common/include/conf/message.decrypted');
+		return $decrypted;
+	}
 	public function public_encrypt($dir, $pub_key, $key_to_encrypt, $time_limit = null){
 		if($this->get_time_limit($time_limit, true)) {
 			$this->gen_aes_key($dir);
