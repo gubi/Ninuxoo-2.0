@@ -4,21 +4,22 @@
 			<?php
 			if($has_config) {
 				?>
-				<li><a href="?op=whatsnew" id="whatsnew" title="Nuovi files indicizzati">Novit&agrave;</a></li>
-				<li><a href="?op=browse&path=/" id="browse" title="Elenco dei files">Esplora</a></li>
-				<li><a href="./Meteo" title="Visualizza dati meteo in tempo reale">Meteo</a></li>
+				<li><a href="?op=whatsnew" id="whatsnew" title="Files di recente indicizzazione">Novit&agrave;</a></li>
+				<li><a href="./Meteo" title="Dati meteo in tempo reale">Meteo</a></li>
 				<?php
 			}
 			?>
-			<li><a href="http://10.168.177.178:8888/" title="Ascolta la musica in rete">Juke Box</a></li>
-			<li><a href="http://ninuxoo.ninux.org/cgi-bin/proxy_wiki.cgi?url=Elenco_Telefonico_rete_VoIP_di_ninux.org" title="Elenco telefonico"><acronym title="Voice over IP">VoIP</acronym></a></li>
+			<li class="separator">&nbsp;</li>
+			<li><a href="http://10.168.177.178:8888/" title="Ascolta la musica condivisa in Rete">Juke Box</a></li>
+			<li><a href="http://ninuxoo.ninux.org/cgi-bin/proxy_wiki.cgi?url=Elenco_Telefonico_rete_VoIP_di_ninux.org" title="Elenco telefonico interno">VoIP</a></li>
 			
 			<li class="separator">&nbsp;</li>
-			<li><a href="http://blog.ninux.org/" title="Vai al nostro Blog">Blog</a></li>
-			<li><a href="http://wiki.ninux.org/" title="Vai al nostro Wiki">Wiki</a></li>
+			<li><a href="http://blog.ninux.org/" title="Blog della Community">Blog</a></li>
+			<li><a href="http://wiki.ninux.org/" title="Wiki documentativo">Wiki</a></li>
+			<li><a href="http://10.162.0.85/" title="Controlla la posta<br />(indirizzi @ninux.org)">Posta</a></li>
 		</ul>
 		<ul>
-			<li><a href="http://10.162.0.85/" title="Controlla la posta">Posta</a></li>
+			<li><a href="javascript:void(0);" onclick="login()">Accedi</a></li>
 		</ul>
 	</div>
 </div>

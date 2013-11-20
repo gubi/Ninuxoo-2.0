@@ -1,8 +1,24 @@
 <link href="common/js/chosen/chosen.css" rel="stylesheet" />
 <script type="text/javascript" src="common/js/chosen/chosen.jquery.min.js"></script>
 <script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
+<script language="Javascript" src="common/js/GnuPG/sha1.js" type="text/javascript"></script>
+<script language="Javascript" src="common/js/GnuPG/base64.js" type="text/javascript"></script>
+<script language="Javascript" src="common/js/GnuPG/PGpubkey.js" type="text/javascript"></script>
 <script type="text/javascript" src="common/js/include/setup.js"></script>
 <script type="text/javascript">
+	function extractEmails(text) {
+		return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+	}
+	function getkey() {
+		var pu = new getPublicKey($("#pgp_pubkey").val());
+		if(pu.vers == -1) return;
+		
+		$("#pgp_version").text(pu.vers);
+		$("#pgp_user").html('<a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a>');
+		$("#user_username").val(extractEmails(pu.user));
+		$("#pgp_fingerprint").text(pu.fp);
+		$("#pgp_key_id").text(pu.keyid);
+	}
 	$(function () {
 		'use strict';
 		$.fn.show_connection_error = function() {
@@ -23,7 +39,7 @@
 				this.removeClass("error");
 			}
 		};
-		
+		$("#pgp_pubkey").val("");
 		$("#node_name").attr("data-placeholder", "Caricamento della lista dei nodi dal MapServer...");
 		$("#node_map").val("");
 		$("#node_type").val("");
@@ -74,6 +90,21 @@
 				$("#header h1").text("Setup");
 				$("title").text(title);
 				$("#nas_description").val("");
+			}
+		});
+		$("#pgp_pubkey").on('keyup change', function(e){
+			getkey();
+		});
+		$("#user_password2").change(function() {
+			if($("#user_password").length == 0 || $("#user_password2").length == 0 || $("#user_password").val() != $("#user_password2").val()) {
+				$("#user_password").attr("class", "error");
+				$("#user_password2").attr("class", "error");
+				apprise("Le password non sono identiche", function(r) {
+					$("#user_password").focus();
+				});
+			} else {
+				$("#user_password").toggleClass("error", "", 300);
+				$("#user_password2").toggleClass("error", "", 300);
 			}
 		});
 		$("#meteo_city").change(function() {
@@ -141,9 +172,11 @@
 			$("form.frm").slideDown(300, function() {
 				$("body").prepend('<div id="form_loaded" style="display: none;">true</div>');
 				$("#node_name").attr("disabled", false);
+				/*
 				if($("#node_name > option").length > 1) {
 					$("#node_name_chzn > .chzn-single").mousedown();
 				}
+				*/
 			});
 			return false;
 		});
@@ -186,6 +219,50 @@
 	<button id="show_form" class="save" <?php print $btn_next_disabled; ?>>Prosegui</button>
 	
 	<form method="post" action="" class="frm" style="display: none;" onsubmit="install()">
+		<fieldset>
+			<legend>Su di te (proprietario del NAS)</legend>
+			<p>Incolla la tua chiave PGP <u>pubblica</u> in formato ASCII Armored (.asc) e una password <u>generica</u> per effettuare il login (non la passphrase!).</p>
+			<p><b>Nota</b>: Una volta incollata la chiave verranno immediatamente visualizzati alcuni dati contenuti nella chiave stessa. Tali dati non verranno salvati e servono unicamente per avere conferma visiva che la chiave fornita sia quella giusta.</p>
+			
+			<label for="pgp_pubkey">Chiave PGP <u>pubblica</u> in formato ASCII Armored: (.asc)</label>
+			<textarea name="pgp_pubkey" id="pgp_pubkey" rows="5" style="width: 50%; height: 150px;" autofocus></textarea>
+			<br />
+			<br />
+			<label for="user_username">Username:</label>
+			<input id="user_username" name="user_username" type="text" value="" autocomplete="off" />
+			<br />
+			<br />
+			<span class="left">
+				<label for="user_password">Password:</label>
+				<input type="password" id="user_password" name="user_password" value="" autocomplete="off" />
+			</span>
+			<span class="left">
+				<label for="user_password2">Ripeti la password:</label>
+				<input type="password" id="user_password2" name="user_password2" value="" autocomplete="off" />
+			</span>
+			<hr />
+			<table cellpadding="2" cellspacing="2">
+				<caption><b>Dati ricavati dalla tua chiave pubblica PGP</b></caption>
+				<tbody>
+					<tr>
+						<th>Versione:</th>
+						<td id="pgp_version"></td>
+					</tr>
+					<tr>
+						<th>User ID:</th>
+						<td id="pgp_user"></td>
+					</tr>
+					<tr>
+						<th>Fingerprint:</th>
+						<td id="pgp_fingerprint"></td>
+					</tr>
+					<tr>
+						<th>ID della chiave:</th>
+						<td id="pgp_key_id"></td>
+					</tr>
+				</tbody>
+			</table>
+		</fieldset>
 		<fieldset>
 			<legend>Nodo Ninux</legend>
 			<label for="node_name">Nome del nodo di riferimento:</label>

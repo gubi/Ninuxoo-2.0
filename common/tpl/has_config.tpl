@@ -128,7 +128,7 @@ function get_stats(){
 	$.getJSON("common/include/classes/local_search.class.php", {op: "resourcestats"}, function(resource) {
 		$("#resstats").html();
 		$("#resstats").fadeOut(300, function(){
-			$(this).html(resource.result + " files indicizzati in questa risorsa locale (<?php print $config["NAS"]["name"]; ?>)").fadeIn(300);
+			$(this).html(resource.result + " files indicizzati da questa risorsa locale (<?php print $config["NAS"]["name"]; ?>)").fadeIn(300);
 		});
 	});
 }

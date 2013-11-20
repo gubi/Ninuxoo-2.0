@@ -1,8 +1,4 @@
 <?php
-//require("php_error.php");
-if (function_exists('\php_error\reportErrors')) {
-	\php_error\reportErrors();
-}
 header("Content-type: text/plain");
 // Scan samba shares directories
 set_include_path("/var/www/common/include/funcs/_ajax");
@@ -21,12 +17,12 @@ $starttime = $mtime;
 $current_dir = str_replace("scan.php", "", $_SERVER["SCRIPT_FILENAME"]);
 
 // Check for Ninuxoo conf file
-if (!file_exists("config.ini")) {
+if (!file_exists("common/include/conf/config.ini")) {
 	print "Error: no `config.ini` file.\nPlease, run setup before.\n\nNothing to scan.\nExit";
 	exit();
 } else {
 	// Get data from Ninuxoo conf file
-	$conf_file = parse_ini_file("config.ini", true);
+	$conf_file = parse_ini_file("common/include/conf/config.ini", true);
 	$smb_conf_file = trim(preg_replace("/;(.*?)$/i", "", $conf_file["NAS"]["smb_conf_dir"])) . "smb.conf";
 }
 // Moves to root
@@ -67,7 +63,11 @@ foreach($paths as $scan_dir){
 		$curr_dir[] = $cdir;
 		$listing_list[$cdir] = implode("/", $share_);
 		
-		$ll = shell_exec("find " . str_replace(" ", "\ ", escapeshellcmd($scan_dir)) . " -mindepth 1");
+		//if(!isset($_GET["ajax"])) {
+			$ll = shell_exec("find " . str_replace(" ", "\ ", escapeshellcmd($scan_dir)) . " -mindepth 1");
+		/*} else {
+			passthru("find " . str_replace(" ", "\ ", escapeshellcmd($scan_dir)) . " -mindepth 1", $ll);
+		}*/
 		if(strlen($ll) > 3){
 			$listing .= "/" . str_replace($replace_dir, "", trim(str_replace("./", trim(str_replace(array("./", $main_dir), "", $scan_dir)) . "/", $ll))) . "\n";
 			$listing_arr[$cdir] = str_replace($replace_dir, "", trim(str_replace(array("./", ".\n", ".\r\n"), array(trim(str_replace(array("./", $main_dir), "", $scan_dir)) . "/", "{~}\n", "{~}\n"), $ll)));
@@ -108,8 +108,8 @@ if (strlen($conf_content) > 0) {
 	$conf_content .= "last_items_count = " . count($scanned) . "\n";
 } else {
 	chdir($current_dir);
-	$conf->conf_replace("last_scan_date", date("Y-m-d"), "config.ini");
-	$conf->conf_replace("last_items_count", count($scanned), "config.ini");
+	$conf->conf_replace("last_scan_date", date("Y-m-d"), "common/include/conf/config.ini");
+	$conf->conf_replace("last_items_count", count($scanned), "common/include/conf/config.ini");
 }
 
 // Create listing file
@@ -215,10 +215,10 @@ $totaltime = round($endtime - $starttime, 5);
 		// Write content in file
 		fwrite($conf_file, $conf_content);
 		fclose($conf_file);
-		chmod("config.ini", 0777);
+		chmod("common/include/conf/config.ini", 0777);
 	} else {
 		chdir($current_dir);
-		$conf->conf_replace("last_scanning_time", $totaltime, "config.ini");
+		$conf->conf_replace("last_scanning_time", $totaltime, "common/include/conf/config.ini");
 	}
 // Display output
 if(!isset($_GET["ajax"])) {

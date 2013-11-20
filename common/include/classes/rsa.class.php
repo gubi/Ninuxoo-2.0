@@ -43,13 +43,7 @@ class rsa {
 	}
 	public function get_token($key) {
 		/*
-		SSL KEY STRUCTURE:
-		______________________________________________________________
-		
-			-----BEGIN PUBLIC KEY-----
-			X509 signature + PEM sig + modulus + 'ID' + exponent
-			-----END PUBLIC KEY----- 
-		______________________________________________________________
+		RSA 2048 structure taken from: http://www.php.net/manual/es/function.openssl-pkey-get-public.php#104439
 		*/
 		return md5(strstr(str_replace(array("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA", "\n"), "", str_replace(array("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----"), "", $key)), "ID", true));
 	}

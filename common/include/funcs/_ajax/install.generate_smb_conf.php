@@ -1,14 +1,19 @@
 <?php
 header("Content-type: text/plain");
-require_once("common/include/classes/logging.class.php");
+require_once("../../classes/logging.class.php");
 
 $log = new Logging();
-$log->file("common/include/common/include/log/ninuxoo.log");
+$log->file("../../log/ninuxoo.log");
 $log->write("notice", "[install] Started");
 
 $output["smb_conf_dir"] = str_replace("//", "/", $output["smb_conf_dir"] . "/");
 $output["server_root"] = str_replace("//", "/", $output["server_root"] . "/");
 $output["api_dir"] = str_replace("//", "/", $output["api_dir"] . "/");
+
+
+$user_conf = '[User]' . "\n";
+$user_conf .= 'username = "' . $output["user_username"] . '"' . "\n";
+$user_conf .= 'pass = "' . sha1($output["user_password"]) . '"' . "\n";
 
 $smb_conf = '; NINUXOO CONFIGURATION FILE' . "\n\n";
 
@@ -16,6 +21,7 @@ $smb_conf .= '[Ninux node]' . "\n";
 $smb_conf .= 'name = "' . $output["node_name"] . '"' . "\n";
 $smb_conf .= 'map_server_uri = "' . $output["node_map"] . '"' . "\n";
 $smb_conf .= 'node_type = "' . $output["node_type"] . '" ;Use "hotspot", "active" or "potential"' . "\n\n";
+
 
 $smb_conf .= '[NAS]' . "\n";
 $smb_conf .= 'name = "' . $output["nas_name"] . '" ;NAS name' . "\n";
@@ -62,7 +68,7 @@ $mysql_conf .= 'host = "' . $output["mysql_host"] . '"' . "\n";
 $mysql_conf .= 'db_name = "' . $output["mysql_db_name"] . '"' . "\n";
 $mysql_conf .= 'username = "' . $output["mysql_username"] . '"' . "\n";
 $mysql_conf .= 'password = "' . $output["mysql_password"] . '"' . "\n";
-$mysql_conf .= 'tables = "' . $output["mysql_db_table"] . '"';
+$mysql_conf .= 'tables = "' . $output["mysql_db_table"] . '"' . "\n";
 
 
 // Files creation
@@ -72,27 +78,47 @@ if($fp = fopen($output["server_root"] . "common/include/conf/config.ini", "w")) 
 	fclose($fp);
 	$log->write("notice", "[install] The file 'config.ini' is created in 'common/include/conf/'");
 	
-	// Database config file
-	if($fdb = fopen($output["server_root"] . "common/include/conf/.db.conf", "w")) {
-		fwrite($fdb, $mysql_conf . PHP_EOL);
-		fclose($fdb);
-		$log->write("notice", "[install] The file '.db.conf' is created in 'common/include/conf/'");
+	// User login file
+	if($fu = fopen($output["server_root"] . "common/include/conf/.user.conf", "w")) {
+		fwrite($fu, $user_conf . PHP_EOL);
+		fclose($fu);
+		$log->write("notice", "[install] The file '.user.conf' is created in 'common/include/conf/'");
 		
-		// Crontab
-		$fc = fopen($output["server_root"] . "crontab", "w+");
-		if(fwrite($fc, "# Ninuxoo Local scan job\n00 */6 * * * root /usr/bin/php " . $output["server_root"] . "scan.php" . PHP_EOL) === false) {
-			$log->write("error", "[install] Can't create 'crontab' file in '" . $output["server_root"] . "'. Install malformed");
-			$data = "error::Sono stati riscontrati dei problemi nella creazione del crontab.\nInstallazione avvenuta con successo.\nInstallare il cronjob manualmente.\nConsultare la documentazione per maggiori informazioni.";
-		} else {
-			fclose($fc);
-			if(!exec("crontab " . $output["server_root"] . "crontab")) {
-				$log->write("notice", "[warning] A problem has occurred during installation of crontab. Please open and copy '" . $output["server_root"] . "crontab' and paste in '$ (sudo) crontab -e' manually.");
+		// User public PGP file
+		if($fpgp = fopen($output["server_root"] . "common/include/conf/.user.asc", "w")) {
+			fwrite($fpgp, $output["pgp_pubkey"] . PHP_EOL);
+			fclose($fpgp);
+			$log->write("notice", "[install] The file '.user.asc' is created in 'common/include/conf/'");
+			
+			// Database config file
+			if($fdb = fopen($output["server_root"] . "common/include/conf/.db.conf", "w")) {
+				fwrite($fdb, $mysql_conf . PHP_EOL);
+				fclose($fdb);
+				$log->write("notice", "[install] The file '.db.conf' is created in 'common/include/conf/'");
+				
+				// Crontab
+				$fc = fopen($output["server_root"] . "crontab", "w+");
+				if(fwrite($fc, "# Ninuxoo Local scan job\n00 */6 * * * root /usr/bin/php " . $output["server_root"] . "scan.php" . PHP_EOL) === false) {
+					$log->write("error", "[install] Can't create 'crontab' file in '" . $output["server_root"] . "'. Install malformed");
+					$data = "error::Sono stati riscontrati dei problemi nella creazione del crontab.\nInstallazione avvenuta con successo.\nInstallare il cronjob manualmente.\nConsultare la documentazione per maggiori informazioni.";
+				} else {
+					fclose($fc);
+					if(!exec("crontab " . $output["server_root"] . "crontab")) {
+						$log->write("notice", "[warning] A problem has occurred during installation of crontab. Please open and copy '" . $output["server_root"] . "crontab' and paste in '$ (sudo) crontab -e' manually.");
+					}
+					$data = "ok";
+				}
+			} else {
+				$log->write("error", "[install] Can't create '.user.asc' in 'common/include/conf/'. Install malformed");
+				$data = "error::Non si gode dei permessi sufficienti per salvare la chiave PGP dell'utente.\nInstallazione parzialmente riuscita :/";
 			}
-			$data = "ok";
+		} else {
+			$log->write("error", "[install] Can't create '.db.conf' in 'common/include/conf/'. Install malformed");
+			$data = "error::Non si gode dei permessi sufficienti per creare il file di config per il database MySQL.\nInstallazione parzialmente riuscita :/";
 		}
 	} else {
-		$log->write("error", "[install] Can't create '.db.conf' in 'common/include/conf/'. Install malformed");
-		$data = "error::Non si gode dei permessi sufficienti per creare il file di config per il database MySQL.\nInstallazione parzialmente riuscita :/";
+		$log->write("error", "[install] Can't create '.user.conf' in 'common/include/conf/'. Install malformed");
+		$data = "error::Non si gode dei permessi sufficienti per creare il file delle credenziali di accesso.\nInstallazione parzialmente riuscita :/";
 	}
 } else {
 	$log->write("error", "[install] Can't create 'config.ini' in 'common/include/conf/'. Install aborted");

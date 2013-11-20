@@ -20,7 +20,7 @@ class local_search {
 	private $params;
 	
 	public function __construct() {
-		$this->conf = parse_ini_file("../../../config.ini", true);
+		$this->conf = parse_ini_file("../conf/config.ini", true);
 		$this->root_dir = $this->conf["NAS"]["root_dir"];
 		$this->smb_conf_dir = $this->conf["NAS"]["smb_conf_dir"];
 	}
@@ -540,7 +540,7 @@ class local_search {
 
 header ("Content-type: text/plain; charset=utf-8");
 
-$conf = parse_ini_file("../../../config.ini", true);
+$conf = parse_ini_file("../conf/config.ini", true);
 $local_search = new local_search();
 $local_search->set_params(array(
 					/*"config_ini_file" => "config.ini",*/
