@@ -11,7 +11,10 @@ if(isset($_GET["file"]) && trim($_GET["file"]) !== "") {
 	print "rsa decrypted: " . $rsa_decrypted . "\n\n";
 	$hash =  rawurlencode($rsa_encrypted);
 	
-	print "http://192.168.36.210/download.php?h=" . $hash . "\n\n";
+	if (file_exists("../../conf/config.ini")) {
+		$config = parse_ini_file("../../conf/config.ini", true);
+		print $config["NAS"]["http_root"] . "/download.php?h=" . $hash . "\n\n";
+	}
 } else {
 	print "E' necessario inserire una quey ?file=percorso/file.ext";
 }
