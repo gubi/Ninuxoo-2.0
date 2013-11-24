@@ -222,14 +222,12 @@
 			<span class="left">
 				<label for="pgp_pubkey" class="required">Chiave PGP <u>pubblica</u> in formato ASCII Armored:</label>
 				<textarea name="pgp_pubkey" id="pgp_pubkey" rows="5" style="width: 100%; height: 150px;" autofocus></textarea>
+				<p><small><a style="display: none;" id="pgp_remove_key" href="javascript:void(0);" onclick="$('#pgp_pubkey').val('');getkey();" title="Cancella la chiave inserita">Cancella la chiave inserita</a>&nbsp;</small></p>
 			</span>
-			<p>
-				<small><a style="display: none;" id="pgp_remove_key" href="javascript:void(0);" onclick="$('#pgp_pubkey').val('');getkey();" title="Cancella la chiave inserita">Cancella la chiave inserita</a></small>
-			</p>
 			<br />
 			<br />
 			<label for="user_username" class="required">Username:</label>
-			<input id="user_username" name="user_username" type="text" value="" autocomplete="off" />
+			<input id="user_username" name="user_username" type="email" value="" autocomplete="off" />
 			<br />
 			<br />
 			<span class="left">
