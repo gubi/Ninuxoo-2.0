@@ -92,12 +92,17 @@ form.frm {
 	margin: 1em 0 5px 0;
 	color: #666;
 	clear: both;
+	white-space: pre;
 }
 .frm label[for]:hover {
 	cursor: pointer;
 }
 .frm label:hover {
 	color: #333;
+}
+.frm label.required:after {
+	content: " * ";
+	color: #ef531d;
 }
 .frm label + input, .frm label + select, .frm label + textarea {
 	margin-bottom: 10px;
@@ -966,6 +971,12 @@ input.error, textarea.error, select.error {
 }
 .left > label {
 	display: inline;
+}
+img.left {
+	margin-top: 1em;
+}
+.right {
+	float: right;
 }
 .info {
 	color: #999;

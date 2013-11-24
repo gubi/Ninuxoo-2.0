@@ -254,69 +254,111 @@ function makeid() {
 	return text;
 }
 function install() {
-	if($("#user_password").val() == $("#user_password2").val()) {
-		if($("#node_name").val().length > 0 && $("#nas_name").val().length > 0 && $("#pgp_pubkey").val() && $("#nas_description").val().length > 0 && $("#meteo_name").val().length > 0) {
-			$("#setup_loader > h1").text("Installazione di Ninuxoo...");
-			$("#setup_loader").fadeIn(450, function() {
-				$("#setup_loader > span").text("Creazione del file di config...");
-				var password = makeid();
+	if($("#pgp_pubkey").val() != "") {
+		$("#pgp_pubkey").removeClass("error");
+		if($("#user_password").val() == $("#user_password2").val()) {
+			$("#user_password").removeClass("error");
+			$("#user_password2").removeClass("error");
+			if($("#node_name").val().length > 0 && $("#nas_name").val().length > 0 && $("#nas_description").val().length > 0 && $("#meteo_name").val().length > 0) {
+				$("#node_name").removeClass("error");
+				$("#nas_name").removeClass("error");
+				$("#nas_description").removeClass("error");
+				$("#meteo_name").removeClass("error");
 				
-				$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-					var encryptedString = $.jCryption.encrypt($("#content > form").serialize(), password);
+				$("#setup_loader > h1").text("Installazione di Ninuxoo...");
+				$("#setup_loader").fadeIn(450, function() {
+					$("#setup_loader > span").text("Creazione del file di config...");
+					var password = makeid();
 					
-					$.ajax({
-						url: "common/include/funcs/_ajax/decrypt.php",
-						dataType: "json",
-						type: "POST",
-						data: {
-							jCryption: encryptedString,
-							type: "install"
-						},
-						success: function(response) {
-							if (response["data"] !== "ok") {
-								var risp = response["data"].split("::");
-								if(risp[0] == "error") {
-									alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
-								}
-							} else {
-								$("#setup_loader > span").text("Scansione dei files...");
-								$.get("scan.php", {ajax: "true"}, function(scan_return) {
-									if($.trim(scan_return) == "done.") {
-										alert("Ho creato il file \"config.ini\".<br />Ho salvato i tuoi parametri di accesso e la chiave pubblica PGP.<br />Ho creato il file di connessione al database.<br />Ho configurato il cronjob e fatto una scansione dei files...<br /><br />Non resta che ricaricare la pagina e Ninuxoo &egrave; pronto per l'uso...<br />Grazie per la pazienza <tt>:)</tt>", {icon: "success", title: "Installazione avvenuta con successo!", textOk: "Prego"}, function(r) {
-											if(r) {
-												location.reload();
-											}
-										});
-									} else {
-										alert("Si &egrave; verificato un errore durante l'installazione:\n" + scan_return, {icon: "error", title: "Ouch!"});
+					$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+						var encryptedString = $.jCryption.encrypt($("#content > form").serialize(), password);
+						
+						$.ajax({
+							url: "common/include/funcs/_ajax/decrypt.php",
+							dataType: "json",
+							type: "POST",
+							data: {
+								jCryption: encryptedString,
+								type: "install"
+							},
+							success: function(response) {
+								if (response["data"] !== "ok") {
+									var risp = response["data"].split("::");
+									if(risp[0] == "error") {
+										alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
 									}
-								});
+								} else {
+									$("#setup_loader > span").text("Scansione dei files...");
+									$.get("scan.php", {ajax: "true"}, function(scan_return) {
+										if($.trim(scan_return) == "done.") {
+											alert("Ho creato il file \"config.ini\".<br />Ho salvato i tuoi parametri di accesso e la chiave pubblica PGP.<br />Ho creato il file di connessione al database.<br />Ho configurato il cronjob e fatto una scansione dei files...<br /><br />Non resta che ricaricare la pagina e Ninuxoo &egrave; pronto per l'uso...<br />Grazie per la pazienza <tt>:)</tt>", {icon: "success", title: "Installazione avvenuta con successo!", textOk: "Prego"}, function(r) {
+												if(r) {
+													location.reload();
+												}
+											});
+										} else {
+											alert("Si &egrave; verificato un errore durante l'installazione:\n" + scan_return, {icon: "error", title: "Ouch!"});
+										}
+									});
+								}
 							}
-						}
+						});
+					}, function() {
+						$("#setup_loader").fadeOut(300);
+						$("#setup_loader > h1").text("");
+						$("#setup_loader > span").text("");
+						alert("Si &egrave; verificato un errore durante l'installazione:\nErrore di autenticazione.", {icon: "error", title: "Ouch!"});
 					});
-				}, function() {
-					$("#setup_loader").fadeOut(300);
-					$("#setup_loader > h1").text("");
-					$("#setup_loader > span").text("");
-					alert("Si &egrave; verificato un errore durante l'installazione:\nErrore di autenticazione.", {icon: "error", title: "Ouch!"});
 				});
-			});
-		} else {
-			if($("#node_name").val().length == 0) {
-				$("#node_name").focus();
-			} else if($("#nas_name").val().length == 0) {
-				$("#nas_name").focus();
-			} else if($("#nas_description").val().length == 0) {
-				$("#nas_description").focus();
+			} else {
+				if($("#node_name").val().length == 0) {
+					$("#node_name").addClass("error").focus();
+				} else if($("#nas_name").val().length == 0) {
+					$("#nas_name").addClass("error").focus();
+				} else if($("#nas_description").val().length == 0) {
+					$("#nas_description").addClass("error").focus();
+				} else if($("#meteo_name").val().length == 0) {
+					$("#meteo_name").addClass("error").focus();
+				}
 			}
+		} else {
+			$("#user_password").addClass("error");
+			$("#user_password2").addClass("error");
+			apprise("Le password non sono identiche", function(r) {
+				if(r) {
+					$("#user_password").focus();
+				}
+			});
 		}
 	} else {
-		$("#user_password").addClass("error");
-		$("#user_password2").addClass("error");
-		apprise("Le password non sono identiche", function(r) {
+		$("#pgp_pubkey").addClass("error");
+		apprise("Non &egrave; stata inserita la chiave PGP", function(r) {
 			if(r) {
-				$("#user_password").focus();
+				$("#pgp_pubkey").focus();
 			}
 		});
+	}
+}
+function extractEmails(text) {
+	return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+}
+function getkey() {
+	var pu = new getPublicKey($("#pgp_pubkey").val()),
+	fingerprint = pu.fp.match(/.{4}/g);
+	if(pu.vers == -1) return;
+	
+	$("#pgp_version").text(pu.vers);
+	$("#pgp_user").html('<a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a>');
+	$("#user_username").val(extractEmails(pu.user));
+	if(fingerprint != null && fingerprint.length > 2) {
+		$("#pgp_fingerprint").text(fingerprint.join(" "));
+	} else {
+		$("#pgp_fingerprint").text("");
+	}
+	$("#pgp_key_id").text(pu.keyid);
+	$("#pgp_remove_key").show();
+	$("#user_password").focus();
+	if($("#pgp_pubkey").val() == "") {
+		$('#pgp_remove_key').hide();
 	}
 }

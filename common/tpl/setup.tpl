@@ -6,19 +6,6 @@
 <script language="Javascript" src="common/js/GnuPG/PGpubkey.js" type="text/javascript"></script>
 <script type="text/javascript" src="common/js/include/setup.js"></script>
 <script type="text/javascript">
-	function extractEmails(text) {
-		return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
-	}
-	function getkey() {
-		var pu = new getPublicKey($("#pgp_pubkey").val());
-		if(pu.vers == -1) return;
-		
-		$("#pgp_version").text(pu.vers);
-		$("#pgp_user").html('<a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a>');
-		$("#user_username").val(extractEmails(pu.user));
-		$("#pgp_fingerprint").text(pu.fp);
-		$("#pgp_key_id").text(pu.keyid);
-	}
 	$(function () {
 		'use strict';
 		$.fn.show_connection_error = function() {
@@ -169,9 +156,11 @@
 		});
 		$("#show_form").click(function() {
 			$(this).hide();
+			$("html, body").animate({ scrollTop: ($("hr").first().offset().top) }, 300);
 			$("form.frm").slideDown(300, function() {
 				$("body").prepend('<div id="form_loaded" style="display: none;">true</div>');
 				$("#node_name").attr("disabled", false);
+				$("#pgp_pubkey").focus();
 				/*
 				if($("#node_name > option").length > 1) {
 					$("#node_name_chzn > .chzn-single").mousedown();
@@ -197,17 +186,13 @@
 	<div id="abstract">
 		<img src="common/media/img/ninuxoo_claim.png" class="left" />
 		<h1>Benvenuti in Ninuxoo!</h1>
-		<p>
-			Ninuxoo &egrave; un motore di indicizzazione decentralizzato dei files presenti sui NAS nella Rete Comunitaria Ninux.
-		</p>
+		<p>Ninuxoo &egrave; un motore di indicizzazione decentralizzato dei files presenti sui NAS nella Rete Comunitaria Ninux.</p>
 		<p>
 			Compilando il modulo a seguire si installer&agrave; una versione locale, beneficiando cos&igrave; di un Motore di Ricerca personale e aiutando la Rete a moltiplicare i punti di accesso al servizio.<br />
 			Il processo &egrave; abbastanza automatizzato, il ch&eacute; consente un'installazione rapida con pochi moduli da dover compilare.<br />
 			Non &egrave; richiesto nessun tipo di database, ma potrebbe essere necessario collegarne uno nel caso in cui si disponga fisicamente di una Stazione Meteorologica.
 		</p>
-		<p>
-			Per maggiori informazioni, &egrave; possibile consultare:
-		</p>
+		<p>Per maggiori informazioni, &egrave; possibile consultare:</p>
 		<ul>
 			<li><a href="http://wiki.ninux.org/Ninuxoo" target="_blank">Ninuxoo sul wiki ufficiale</a></li>
 			<li><a href="https://github.com/gubi/Ninuxoo-Semantic-Decentralized/wiki" target="_blank">Documentazione sul repository ufficiale su Github</a></li>
@@ -220,24 +205,39 @@
 	
 	<form method="post" action="" class="frm" style="display: none;" onsubmit="install()">
 		<fieldset>
-			<legend>Su di te (proprietario del NAS)</legend>
-			<p>Incolla la tua chiave PGP <u>pubblica</u> in formato ASCII Armored (.asc) e una password <u>generica</u> per effettuare il login (non la passphrase!).</p>
+			<legend>Dati per l'accesso</legend>
+			<p>I dati a seguire consentiranno l'accesso al pannello di controllo, dal quale si potr&agrave;:</p>
+			<ul>
+				<li>Modificare i dati inseriti in questo modulo</li>
+				<li>Impostare le preferenze di ricerca predefinite</li>
+				<li>Avviare scansioni manualmente</li>
+				<li>Gestire le connessioni ad altri Ninuxoo<br /><small><a target="_blank" href="https://github.com/gubi/Ninuxoo-Semantic-Decentralized/wiki/Tokens-e-processo-di-scambio-chiavi-tra-device">Informazioni sui meccanismi di connessione</a></small></li>
+				<li>Gestire alcune funzionalit&agrave; dell'interfaccia Meteo</li>
+				<li>Memorizzare le configurazioni dei device personali</li>
+			</ul>
+			<hr />
 			<p><b>Nota</b>: Una volta incollata la chiave verranno immediatamente visualizzati alcuni dati contenuti nella chiave stessa. Tali dati non verranno salvati e servono unicamente per avere conferma visiva che la chiave fornita sia quella giusta.</p>
 			
-			<label for="pgp_pubkey">Chiave PGP <u>pubblica</u> in formato ASCII Armored: (.asc)</label>
-			<textarea name="pgp_pubkey" id="pgp_pubkey" rows="5" style="width: 50%; height: 150px;" autofocus></textarea>
+			<img class="left" src="common/media/img/gnupg_logo.png">
+			<span class="left">
+				<label for="pgp_pubkey" class="required">Chiave PGP <u>pubblica</u> in formato ASCII Armored:</label>
+				<textarea name="pgp_pubkey" id="pgp_pubkey" rows="5" style="width: 100%; height: 150px;" autofocus></textarea>
+			</span>
+			<p>
+				<small><a style="display: none;" id="pgp_remove_key" href="javascript:void(0);" onclick="$('#pgp_pubkey').val('');getkey();" title="Cancella la chiave inserita">Cancella la chiave inserita</a></small>
+			</p>
 			<br />
 			<br />
-			<label for="user_username">Username:</label>
+			<label for="user_username" class="required">Username:</label>
 			<input id="user_username" name="user_username" type="text" value="" autocomplete="off" />
 			<br />
 			<br />
 			<span class="left">
-				<label for="user_password">Password:</label>
+				<label for="user_password" class="required">Password:</label>
 				<input type="password" id="user_password" name="user_password" value="" autocomplete="off" />
 			</span>
 			<span class="left">
-				<label for="user_password2">Ripeti la password:</label>
+				<label for="user_password2" class="required">Ripeti la password:</label>
 				<input type="password" id="user_password2" name="user_password2" value="" autocomplete="off" />
 			</span>
 			<hr />
@@ -265,7 +265,7 @@
 		</fieldset>
 		<fieldset>
 			<legend>Nodo Ninux</legend>
-			<label for="node_name">Nome del nodo di riferimento:</label>
+			<label for="node_name" class="required">Nome del nodo di riferimento:</label>
 			<select name="node_name" id="node_name" disabled style="width: 350px;"><option value=""></option></select><span id="nlloader" style="display: none;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="common/media/img/loader.gif" width="16" /></span>
 			
 			<label for="node_map">Indirizzo sul <a href="http://map.ninux.org/" target="_blank">MapServer</a>:</label>
@@ -281,10 +281,10 @@
 		</fieldset>
 		<fieldset>
 			<legend><acronym title="Network Attached Storage">NAS</acronym></legend>
-			<label for="nas_name">Nome di questo NAS:</label>
+			<label for="nas_name" class="required">Nome di questo NAS:</label>
 			<input type="text" name="nas_name" id="nas_name" style="width: 50%;" value="" />
 			
-			<label for="nas_description">Descrizione (titolo della pagina):</label>
+			<label for="nas_description" class="required">Descrizione (titolo della pagina):</label>
 			<input type="text" name="nas_description" id="nas_description" style="width: 90%;" value="" />
 			<hr />
 			<button id="show_nas_advanced_options" class="save grey">Avanzate...</button>
@@ -325,7 +325,7 @@
 			<input type="hidden" id="tmp_lng" value="" />
 			<label><input type="checkbox" name="install_meteo" id="install_meteo" checked /> Installa l'interfaccia Meteo</label>
 			<br />
-			<label for="meteo_name">Nome della Stazione:</label>
+			<label for="meteo_name" class="required">Nome della Stazione:</label>
 			<input type="text" name="meteo_name" id="meteo_name" style="width: 50%;" value="" />
 			<hr />
 			<button id="show_meteo_advanced_options" class="save grey">Avanzate...</button>
