@@ -181,7 +181,7 @@
 		});
 	});
 </script>
-<div id="content">
+<div>
 	<div id="setup_loader"><h1></h1><span></span></div>
 	<div id="abstract">
 		<img src="common/media/img/ninuxoo_claim.png" class="left" />
@@ -221,22 +221,22 @@
 			<img class="left" src="common/media/img/gnupg_logo.png">
 			<span class="left">
 				<label for="pgp_pubkey" class="required">Chiave PGP <u>pubblica</u> in formato ASCII Armored:</label>
-				<textarea name="pgp_pubkey" id="pgp_pubkey" rows="5" style="width: 100%; height: 150px;" autofocus></textarea>
+				<textarea name="pgp_pubkey" id="pgp_pubkey" rows="5" style="width: 100%; height: 150px;" autofocus tabindex="1"></textarea>
 				<p><small><a style="display: none;" id="pgp_remove_key" href="javascript:void(0);" onclick="$('#pgp_pubkey').val('');getkey();" title="Cancella la chiave inserita">Cancella la chiave inserita</a>&nbsp;</small></p>
 			</span>
 			<br />
 			<br />
 			<label for="user_username" class="required">Username:</label>
-			<input id="user_username" name="user_username" type="email" value="" autocomplete="off" />
+			<input id="user_username" name="user_username" type="email" value="" autocomplete="off" tabindex="2" />
 			<br />
 			<br />
 			<span class="left">
 				<label for="user_password" class="required">Password:</label>
-				<input type="password" id="user_password" name="user_password" value="" autocomplete="off" />
+				<input type="password" id="user_password" name="user_password" value="" autocomplete="off" tabindex="3" />
 			</span>
 			<span class="left">
 				<label for="user_password2" class="required">Ripeti la password:</label>
-				<input type="password" id="user_password2" name="user_password2" value="" autocomplete="off" />
+				<input type="password" id="user_password2" name="user_password2" value="" autocomplete="off" tabindex="4" />
 			</span>
 			<hr />
 			<table cellpadding="2" cellspacing="2">
@@ -264,14 +264,14 @@
 		<fieldset>
 			<legend>Nodo Ninux</legend>
 			<label for="node_name" class="required">Nome del nodo di riferimento:</label>
-			<select name="node_name" id="node_name" disabled style="width: 350px;"><option value=""></option></select><span id="nlloader" style="display: none;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="common/media/img/loader.gif" width="16" /></span>
+			<select name="node_name" id="node_name" disabled style="width: 350px;" tabindex="5"><option value=""></option></select><span id="nlloader" style="display: none;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="common/media/img/loader.gif" width="16" /></span>
 			
 			<label for="node_map">Indirizzo sul <a href="http://map.ninux.org/" target="_blank">MapServer</a>:</label>
-			<input type="url" name="node_map" id="node_map" style="width: 50%;" autofocus value="" disabled placeholder="http://map.ninux.org/select/..." />
+			<input type="url" name="node_map" id="node_map" style="width: 50%;" autofocus value="" disabled placeholder="http://map.ninux.org/select/..." tabindex="6" />
 			
 			<div id="selction-ajax"></div>
 			<label for="node_type">Tipo di nodo:</label>
-			<select name="node_type" id="node_type" style="width: 200px;" disabled data-placeholder="Tipo di nodo...">
+			<select name="node_type" id="node_type" style="width: 200px;" disabled data-placeholder="Tipo di nodo..." tabindex="7">
 				<option value=""></option>
 				<option value="active">Attivo</option>
 				<option value="hotspot">HotSpot</option>
@@ -280,32 +280,32 @@
 		<fieldset>
 			<legend><acronym title="Network Attached Storage">NAS</acronym></legend>
 			<label for="nas_name" class="required">Nome di questo NAS:</label>
-			<input type="text" name="nas_name" id="nas_name" style="width: 50%;" value="" />
+			<input type="text" name="nas_name" id="nas_name" style="width: 50%;" value="" tabindex="8" />
 			
 			<label for="nas_description" class="required">Descrizione (titolo della pagina):</label>
-			<input type="text" name="nas_description" id="nas_description" style="width: 90%;" value="" />
+			<input type="text" name="nas_description" id="nas_description" style="width: 90%;" value="" tabindex="9" />
 			<hr />
 			<button id="show_nas_advanced_options" class="save grey">Avanzate...</button>
 			<div class="advanced" id="nas_advanced_options" style="display: none;">
 				<h3>Impostazioni <acronym title="Network Attached Storage">NAS</acronym> avanzate</h3>
 				<label for="uri_address">Indirizzo <acronym title="Uniform Resource Identifier">URI</acronym>:</label>
-				<input type="text" name="uri_address" id="uri_address" style="width: 50%;" value="<?php print (($_SERVER["HTTPS"]) ? "https//" : "http://") . $_SERVER["SERVER_ADDR"]; ?>" />
+				<input type="text" name="uri_address" id="uri_address" style="width: 50%;" value="<?php print (($_SERVER["HTTPS"]) ? "https//" : "http://") . $_SERVER["SERVER_ADDR"]; ?>" tabindex="10" />
 				<br />
 				<br />
-				<label><input type="checkbox" name="remote_nas" id="remote_nas" /> Il NAS &egrave; in una posizione remota ed &egrave; gestito da controller apposito</label>
+				<label><input type="checkbox" name="remote_nas" id="remote_nas" tabindex="11" /> Il NAS &egrave; in una posizione remota ed &egrave; gestito da controller apposito</label>
 				<br />
 				<label for="smb_conf_dir">Directory del file di configurazione SAMBA:</label>
-				<input type="text" name="smb_conf_dir" id="smb_conf_dir" style="width: 25%;" value="" placeholder="/etc/samba/" />
+				<input type="text" name="smb_conf_dir" id="smb_conf_dir" style="width: 25%;" value="" placeholder="/etc/samba/" tabindex="12" />
 				<p id="info_mount_btn" style="display: none;" class="info">Per poter rintracciare i files, &egrave; necessario che il NAS sia montato in maniera permanente</p>
 				
 				<label for="smb_conf_paths">Directories SAMBA che si desidera siano scansionate:</label>
-				<textarea name="smb_conf_paths" id="smb_conf_paths" rows="5" style="width: 50%;" disabled></textarea>
+				<textarea name="smb_conf_paths" id="smb_conf_paths" rows="5" style="width: 50%;" disabled tabindex="13"></textarea>
 				
 				<label for="server_root">Directory root del Server:</label>
-				<input type="text" name="server_root" id="server_root" style="width: 50%;" value="<?php print getcwd() . "/"; ?>" placeholder="/var/www/" />
+				<input type="text" name="server_root" id="server_root" style="width: 50%;" value="<?php print getcwd() . "/"; ?>" placeholder="/var/www/" tabindex="14" />
 				
 				<label for="api_dir">Directory per le API:</label>
-				<input type="text" name="api_dir" id="api_dir" style="width: 50%;" value="<?php print getcwd(); ?>/API/" placeholder="/var/www/API/" />
+				<input type="text" name="api_dir" id="api_dir" style="width: 50%;" value="<?php print getcwd(); ?>/API/" placeholder="/var/www/API/" tabindex="15" />
 			</div>
 		</fieldset>
 		<fieldset>
@@ -321,10 +321,10 @@
 			</p>
 			<input type="hidden" id="tmp_lat" value="" />
 			<input type="hidden" id="tmp_lng" value="" />
-			<label><input type="checkbox" name="install_meteo" id="install_meteo" checked /> Installa l'interfaccia Meteo</label>
+			<label><input type="checkbox" name="install_meteo" id="install_meteo" checked tabindex="16" /> Installa l'interfaccia Meteo</label>
 			<br />
 			<label for="meteo_name" class="required">Nome della Stazione:</label>
-			<input type="text" name="meteo_name" id="meteo_name" style="width: 50%;" value="" />
+			<input type="text" name="meteo_name" id="meteo_name" style="width: 50%;" value="" tabindex="17" />
 			<hr />
 			<button id="show_meteo_advanced_options" class="save grey">Avanzate...</button>
 			<div class="advanced" id="meteo_advanced_options" style="display: none;">
@@ -334,42 +334,42 @@
 					Per i pi&ugrave; attenti alla privacy &egrave; possibile <a href="javascript: void(0);" id="paranoid_mode">cancellare i dati relativi all'interfaccia Meteo</a> <span id="calculate_meteo_data_span" style="display: none;">(<a href="javascript: void(0);" id="calculate_meteo_data">ricalcola</a>)</span> ;)
 				</p>
 				<label for="meteo_city">Citt&agrave;:</label>
-				<input type="text" name="meteo_city" id="meteo_city" style="width: 50%;" value="" />
+				<input type="text" name="meteo_city" id="meteo_city" style="width: 50%;" value="" tabindex="18" />
 				
 				<label for="meteo_region">Regione:</label>
-				<input type="text" name="meteo_region" id="meteo_region" style="width: 50%;" value="" />
+				<input type="text" name="meteo_region" id="meteo_region" style="width: 50%;" value="" tabindex="19" />
 				
 				<label for="meteo_country">Paese:</label>
-				<input type="text" name="meteo_country" id="meteo_country" style="width: 50%;" value="" />
+				<input type="text" name="meteo_country" id="meteo_country" style="width: 50%;" value="" tabindex="20" />
 				
 				<br />
 				
 				<label for="meteo_owid">OpenWeather ID:</label>
-				<input type="text" name="meteo_owid" id="meteo_owid" value="" />
+				<input type="text" name="meteo_owid" id="meteo_owid" value="" tabindex="21" />
 				
 				<br />
 				<br />
 				<span class="left">
 					<label for="meteo_lat">Latitudine:</label>
-					<input type="number" name="meteo_lat" id="meteo_lat" value="" />
+					<input type="number" name="meteo_lat" id="meteo_lat" value="" tabindex="22" />
 				</span>
 				<span class="left">
 					<label for="meteo_lng">Longitudine:</label>
-					<input type="number" name="meteo_lng" id="meteo_lng" value="" />
+					<input type="number" name="meteo_lng" id="meteo_lng" value="" tabindex="23" />
 				</span>
 				<br />
 				<span class="left">
 					<label for="meteo_altitude_mt">Altitudine (metri):</label>
-					<input type="number" name="meteo_altitude_mt" id="meteo_altitude_mt" size="2" value="" />
+					<input type="number" name="meteo_altitude_mt" id="meteo_altitude_mt" size="2" value="" tabindex="24" />
 				</span>
 				<span class="left">
 					<label for="meteo_altitude_ft">Altitudine (piedi):</label>
-					<input type="number" name="meteo_altitude_ft" id="meteo_altitude_ft" size="3" value="" />
+					<input type="number" name="meteo_altitude_ft" id="meteo_altitude_ft" size="3" value="" tabindex="25" />
 				</span>
 				<br />
 				<span class="left">
 					<label for="meteo_altitude_unit">Unit&agrave; di misura per l'altitudine:</label>
-					<select name="meteo_altitude_unit" id="meteo_altitude_unit" style="width: 100px;">
+					<select name="meteo_altitude_unit" id="meteo_altitude_unit" style="width: 100px;" tabindex="26">
 						<option value=""></option>
 						<option value="mt" selected>metri</option>
 						<option value="ft">piedi</option>
@@ -386,30 +386,30 @@
 				</p>
 				<br />
 				<label for="mysql_host">Host:</label>
-				<input type="text" name="mysql_host" id="mysql_host" value="localhost" />
+				<input type="text" name="mysql_host" id="mysql_host" value="localhost" tabindex="27" />
 				<br />
 				<br />
 				<span class="left">
 					<label for="mysql_username">Username:</label>
-					<input type="text" name="mysql_username" id="mysql_username" value="" />
+					<input type="text" name="mysql_username" id="mysql_username" value="" tabindex="28" />
 				</span>
 				<span class="left">
 					<label for="mysql_password">Password:</label>
-					<input type="password" name="mysql_password" id="mysql_password" value="" />
+					<input type="password" name="mysql_password" id="mysql_password" value="" tabindex="29" />
 				</span>
 				<br />
 				<br />
 				<span class="left">
 					<label for="mysql_db_name">Nome del database:</label>
-					<input type="text" name="mysql_db_name" id="mysql_db_name" value="" />
+					<input type="text" name="mysql_db_name" id="mysql_db_name" value="" tabindex="30" />
 				</span>
 				<span class="left">
 					<label for="mysql_db_table">Nome della tabella:</label>
-					<input type="text" name="mysql_db_table" id="mysql_db_table" value="Meteo" />
+					<input type="text" name="mysql_db_table" id="mysql_db_table" value="Meteo" tabindex="31" />
 				</span>
 			</div>
 		</fieldset>
 		<hr />
-		<button id="install" <?php print $btn_next_disabled; ?>>Installa</button>
+		<button id="install" <?php print $btn_next_disabled; ?> tabindex="32">Installa</button>
 	</form>
 </div>

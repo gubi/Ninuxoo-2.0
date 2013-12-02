@@ -1,0 +1,6 @@
+RewriteEngine on
+RewriteBase /
+
+RewriteRule ^([^/\.]+)/?$ /index.php?s=$1 [QSA]
+RewriteRule ^([^/\.]+)/([^/\.]+)/?$ /index.php?s=$1&q=$2 [QSA]
+RewriteRule ^([^/\.]+)/([^/\.]+)/([^\./]+)/?$ /index.php?s=$1&q=$2&id=$3 [QSA]

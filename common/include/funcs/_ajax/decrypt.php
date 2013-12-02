@@ -80,11 +80,38 @@ if(isset($_GET["getPublicKey"])) {
 	
 	$type = (isset($_GET["type"]) && trim($_GET["type"]) !== "") ? $_GET["type"] : $_POST["type"];
 	switch($type) {
+		case "download_data":
+			require_once("editor.download_data.php");
+			break;
 		case "get_samba":
 			require_once("install.smb_conf.php");
 			break;
 		case "install":
 			require_once("install.generate_smb_conf.php");
+			break;
+		case "login":
+			require_once("login.php");
+			break;
+		case "remove_page":
+			require_once("local_site.remove_page.php");
+			break;
+		case "remove_script":
+			require_once("editor.remove_script.php");
+			break;
+		case "save_editor_theme":
+			require_once("save_editor_theme.php");
+			break;
+		case "save_menu":
+			require_once("local_site.save_menu.php");
+			break;
+		case "save_page":
+			require_once("local_site.save_page.php");
+			break;
+		case "save_script":
+			require_once("editor.save_script.php");
+			break;
+		case "save_settings":
+			require_once("save_settings.php");
 			break;
 	}
 }

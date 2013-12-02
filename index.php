@@ -1,10 +1,15 @@
 <?php
-/*
-require("php_error.php");
-if (function_exists('\php_error\reportErrors')) {
-	\php_error\reportErrors();
+require_once("common/include/funcs/_blowfish.php");
+require_once("common/include/lib/markdown.php");
+
+if(isset($_GET["s"]) && trim($_GET["s"]) == "Esci") {
+	setcookie ("n", "", time() - 3600);
+	header("Location: ./");
 }
-*/
+if(isset($_COOKIE["n"])) {
+	$c = explode("~", PMA_blowfish_decrypt($_COOKIE["n"], "ninuxoo_cookie"));
+	$username = $c[1];
+}
 // Generate RSA key
 if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 	shell_exec('openssl genrsa -out common/include/conf/rsa_2048_priv.pem 2048');
@@ -12,17 +17,30 @@ if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 		shell_exec('openssl rsa -pubout -in common/include/conf/rsa_2048_priv.pem -out common/include/conf/rsa_2048_pub.pem');
 	}
 }
+if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
+	$page_title = ucfirst(str_replace("_", " ", $_GET["s"]));
+	
+	if(isset($_GET["q"]) && trim($_GET["q"]) !== "") {
+		$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["q"]));
+		
+		if(isset($_GET["id"]) && trim($_GET["id"]) !== "") {
+			$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["id"]));
+		}
+	}
+} else {
+	$page_title = "";
+}
 // Check if config exist else start setup
 $has_config = (!file_exists("common/include/conf/config.ini")) ? false : true;
 if(!$has_config) {
 	if(!isset($_GET["setup"])) {
-		header("Location: ./?setup");
+		header("Location: http://" . preg_replace("/\/+/", "/", str_replace(array($_GET["s"], $_GET["id"], $_GET["q"]), "", $_SERVER[HTTP_HOST] . "/" . $_SERVER["REQUEST_URI"]) . "/?setup"));
 	} else {
 		$config["NAS"]["name"] = "Local Semantic Ninuxoo setup";
 		$NAS_absolute_uri = "http://" . $_SERVER["SERVER_ADDR"];
 	}
 } else {
-	if(isset($_GET["setup"])) {
+	if(isset($_GET["setup"]) || isset($_GET["s"]) && trim($_GET["s"]) == "login" && isset($_COOKIE["n"])) {
 		header("Location: ./");
 	}
 	
@@ -34,10 +52,10 @@ if(!$has_config) {
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?php print $config["NAS"]["name"]; ?></title>
+	<title><?php print $config["NAS"]["name"] . " | " . $page_title; ?></title>
 	
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"">
-	<base href="./" />
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+	<base href="<?php print $config["NAS"]["http_root"]; ?>" />
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="author" content="Ninux.org Community - the Ninux Software Team" />
 	<meta name="description" content="Ninux.org search engine" />
@@ -51,7 +69,7 @@ if(!$has_config) {
 	<script type="text/javascript" src="common/js/Apprise/apprise-1.5.full.js"></script>
 	<link rel="stylesheet" href="common/js/Apprise/apprise.css" type="text/css">
 	<?php
-	if($has_config) {
+	if($has_config && trim(strtolower($_GET["s"])) !== "admin") {
 		require_once("common/tpl/has_config.tpl");
 	} else {
 		//
@@ -66,6 +84,7 @@ if(!$has_config) {
 	</script>
 </head>
 <body>
+	<div id="page_loader"></div>
 	<?php
 	require_once("common/tpl/menu.tpl");
 	?>
@@ -90,15 +109,10 @@ if(!$has_config) {
 				</tr>
 			</table>
 		</div>
+		<?php if($_GET["s"] !== "Admin" || isset($_GET["q"])) { require_once("common/tpl/breadcrumb.tpl"); } ?>
 		<div id="container">
 			<?php
-			if($has_config) {
-				require_once("common/tpl/content.tpl");
-			} else {
-				include("common/include/funcs/_ajax/check_internet_status.php");
-				$btn_next_disabled = (check_internet_status() == "ok") ? "" : check_internet_status();
-				require_once("common/tpl/setup.tpl");
-			}
+			require_once("common/include/funcs/get_content.php");
 			?>
 			<div id="footer">
 				Powered by Ninux Community ~ the Ninux Software &amp; Communication Team :: icons made by <a href="http://www.picol.org/" target="_blank" title="PIctorial COmmunication Language - Richiede inoltro a Internet">Picol project</a>

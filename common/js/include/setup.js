@@ -351,7 +351,7 @@ function getkey() {
 	$("#pgp_user").html('<a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a>');
 	$("#user_username").val(extractEmails(pu.user));
 	if(fingerprint != null && fingerprint.length > 2) {
-		$("#pgp_fingerprint").text(fingerprint.join(" "));
+		$("#pgp_fingerprint").html('<span class="fingblock">' + fingerprint.join('</span><span class="fingblock">') + '</span>');
 	} else {
 		$("#pgp_fingerprint").text("");
 	}
