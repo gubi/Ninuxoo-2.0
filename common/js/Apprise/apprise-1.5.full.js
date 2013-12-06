@@ -11,6 +11,7 @@ function apprise(string, args, callback) {
 		    'confirm': false, 		// Ok and Cancel buttons
 		    'verify': false, 	// Yes and No buttons
 		    'input': false, 		// Text input (can be true or string for default text)
+		    'message': false, 		// Textarea (can be true or string for default text)
 		    'animate': false, 	// Groovy animation (can true or number, default is 400)
 		    'textOk': 'Ok', 	// Ok button default text
 		    'textCancel': 'Cancel', // Cancel button default text
@@ -18,7 +19,8 @@ function apprise(string, args, callback) {
 		    'textNo': 'No', 	// No button default text
 		    'position': 'center',// position center (y-axis) any other option will default to 100 top
 		    'icon': '',
-		     'title': ''
+		     'title': '',
+		     'progress': false
 		}
 
     if (args) {
@@ -91,17 +93,32 @@ function apprise(string, args, callback) {
             }
             $('.aTextbox').focus();
         }
+        if (args['message']) {
+            if (typeof (args['input']) == 'string') {
+                inner.append('<div class="aInput"><textarea rows="5" class="aTextarea" t="aTextarea">' + args['input'] + '"</textarea></div>');
+            }
+            if (typeof (args['input']) == 'object') {
+                inner.append($('<div class="aInput"></div>').append(args['input']));
+            }
+            else {
+                inner.append('<div class="aInput"><textarea rows="5" class="aTextarea" t="aTextarea"></textarea></div>');
+            }
+            $('.aTextarea').focus();
+        }
     }
 
     inner.append(buttons);
     if (args) {
-        if (args['confirm'] || args['input']) {
-            buttons.append('<button value="ok">' + args['textOk'] + '</button>');
+        if (args['confirm'] || args['input'] || args['message']) {
             buttons.append('<button value="cancel">' + args['textCancel'] + '</button>');
+            buttons.append('<button value="ok">' + args['textOk'] + '</button>');
         }
         else if (args['verify']) {
-            buttons.append('<button value="ok">' + args['textYes'] + '</button>');
             buttons.append('<button value="cancel">' + args['textNo'] + '</button>');
+            buttons.append('<button value="ok">' + args['textYes'] + '</button>');
+        }
+        else if (args['progress']) {
+            buttons.append('<div class="progress progress-striped active"><div style="width: 100%" class="bar bar-warning"></div></div>');
         }
         else { buttons.append('<button value="ok">' + args['textOk'] + '</button>'); }
     }
@@ -131,7 +148,7 @@ function apprise(string, args, callback) {
 
 
     $(document).keydown(function (e) {
-        if (overlay.is(':visible')) {
+        if (overlay.is(':visible') && !$(".aTextarea").is(":focus")) {
             if (e.keyCode == 13)
             { $('.aButtons > button[value="ok"]').click(); }
             if (e.keyCode == 27)
@@ -140,8 +157,12 @@ function apprise(string, args, callback) {
     });
 
     var aText = $('.aTextbox').val();
+    var aText = $('.aTextarea').val();
+    if (!aText) { aText = false; }
     if (!aText) { aText = false; }
     $('.aTextbox').keyup(function ()
+    { aText = $(this).val(); });
+    $('.aTextarea').keyup(function ()
     { aText = $(this).val(); });
 
     $('.aButtons > button').click(function () {
@@ -152,7 +173,7 @@ function apprise(string, args, callback) {
             var wButton = $(this).attr("value");
             if (wButton == 'ok') {
                 if (args) {
-                    if (args['input']) { callback(aText); }
+                    if (args['input'] || args['message']) { callback(aText); }
                     else { callback(true); }
                 }
                 else {

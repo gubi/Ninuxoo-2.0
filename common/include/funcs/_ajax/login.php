@@ -15,11 +15,9 @@ if(file_exists("../../conf/user/" . sha1($output["username"]))) {
 			$html = new simple_html_dom();
 			$html->load_file($mit . "/pks/lookup?search=" . $output["username"]);
 			$ret = $html->find("a");
-			$f = -1;
 			$data = array();
 			foreach($ret as $a) {
 				if(strpos($a->href, "lookup") !== false) {
-					$f++;
 					$data[] = $a->plaintext;
 				}
 			}

@@ -1,5 +1,4 @@
 <?php
-
 if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 	require_once("common/include/lib/mime_types.php");
 	?>

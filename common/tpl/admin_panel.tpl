@@ -7,7 +7,7 @@
 				<small>Le configurazioni di tutti i tuoi device</small>
 			</a>
 			<!--a href="./Admin/NAS_collegati"-->
-			<a href="./Admin/NAS_collegati" style="opacity:0.5;">
+			<a href="./Admin/NAS_collegati">
 				<img src="common/media/img/admin_panel/linked_nas_128_333.png" />
 				<p>NAS COLLEGATI</p>
 				<small>Estendi la Rete delle ricerche</small>

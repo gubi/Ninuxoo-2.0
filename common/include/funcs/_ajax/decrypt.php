@@ -113,6 +113,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "save_settings":
 			require_once("save_settings.php");
 			break;
+		case "trust_nas":
+			require_once("trust_nas.php");
+			break;
 	}
 }
 ?>
