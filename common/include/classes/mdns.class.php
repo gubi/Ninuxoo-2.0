@@ -61,17 +61,17 @@ class mdns {
 						$checkt = $filter;
 					}
 					if($filter == $checkt) {
-						if(in_array("" . $message[2], $this->check_trusted())) {
+						if(is_array($this->check_trusted()) && in_array("" . $message[2], $this->check_trusted())) {
 							$status = "trusted";
-						} else if(is_array($untrusted) && in_array("" . $message[2], $this->check_trusted())) {
+						} else if(is_array($this->check_untrusted()) && in_array("" . $message[2], $this->check_untrusted())) {
 							$status = "untrusted";
 						} else {
 							$status = "unknown";
 						}
 						if($o[3] == "_dns-sd._udp" && $o[7] == 64689 && trim($msg[0], '"') == "Hello guys I'm a Ninuxoo device") {
-							$ips = explode(" ", shell_exec("hostname  -I"));
+							$ips = array_filter(array_map("trim", explode(" ", shell_exec("hostname  -I"))));
 							
-							if(!in_array($o[6], $ips)) {
+							if(in_array($o[6], $ips)) {
 								if($get_owner == true) {
 									$ndata[stripcslashes($o[2])]["owner"] = $this->get_owner($message[0]);
 								}

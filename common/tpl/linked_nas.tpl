@@ -22,7 +22,6 @@
 		
 		$mdns = new mdns();
 		$ndata = $mdns->scan(true);
-		print_r($ndata);
 		if (is_array($ndata)) {
 			foreach($ndata as $hostname => $ip) {
 				switch($ip["status"]) {
@@ -45,7 +44,6 @@
 				}
 				sort($ip["reachability"]);
 				print '<tr><td class="status">' . $img . '</td><td class="hostname"><i>' . $hostname . '</i><input type="hidden" class="token" value="' . $ip["token"] . '" /></td><td class="owner"><a title="Contatta il proprietario di questo NAS" href="mailto:' . $ip["owner"]["email"] . '">0x' . $ip["owner"]["key"] . '</a></td><td style="color: #999;">' . trim($ip["geo_zone"], '"') . '</td><td style="color: #999;">' . implode(", ", $ip["reachability"]) . '</td><td class="mark_btns" style="color: #999;"><table cellpadding="0" cellspacing="0" class="mark"><tr><td class="' . $status_t . '"></td><td class="' . $status_u . '"></td></tr></table></td></tr>';
-				print '<tr><td class="status">' . $img . '</td><td class="hostname"><i>' . $hostname . ' 2</i><input type="hidden" class="token" value="' . $ip["token"] . '" /></td><td class="owner"><a title="Contatta il proprietario di questo NAS" href="mailto:' . $ip["owner"]["email"] . '">0x' . $ip["owner"]["key"] . '</a></td><td style="color: #999;">' . trim($ip["geo_zone"], '"') . '</td><td style="color: #999;">' . implode(", ", $ip["reachability"]) . '</td><td class="mark_btns" style="color: #999;"><table cellpadding="0" cellspacing="0" class="mark"><tr><td class="' . $status_t . '"></td><td class="' . $status_u . '"></td></tr></table></td></tr>';
 			}
 		} else {
 			print '<tr><td colspan="6" align="center"><span class="info">Nessuna configurazione personale salvata</span></td></tr>';
@@ -53,3 +51,4 @@
 		?>
 	</table>
 </fieldset>
+

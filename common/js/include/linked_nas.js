@@ -49,7 +49,7 @@ $(document).ready(function() {
 							});
 						}, function() {
 							$("#page_loader").fadeOut(300);
-							alert("Si &egrave; verificato un errore durante il salvataggio.", {icon: "error", title: "Ouch!"});
+							alert("Si &egrave; verificato un errore durante il processo.", {icon: "error", title: "Ouch!"});
 						});
 					} else {
 						main.find(".selected").removeClass("selected");
@@ -64,7 +64,43 @@ $(document).ready(function() {
 			case "untrusted selected":
 				apprise('<p>Il <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b> ver&agrave; definitivamente scollegato e sar&agrave; marcato come &quot;untrusted&quot;.<br />Non potr&agrave; più effettuare ricerche su questo device n&eacute; acquisire alcun tipo di API.<br />Finch&eacute; sar&agrave; marcato come tale, tutte le richieste di connessione da parte sua<br />verranno rifiutate e non saranno pi&ugrave; notificate.</p><p>Si &egrave; sicuri di voler continuare?</p>', {title: "Rimozione della fiducia", icon: "warning", textCancel: "Annulla", textOk: "Prosegui &rsaquo;", confirm: "true"}, function(r) {
 					if(r) {
-						alert("Okay, sfiducio...", {progress: "true"});
+						apprise('Rimuovo la fiducia al <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b>...', {progress: "true"});
+						
+						$("#page_loader").fadeIn(300);
+						var password = makeid();
+						$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+							var encryptedString = $.jCryption.encrypt("token=" + token, password);
+							
+							$.ajax({
+								url: "common/include/funcs/_ajax/decrypt.php",
+								dataType: "json",
+								type: "POST",
+								data: {
+									jCryption: encryptedString,
+									type: "untrust_nas"
+								},
+								success: function(response) {
+									if (response["data"] !== "ok") {
+										var risp = response["data"].split("::");
+										if(risp[0] == "error") {
+											$("#page_loader").fadeOut(300);
+											$("#aOverlay").fadeOut(300);
+											$(".appriseOuter").fadeOut(300);
+											alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
+										}
+									} else {
+										$("#page_loader").fadeOut(300);
+										$("#aOverlay").fadeOut(300);
+										$(".appriseOuter").fadeOut(300);
+									}
+								}
+							});
+						}, function() {
+							$("#page_loader").fadeOut(300);
+							$("#aOverlay").fadeOut(300);
+							$(".appriseOuter").fadeOut(300);
+							alert("Si &egrave; verificato un errore durante il processo.", {icon: "error", title: "Ouch!"});
+						});
 					} else {
 						main.find(".selected").removeClass("selected");
 						if(current_status != "") {
@@ -77,7 +113,43 @@ $(document).ready(function() {
 				break;
 			default:
 				apprise('Si &egrave; sicuri di voler demarcare il <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b>?', {confirm: "true", textOk: "Si", textCancel: "Annulla"}, function(r) {
-					if(!r) {
+					if(r) {
+						$("#page_loader").fadeIn(300);
+						var password = makeid();
+						$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+							var encryptedString = $.jCryption.encrypt("token=" + token, password);
+							
+							$.ajax({
+								url: "common/include/funcs/_ajax/decrypt.php",
+								dataType: "json",
+								type: "POST",
+								data: {
+									jCryption: encryptedString,
+									type: "unmark_nas"
+								},
+								success: function(response) {
+									if (response["data"] !== "ok") {
+										var risp = response["data"].split("::");
+										if(risp[0] == "error") {
+											$("#page_loader").fadeOut(300);
+											$("#aOverlay").fadeOut(300);
+											$(".appriseOuter").fadeOut(300);
+											alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
+										}
+									} else {
+										$("#page_loader").fadeOut(300);
+										$("#aOverlay").fadeOut(300);
+										$(".appriseOuter").fadeOut(300);
+									}
+								}
+							});
+						}, function() {
+							$("#page_loader").fadeOut(300);
+							$("#aOverlay").fadeOut(300);
+							$(".appriseOuter").fadeOut(300);
+							alert("Si &egrave; verificato un errore durante il processo.", {icon: "error", title: "Ouch!"});
+						});
+					} else {
 						main.find(".selected").removeClass("selected");
 						main.find("td." + current_status).addClass("selected");
 						image.attr("src", image_src);
