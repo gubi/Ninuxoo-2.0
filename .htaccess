@@ -1,5 +1,11 @@
-RewriteEngine on
+RewriteEngine On
 RewriteBase /
+
+#only for the root directory
+RewriteCond %{REQUEST_URI} ^/$
+#if the uri is not already index.php
+RewriteCond %{REQUEST_URI} !^/index.php [NC]
+RewriteRule ^$ /index.php    [R=301,L]
 
 RewriteRule ^([^/\.]+)/?$ /index.php?s=$1 [QSA]
 RewriteRule ^([^/\.]+)/([^/\.]+)/?$ /index.php?s=$1&q=$2 [QSA]
