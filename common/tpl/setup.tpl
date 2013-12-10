@@ -203,7 +203,7 @@
 	<span id="alert_no_internet" class="error"></span>
 	<button id="show_form" class="save" <?php print $btn_next_disabled; ?>>Prosegui</button>
 	
-	<form method="post" action="" class="frm" style="display: none;" onsubmit="install()">
+	<form method="post" action="" class="frm" id="install_frm" style="display: none;" onsubmit="install()">
 		<fieldset>
 			<legend>Dati per l'accesso</legend>
 			<p>I dati a seguire consentiranno l'accesso al pannello di controllo, dal quale si potr&agrave;:</p>

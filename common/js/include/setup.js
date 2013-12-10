@@ -271,7 +271,7 @@ function install() {
 					var password = makeid();
 					
 					$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-						var encryptedString = $.jCryption.encrypt($("#content > form").serialize(), password);
+						var encryptedString = $.jCryption.encrypt($("#install_frm").serialize(), password);
 						
 						$.ajax({
 							url: "common/include/funcs/_ajax/decrypt.php",
@@ -285,7 +285,11 @@ function install() {
 								if (response["data"] !== "ok") {
 									var risp = response["data"].split("::");
 									if(risp[0] == "error") {
-										alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
+										apprise("Si &egrave; verificato un errore durante l'installazione:<br />" + risp[1].replace("\n", "<br />"), {icon: "error", title: "Ouch!"}, function(r) {
+											if(r) {
+												$("#setup_loader").hide();
+											}
+										});
 									}
 								} else {
 									$("#setup_loader > span").text("Scansione dei files...");
