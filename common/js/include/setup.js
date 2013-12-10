@@ -347,18 +347,45 @@ function getkey() {
 	fingerprint = pu.fp.match(/.{4}/g);
 	if(pu.vers == -1) return;
 	
-	$("#pgp_version").text(pu.vers);
-	$("#pgp_user").html('<a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a>');
-	$("#user_username").val(extractEmails(pu.user));
-	if(fingerprint != null && fingerprint.length > 2) {
-		$("#pgp_fingerprint").html('<span class="fingblock">' + fingerprint.join('</span><span class="fingblock">') + '</span>');
+	if($("#pgp_key_results").html().length > 0) {
+		$("#pgp_version").text(pu.vers);
+		$("#pgp_user").html('<a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a>');
+		$("#user_username").val(extractEmails(pu.user));
+		if(fingerprint != null && fingerprint.length > 2) {
+			$("#pgp_fingerprint").html('<span class="fingblock">' + fingerprint.join('</span><span class="fingblock">') + '</span>');
+		} else {
+			$("#pgp_fingerprint").text("");
+		}
+		$("#pgp_key_id").text(pu.keyid);
+		$("#pgp_remove_key").show();
+		if($("#pgp_pubkey").val() == "") {
+			$('#pgp_remove_key').hide();
+			$("#pgp_key_results").slideUp(300);
+			$("#pgp_pubkey").focus();
+		} else {
+			if(fingerprint != null && fingerprint.length > 2) {
+				$("#pgp_key_results").slideDown(300);
+				$("#user_password").focus();
+			}
+		}
 	} else {
-		$("#pgp_fingerprint").text("");
-	}
-	$("#pgp_key_id").text(pu.keyid);
-	$("#pgp_remove_key").show();
-	$("#user_password").focus();
-	if($("#pgp_pubkey").val() == "") {
-		$('#pgp_remove_key').hide();
+		$("#user_username").val(extractEmails(pu.user));
+		if(fingerprint != null && fingerprint.length > 2) {
+			$("#pgp_fingerprint").html('<span class="fingblock">' + fingerprint.join('</span><span class="fingblock">') + '</span>');
+		} else {
+			$("#pgp_fingerprint").text("");
+		}
+		$("#pgp_remove_key").show();
+		if($("#pgp_pubkey").val() == "") {
+			$('#pgp_remove_key').hide();
+			$("#pgp_key_results").slideUp(300);
+			$("#pgp_pubkey").focus();
+		} else {
+			if(fingerprint != null && fingerprint.length > 2) {
+				$("#pgp_key_results").html('<hr /><table cellpadding="2" cellspacing="2"><caption><b>Dati ricavati dalla tua chiave pubblica PGP</b></caption><tbody><tr><th>Versione:</th><td id="pgp_version">' + pu.vers + '</td></tr><tr><th>User ID:</th><td id="pgp_user"><a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a></td></tr><tr><th>Fingerprint:</th><td id="pgp_fingerprint"></td></tr><tr><th>ID della chiave:</th><td id="pgp_key_id">' + pu.keyid + '</td></tr></tbody></table>');
+				$("#pgp_key_results").slideDown(300);
+				$("#user_password").focus();
+			}
+		}
 	}
 }
