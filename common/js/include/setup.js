@@ -271,7 +271,7 @@ function install() {
 					var password = makeid();
 					
 					$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-						var encryptedString = $.jCryption.encrypt($("#content > form").serialize(), password);
+						var encryptedString = $.jCryption.encrypt($("#install_frm").serialize(), password);
 						
 						$.ajax({
 							url: "common/include/funcs/_ajax/decrypt.php",
@@ -285,7 +285,11 @@ function install() {
 								if (response["data"] !== "ok") {
 									var risp = response["data"].split("::");
 									if(risp[0] == "error") {
-										alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
+										apprise("Si &egrave; verificato un errore durante l'installazione:<br />" + risp[1].replace("\n", "<br />"), {icon: "error", title: "Ouch!"}, function(r) {
+											if(r) {
+												$("#setup_loader").hide();
+											}
+										});
 									}
 								} else {
 									$("#setup_loader > span").text("Scansione dei files...");
@@ -347,18 +351,45 @@ function getkey() {
 	fingerprint = pu.fp.match(/.{4}/g);
 	if(pu.vers == -1) return;
 	
-	$("#pgp_version").text(pu.vers);
-	$("#pgp_user").html('<a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a>');
-	$("#user_username").val(extractEmails(pu.user));
-	if(fingerprint != null && fingerprint.length > 2) {
-		$("#pgp_fingerprint").html('<span class="fingblock">' + fingerprint.join('</span><span class="fingblock">') + '</span>');
+	if($("#pgp_key_results").html().length > 0) {
+		$("#pgp_version").text(pu.vers);
+		$("#pgp_user").html('<a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a>');
+		$("#user_username").val(extractEmails(pu.user));
+		if(fingerprint != null && fingerprint.length > 2) {
+			$("#pgp_fingerprint").html('<span class="fingblock">' + fingerprint.join('</span><span class="fingblock">') + '</span>');
+		} else {
+			$("#pgp_fingerprint").text("");
+		}
+		$("#pgp_key_id").text(pu.keyid);
+		$("#pgp_remove_key").show();
+		if($("#pgp_pubkey").val() == "") {
+			$('#pgp_remove_key').hide();
+			$("#pgp_key_results").slideUp(300);
+			$("#pgp_pubkey").focus();
+		} else {
+			if(fingerprint != null && fingerprint.length > 2) {
+				$("#pgp_key_results").slideDown(300);
+				$("#user_password").focus();
+			}
+		}
 	} else {
-		$("#pgp_fingerprint").text("");
-	}
-	$("#pgp_key_id").text(pu.keyid);
-	$("#pgp_remove_key").show();
-	$("#user_password").focus();
-	if($("#pgp_pubkey").val() == "") {
-		$('#pgp_remove_key').hide();
+		$("#user_username").val(extractEmails(pu.user));
+		if(fingerprint != null && fingerprint.length > 2) {
+			$("#pgp_fingerprint").html('<span class="fingblock">' + fingerprint.join('</span><span class="fingblock">') + '</span>');
+		} else {
+			$("#pgp_fingerprint").text("");
+		}
+		$("#pgp_remove_key").show();
+		if($("#pgp_pubkey").val() == "") {
+			$('#pgp_remove_key').hide();
+			$("#pgp_key_results").slideUp(300);
+			$("#pgp_pubkey").focus();
+		} else {
+			if(fingerprint != null && fingerprint.length > 2) {
+				$("#pgp_key_results").html('<hr /><table cellpadding="2" cellspacing="2"><caption><b>Dati ricavati dalla tua chiave pubblica PGP</b></caption><tbody><tr><th>Versione:</th><td id="pgp_version">' + pu.vers + '</td></tr><tr><th>User ID:</th><td id="pgp_user"><a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a></td></tr><tr><th>Fingerprint:</th><td id="pgp_fingerprint"></td></tr><tr><th>ID della chiave:</th><td id="pgp_key_id">' + pu.keyid + '</td></tr></tbody></table>');
+				$("#pgp_key_results").slideDown(300);
+				$("#user_password").focus();
+			}
+		}
 	}
 }

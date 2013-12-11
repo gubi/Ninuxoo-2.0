@@ -203,7 +203,7 @@
 	<span id="alert_no_internet" class="error"></span>
 	<button id="show_form" class="save" <?php print $btn_next_disabled; ?>>Prosegui</button>
 	
-	<form method="post" action="" class="frm" style="display: none;" onsubmit="install()">
+	<form method="post" action="" class="frm" id="install_frm" style="display: none;" onsubmit="install()">
 		<fieldset>
 			<legend>Dati per l'accesso</legend>
 			<p>I dati a seguire consentiranno l'accesso al pannello di controllo, dal quale si potr&agrave;:</p>
@@ -222,7 +222,7 @@
 			<span class="left">
 				<label for="pgp_pubkey" class="required">Chiave PGP <u>pubblica</u> in formato ASCII Armored:</label>
 				<textarea name="pgp_pubkey" id="pgp_pubkey" rows="5" style="width: 100%; height: 150px;" autofocus tabindex="1"></textarea>
-				<p><small><a style="display: none;" id="pgp_remove_key" href="javascript:void(0);" onclick="$('#pgp_pubkey').val('');getkey();" title="Cancella la chiave inserita">Cancella la chiave inserita</a>&nbsp;</small></p>
+				<p><small><a style="display: none;" id="pgp_remove_key" href="javascript:void(0);" onclick="$('#pgp_pubkey').val('');getkey();" title="Cancella il testo inserito">Cancella il testo inserito</a>&nbsp;</small></p>
 			</span>
 			<br />
 			<br />
@@ -238,28 +238,7 @@
 				<label for="user_password2" class="required">Ripeti la password:</label>
 				<input type="password" id="user_password2" name="user_password2" value="" autocomplete="off" tabindex="4" />
 			</span>
-			<hr />
-			<table cellpadding="2" cellspacing="2">
-				<caption><b>Dati ricavati dalla tua chiave pubblica PGP</b></caption>
-				<tbody>
-					<tr>
-						<th>Versione:</th>
-						<td id="pgp_version"></td>
-					</tr>
-					<tr>
-						<th>User ID:</th>
-						<td id="pgp_user"></td>
-					</tr>
-					<tr>
-						<th>Fingerprint:</th>
-						<td id="pgp_fingerprint"></td>
-					</tr>
-					<tr>
-						<th>ID della chiave:</th>
-						<td id="pgp_key_id"></td>
-					</tr>
-				</tbody>
-			</table>
+			<div id="pgp_key_results"></div>
 		</fieldset>
 		<fieldset>
 			<legend>Nodo Ninux</legend>
