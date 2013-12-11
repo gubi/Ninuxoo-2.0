@@ -12,16 +12,19 @@
 							case "config_editor":
 								include("common/tpl/config_editor.tpl");
 								break;
-							case "nas_collegati":
-								include("common/tpl/linked_nas.tpl");
-								break;
-							case "impostazioni_meteo":
-								break;
-							case "sito_locale":
-								include("common/tpl/local_site.tpl");
+							case "impostazioni_di_ricerca":
+								include("common/tpl/search_settings.tpl");
 								break;
 							case "impostazioni_generali":
 								include("common/tpl/general_settings.tpl");
+								break;
+							case "impostazioni_meteo":
+								break;
+							case "nas_collegati":
+								include("common/tpl/linked_nas.tpl");
+								break;
+							case "sito_locale":
+								include("common/tpl/local_site.tpl");
 								break;
 							default:
 								include("common/tpl/admin_panel.tpl");

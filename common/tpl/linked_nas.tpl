@@ -4,6 +4,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	check_nas(1);
+	$("html, body").animate({ scrollTop: ($("h1").eq(1).offset().top) }, 300);
 });
 </script>
 <fieldset class="frm">

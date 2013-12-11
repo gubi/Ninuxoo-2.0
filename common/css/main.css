@@ -1115,6 +1115,11 @@ div.menu a, div.menu span.separator {
 div.menu span.separator {
 	width: 10px;
 }
+div.menu span.separator.transparent {
+	background-image: none;
+    background-repeat: no-repeat;
+	width: 5px;
+}
 div.menu a:hover {
 	border: #ccc 2px solid;
 }

@@ -42,6 +42,9 @@ foreach($shared_dirs as $kshared => $shared) {
 	$info = pathinfo($shared);
 	$smb_conf .= 'smb_shares[] = "/' . trim($info["basename"]) . '"' . "\n" . (($kshared == (count($shared_dirs) - 1)) ? "\n" : "");
 }
+$smb_conf .= "\n" . 'allow_advanced_research = "true"' . "\n";
+$smb_conf .= '"research_type = "query"' . "\n";
+$smb_conf .= '"research_results = 200' . "\n\n";
 $smb_conf .= ';Auto updated data (do not edit)' . "\n";
 $smb_conf .= 'last_scan_date = "' . date("Y-m-d") . '"' . "\n";
 $smb_conf .= 'last_items_count = 0' . "\n";

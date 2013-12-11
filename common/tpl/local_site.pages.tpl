@@ -4,7 +4,6 @@ if(trim($_GET["id"]) == "Pagine") {
 	?>
 	<h1>Gestione delle pagine</h1>
 	<br />
-	<br />
 	<fieldset class="frm">
 		<legend>Pagine salvate</legend>
 		<table cellpadding="10" cellspacing="10">
