@@ -58,14 +58,14 @@ class rsa {
 		return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, SALT, base64_decode($text), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
 	}
 	public function simple_private_encrypt($string) {
-		shell_exec("echo '" . $string . "' | openssl rsautl -encrypt -inkey ../../conf/rsa_2048_priv.pem > ../../conf/message.encrypted");
-		$encrypted = shell_exec('cat ../../conf/message.encrypted | base64 - && rm ../../conf/message.encrypted');
+		shell_exec("echo '" . $string . "' | openssl rsautl -encrypt -inkey " . str_replace("classes", "conf", __DIR__) . "/rsa_2048_priv.pem > " . str_replace("classes", "conf", __DIR__) . "/message.encrypted");
+		$encrypted = shell_exec('cat ' . str_replace("classes", "conf", __DIR__) . '/message.encrypted | base64 - && rm ' . str_replace("classes", "conf", __DIR__) . '/message.encrypted');
 		return $encrypted;
 	}
 	public function simple_private_decrypt($string) {
-		shell_exec('echo "' . $string . '" | base64 -d - > common/include/conf/message.encrypted');
-		shell_exec("cat common/include/conf/message.encrypted | openssl rsautl -decrypt -inkey common/include/conf/rsa_2048_priv.pem > common/include/conf/message.decrypted && rm common/include/conf/message.encrypted");
-		$decrypted = shell_exec('cat common/include/conf/message.decrypted && rm common/include/conf/message.decrypted');
+		shell_exec('echo "' . $string . '" | base64 -d - > ' . str_replace("classes", "conf", __DIR__) . '/message.encrypted');
+		shell_exec("cat " . str_replace("classes", "conf", __DIR__) . "/message.encrypted | openssl rsautl -decrypt -inkey " . str_replace("classes", "conf", __DIR__) . "/rsa_2048_priv.pem > " . str_replace("classes", "conf", __DIR__) . "/message.decrypted && rm " . str_replace("classes", "conf", __DIR__) . "/message.encrypted");
+		$decrypted = shell_exec('cat ' . str_replace("classes", "conf", __DIR__) . '/message.decrypted && rm ' . str_replace("classes", "conf", __DIR__) . '/message.decrypted');
 		return $decrypted;
 	}
 	public function public_encrypt($dir, $pub_key, $key_to_encrypt, $time_limit = null){

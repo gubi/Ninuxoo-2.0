@@ -22,7 +22,11 @@ $user_conf .= 'editor_theme = "default"' . "\n";
 $general_settings = '[login]' . "\n";
 $general_settings .= 'session_length = 3600' . "\n";
 $general_settings .= 'allow_user_registration = "true"' . "\n\n";
-$general_settings .= 'admin[] = "' . sha1($output["user_username"]) . '"' . "\n";
+$general_settings .= 'admin[] = "' . sha1($output["user_username"]) . '"' . "\n\n";
+$general_settings = '[searches]' . "\n";
+$general_settings .= 'allow_advanced_research = "true"' . "\n";
+$general_settings .= 'research_type = "query"' . "\n";
+$general_settings .= 'research_results = 200' . "\n";
 
 $smb_conf = '; NINUXOO CONFIGURATION FILE' . "\n\n";
 $smb_conf .= '[Ninux node]' . "\n";
@@ -42,9 +46,6 @@ foreach($shared_dirs as $kshared => $shared) {
 	$info = pathinfo($shared);
 	$smb_conf .= 'smb_shares[] = "/' . trim($info["basename"]) . '"' . "\n" . (($kshared == (count($shared_dirs) - 1)) ? "\n" : "");
 }
-$smb_conf .= "\n" . 'allow_advanced_research = "true"' . "\n";
-$smb_conf .= '"research_type = "query"' . "\n";
-$smb_conf .= '"research_results = 200' . "\n\n";
 $smb_conf .= ';Auto updated data (do not edit)' . "\n";
 $smb_conf .= 'last_scan_date = "' . date("Y-m-d") . '"' . "\n";
 $smb_conf .= 'last_items_count = 0' . "\n";

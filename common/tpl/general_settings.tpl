@@ -115,7 +115,7 @@ $(document).ready(function() {
 <h1>Impostazioni generali</h1>
 <br />
 <br />
-<form method="post" action="" id="settings_frm" onsubmit="false;">
+<form method="post" action="" id="settings_frm" onsubmit="return false;">
 	<fieldset class="frm">
 		<legend>Accesso al Sistema <a name="Accesso_al_Sistema" id="Accesso_al_Sistema"></a></legend>
 		<label for="session_length">Durata generale della sessione</label>

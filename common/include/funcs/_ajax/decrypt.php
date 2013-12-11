@@ -113,8 +113,14 @@ if(isset($_GET["getPublicKey"])) {
 		case "save_script":
 			require_once("editor.save_script.php");
 			break;
+		case "save_search_settings":
+			require_once("save_search_settings.php");
+			break;
 		case "save_settings":
 			require_once("save_settings.php");
+			break;
+		case "start_scan":
+			require_once("local_scan.php");
 			break;
 		case "trust_nas":
 			require_once("linked_nas.trust_nas.php");
