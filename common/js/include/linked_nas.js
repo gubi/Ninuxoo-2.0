@@ -1,7 +1,11 @@
 function check_nas(time) {
 	time = parseInt(time);
 	
-	$("#counter").html(time + ":00 secondi");
+	var minutes_txt = "minuti";
+	if(time == 1) {
+		minutes_txt = "minuto";
+	}
+	$("#counter").html(time + ":00 " + minutes_txt);
 	var countdown = time * 60 * 1000,
 	timerId = setInterval(function(){
 		countdown -= 1000;
@@ -45,6 +49,7 @@ function check_nas(time) {
 					});
 				} else {
 					$("tr#no_nas span").text("Ancora nessun NAS rilevato nelle vicinanze");
+					$("tr#no_nas img").remove();
 				}
 			}
 		});

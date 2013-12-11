@@ -13,8 +13,7 @@ $(document).ready(function() {
 		Per attivare o meno il collegamento con uno dei quali fare click sul flag corrispondente nella colonna dello stato .
 	</p>
 	<p>
-		Il prossimo controllo dei NAS presenti sar&agrave; tra <span id="counter"></span>...<br />
-		&Egrave possibile impostare il tempo di refresh nelle <a href="./Admin/Impostazioni_generali">impostazioni generali</a>
+		Il prossimo controllo dei NAS presenti sar&agrave; tra <span id="counter"></span>...
 	</p>
 	<hr />
 	<table cellpadding="10" cellspacing="10" id="finded_nas">
