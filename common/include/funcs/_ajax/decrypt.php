@@ -80,6 +80,9 @@ if(isset($_GET["getPublicKey"])) {
 	
 	$type = (isset($_GET["type"]) && trim($_GET["type"]) !== "") ? $_GET["type"] : $_POST["type"];
 	switch($type) {
+		case "check_neighbor":
+			require_once("linked_nas.check_neighbor.php");
+			break;
 		case "download_data":
 			require_once("editor.download_data.php");
 			break;

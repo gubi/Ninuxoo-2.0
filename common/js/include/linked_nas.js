@@ -1,4 +1,56 @@
-$(document).ready(function() {
+function check_nas(time) {
+	time = parseInt(time);
+	
+	$("#counter").html(time + ":00 secondi");
+	var countdown = time * 60 * 1000,
+	timerId = setInterval(function(){
+		countdown -= 1000;
+		var min = Math.floor(countdown / (60 * 1000)),
+		sec = Math.floor((countdown - (min * 60 * 1000)) / 1000),
+		timer = min + ":" + sec;
+		
+		if (countdown <= 0) {
+			clearInterval(timerId);
+			setTimeout(function() {
+				check_nas(time);
+			}, 1000);
+		}
+		if(timer == "0:0") {
+			timer = "0";
+		}
+		$("#counter").html(timer + " secondi");
+	}, 1000);
+	
+	var password = makeid();
+	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+		var encryptedString = $.jCryption.encrypt("check=true", password);
+		$.ajax({
+			url: "common/include/funcs/_ajax/decrypt.php",
+			dataType: "json",
+			type: "POST",
+			data: {
+				jCryption: encryptedString,
+				type: "check_neighbor"
+			},
+			success: function(response) {
+				if(response.data["finded"] > 0) {
+					$.each(response.data, function(item, finded) {
+						if(item !== "finded") {
+							if($("tr#nas_" + item).length == 0) {
+								$("#finded_nas tr#no_nas").remove();
+								$("#finded_nas").append('<tr id="nas_' + item + '"><td class="status">' + finded["img"] + '</td><td class="hostname"><i>' + finded["hostname"] + '</i><input type="hidden" class="token" value="' + finded["token"] + '" /></td><td class="owner"><a title="Contatta il proprietario di questo NAS" href="mailto:' + finded["owner"]["email"] + '">' + finded["owner"]["key"] + '</a></td><td style="color: #999;">' + finded["geo_zone"] + '</td><td style="color: #999;">' + finded["reachability"] + '</td><td class="mark_btns" style="color: #999;"><table cellpadding="0" cellspacing="0" class="mark"><tr><td class="' + finded["status_t"] + '"></td><td class="' + finded["status_u"] + '"></td></tr></table></td></tr>');
+								linked_nas_functions();
+							}
+						}
+					});
+				} else {
+					$("tr#no_nas span").text("Ancora nessun NAS rilevato nelle vicinanze");
+				}
+			}
+		});
+	});
+}
+function linked_nas_functions() {
 	$(".mark td").click(function() {
 		var token = $(this).closest("table").attr("id"),
 		main = $(this).closest("table").parent("td").parent("tr"),
@@ -159,4 +211,4 @@ $(document).ready(function() {
 				break;
 		}
 	});
-});
+}

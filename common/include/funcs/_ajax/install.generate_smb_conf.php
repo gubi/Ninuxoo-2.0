@@ -74,52 +74,49 @@ $mysql_conf .= 'tables = "' . $output["mysql_db_table"] . '"' . "\n";
 
 // Files creation
 // Main config file
-if($fp = @fopen($output["server_root"] . "common/include/conf/config.ini", "w")) {
+if($fp = fopen($output["server_root"] . "common/include/conf/config.ini", "w")) {
 	fwrite($fp, $smb_conf . PHP_EOL);
 	fclose($fp);
 	$log->write("notice", "[install] The new file 'config.ini' is located in 'common/include/conf/'");
 	
 	// Main config file
-	if($fg = @fopen($output["server_root"] . "common/include/conf/general_settings.ini", "w")) {
+	if($fg = fopen($output["server_root"] . "common/include/conf/general_settings.ini", "w")) {
 		fwrite($fg, $general_settings . PHP_EOL);
 		fclose($fg);
 		$log->write("notice", "[install] The new file 'general_settings.ini' is located in 'common/include/conf/'");
 		
 		// User login file
-		if(!file_exists($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]))) {
-			mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/");
-			chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/", 0777);
-		}
-		if($fu = @fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/user.conf", "w")) {
+		mkdir("common/include/conf/user/" . sha1($output["user_username"]) . "/");
+		chmod("common/include/conf/user/" . sha1($output["user_username"]) . "/", 0777);
+		if($fu = fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/user.conf", "w")) {
 			fwrite($fu, $user_conf . PHP_EOL);
 			fclose($fu);
 			$log->write("notice", "[install] The new file 'user.conf' is located in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'");
 			
 			// User public PGP file
-			if($fpgp = @fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/pubkey.asc", "w")) {
+			if($fpgp = fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/pubkey.asc", "w")) {
 				fwrite($fpgp, $output["pgp_pubkey"] . PHP_EOL);
 				fclose($fpgp);
 				$log->write("notice", "[install] The new file 'pubkey.asc' is located in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'");
 				
 				// Database config file
-				if($fdb = @fopen($output["server_root"] . "common/include/conf/db.ini", "w")) {
+				if($fdb = fopen($output["server_root"] . "common/include/conf/db.ini", "w")) {
 					fwrite($fdb, $mysql_conf . PHP_EOL);
 					fclose($fdb);
 					$log->write("notice", "[install] The new file 'db.ini' is located in 'common/include/conf/'");
 					
 					// Crontab
-					if($fc = @fopen($output["server_root"] . "crontab", "w+")) {
-						fwrite($fc, "# Ninuxoo Local scan job\n00 */6 * * * root /usr/bin/php " . $output["server_root"] . "scan.php" . PHP_EOL);
+					$fc = fopen($output["server_root"] . "crontab", "w+");
+					if(fwrite($fc, "# Ninuxoo Local scan job\n00 */6 * * * root /usr/bin/php " . $output["server_root"] . "scan.php" . PHP_EOL) === false) {
+						$log->write("error", "[install] Can't create 'crontab' file in '" . $output["server_root"] . "'. Installation malformed");
+						$data = "error::Sono stati riscontrati dei problemi nella creazione del crontab.\nInstallazione avvenuta con successo.\nInstallare il cronjob manualmente.\nConsultare la documentazione per maggiori informazioni.";
+					} else {
 						fclose($fc);
-						
 						if(!exec("crontab " . $output["server_root"] . "crontab")) {
 							$log->write("notice", "[warning] A problem has occurred during installation of crontab. Please open and copy '" . $output["server_root"] . "crontab' and paste in '$ (sudo) crontab -e' manually.");
 						}
 						mail($output["user_username"], "Benvenuto in Ninuxoo!", "Prova", "From: ninuxoo@ninux.org");
 						$data = "ok";
-					} else {
-						$log->write("error", "[install] Can't create 'crontab' file in '" . $output["server_root"] . "'. Installation malformed");
-						$data = "error::Sono stati riscontrati dei problemi nella creazione del crontab.\nInstallazione avvenuta con successo.\nInstallare il cronjob manualmente.\nConsultare la documentazione per maggiori informazioni.";
 					}
 				} else {
 					$log->write("error", "[install] Can't create 'db.ini' in 'common/include/conf/'. Installation malformed");

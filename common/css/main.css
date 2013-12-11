@@ -39,7 +39,7 @@ fieldset {
 	border: #ccc 1px solid;
 	padding-top: 20px;
 	border-radius: 3px;
-	margin-bottom: 3em;
+	margin-bottom: 1em;
 }
 fieldset:hover{
 	border: #efac95 1px solid;
@@ -652,7 +652,7 @@ table.grid td {
 	width: 100%;
 }
 #main_header {
-	padding-top: 5.4%;
+	padding-top: 2em;
 }
 #header {
 	padding-top: 0;
@@ -693,7 +693,7 @@ table.grid td {
 #breadcrumb {
 	clear: left;
 	display: block;
-	margin: 5em 0 3em 0;
+	margin: 2em 0 2em 0;
 	padding: 0 15px;
 }
 #breadcrumb ul {
@@ -808,7 +808,7 @@ a#poster img {
 	-moz-border-radius: 18px;
 	-webkit-border-radius: 18px;
 	padding: 15px 15px 30px 15px;
-	margin-bottom: 2em;
+	/*margin-bottom: 2em;*/
 	color: #333;
 	font-size: 1.2em;
 }
@@ -1007,7 +1007,7 @@ ul#denied_list li img {
 }
 #footer {
 	text-align: center;
-	margin-top: 10px;
+	/*margin-top: 10px;*/
 	padding-bottom: 15px;
 	font-size: 11px;
 	color: #bbb;

@@ -46,7 +46,7 @@ class mdns {
 		return $oo;
 	}
 	public function scan($get_owner = false, $filter = "") {
-		$avh = shell_exec("avahi-browse _dns-sd._udp -prt");
+		$avh = shell_exec("avahi-browse _dns-sd._udp -prtl");
 		preg_match_all("/\=\;(.*?)\n/is", $avh, $out);
 		
 		foreach($out[1] as $kp => $parsed) {
