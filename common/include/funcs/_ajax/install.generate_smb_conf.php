@@ -50,30 +50,34 @@ $smb_conf .= ';Auto updated data (do not edit)' . "\n";
 $smb_conf .= 'last_scan_date = "' . date("Y-m-d") . '"' . "\n";
 $smb_conf .= 'last_items_count = 0' . "\n";
 $smb_conf .= 'last_scanning_time = 0' . "\n\n";
-$smb_conf .= '[Meteo Station]' . "\n";
-$smb_conf .= 'active = "' . (($output["install_meteo"] == "on") ? "true" : "false") . '"' . "\n";
-$smb_conf .= 'working = "' . ((isset($output["mysql_db_name"]) && trim($output["mysql_db_name"]) !== "") ? "true" : "false") . '"' . "\n\n";
-$smb_conf .= 'name = "' . $output["meteo_name"] . '"' . "\n";
+$smb_conf .= '[Meteo]' . "\n";
+$smb_conf .= 'station_active = "' . (($output["install_meteo"] == "on") ? "true" : "false") . '"' . "\n";
+$smb_conf .= 'station_working = "' . ((isset($output["mysql_db_name"]) && trim($output["mysql_db_name"]) !== "") ? "true" : "false") . '"' . "\n\n";
+$smb_conf .= 'station_name = "' . $output["meteo_name"] . '"' . "\n\n";
 $smb_conf .= ';Set the center of map and retrieve its borders' . "\n";
-$smb_conf .= 'city = "' . $output["meteo_city"] . '"' . "\n";
-$smb_conf .= 'region = "' . $output["meteo_region"] . '"' . "\n";
-$smb_conf .= 'country = "' . $output["meteo_country"] . '"' . "\n";
+$smb_conf .= 'station_city = "' . $output["meteo_city"] . '"' . "\n";
+$smb_conf .= 'station_region = "' . $output["meteo_region"] . '"' . "\n";
+$smb_conf .= 'station_country = "' . $output["meteo_country"] . '"' . "\n";
 $smb_conf .= 'OpenWeatherID = ' . $output["meteo_owid"] . ' ;OpenWeatherMap city ID. Find yours to http://openweathermap.org/data/2.1/find/name?q=CITY_NAME' . "\n";
 $smb_conf .= 'source_data_uri = "' . $output["api_dir"] . 'station.php"' . "\n";
 $smb_conf .= 'http_root = "' . $output["uri_address"] . '/Meteo/" ;NAS Meteo Station web uri' . "\n\n"; 
-$smb_conf .= ';If you want to get this data, please visit http://www.earthtools.org/' . "\n";
+$smb_conf .= ';You can retrieve following data from http://www.earthtools.org/' . "\n";
 $smb_conf .= 'altitude_mt = ' . $output["meteo_altitude_mt"] . "\n";
 $smb_conf .= 'altitude_ft = ' . $output["meteo_altitude_ft"] . "\n";
 $smb_conf .= 'default_altitude_unit = "' . $output["meteo_altitude_unit"] . '"' . "\n";
 $smb_conf .= 'latitude = ' . $output["meteo_lat"] . "\n";
-$smb_conf .= 'longitude = ' . $output["meteo_lng"] . "\n";
+$smb_conf .= 'longitude = ' . $output["meteo_lng"] . "\n\n";
+$smb_conf .= 'show_ninux_nodes = "true"' . "\n";
+$smb_conf .= 'show_region_area = "true"' . "\n";
+$smb_conf .= 'refresh_interval = 48000' . "\n";
 
-$mysql_conf = "[database]\n";
-$mysql_conf .= 'host = "' . $output["mysql_host"] . '"' . "\n";
-$mysql_conf .= 'db_name = "' . $output["mysql_db_name"] . '"' . "\n";
-$mysql_conf .= 'username = "' . $output["mysql_username"] . '"' . "\n";
-$mysql_conf .= 'password = "' . $output["mysql_password"] . '"' . "\n";
-$mysql_conf .= 'tables = "' . $output["mysql_db_table"] . '"' . "\n";
+$db_conf = "[database]\n";
+$db_conf .= 'type = "' . $output["db_type"] . '" ;use "mysql", "sqlite" or "postgresql"' . "\n\n";
+$db_conf .= 'host = "' . $output["mysql_host"] . '"' . "\n";
+$db_conf .= 'db_name = "' . $output["mysql_db_name"] . '"' . "\n";
+$db_conf .= 'username = "' . $output["mysql_username"] . '"' . "\n";
+$db_conf .= 'password = "' . $output["mysql_password"] . '"' . "\n";
+$db_conf .= 'table = "' . $output["mysql_db_table"] . '"' . "\n";
 
 
 // Files creation
@@ -107,7 +111,7 @@ if($fp = @fopen($output["server_root"] . "common/include/conf/config.ini", "w"))
 				
 				// Database config file
 				if($fdb = @fopen($output["server_root"] . "common/include/conf/db.ini", "w")) {
-					fwrite($fdb, $mysql_conf . PHP_EOL);
+					fwrite($fdb, $db_conf . PHP_EOL);
 					fclose($fdb);
 					$log->write("notice", "[install] The new file 'db.ini' is located in 'common/include/conf/'");
 					

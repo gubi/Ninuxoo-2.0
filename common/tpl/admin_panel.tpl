@@ -11,11 +11,40 @@
 				<p>NAS COLLEGATI</p>
 				<small>Estendi la Rete delle ricerche</small>
 			</a>
-			<a href="javascript: void(0);" style="opacity:0.5;">
-				<img src="common/media/img/admin_panel/meteo_128_333.png" />
-				<p>DATI METEO</p>
-				<small>Tutti i dati raccolti dalla Stazione</small>
-			</a>
+			<?php
+			$db = parse_ini_file("common/include/conf/db.ini", true);
+			class dbConnection extends PDO{
+				public function __construct() {    
+					switch($db["database"]["type"]){
+						case "mysql":
+							$dbconn = "mysql:host=" . $db["database"]["host"] . ";dbname=" . $db["database"]["db_name"] . ";";
+						break;
+						case "sqlite":
+							$dbconn = "sqlite:" . $db["database"]["host"] . ";";
+						break;
+						case "postgresql":
+							$dbconn = "pgsql:host=" . $db["database"]["host"] . " dbname=" . $db["database"]["db_name"] . ";";
+						break;
+					}
+					parent::__construct($dbconn, $db["database"]["username"], $db["database"]["password"], array(PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+				}
+			}
+			try {
+				$conn = new dbConnection();
+				$connection = true;
+			} catch(PDOException $e) {
+				$connection = false;
+			}
+			if($connection) {
+				?>
+				<a href="./Admin/impostazioni_meteo">
+					<img src="common/media/img/admin_panel/meteo_128_333.png" />
+					<p>DATI METEO</p>
+					<small>Tutti i dati raccolti dalla Stazione</small>
+				</a>
+				<?php
+			}
+			?>
 			<span class="separator transparent"></span>
 			<a href="./Admin/Config_editor">
 				<img src="common/media/img/admin_panel/loco_minimal_128_333.png" />

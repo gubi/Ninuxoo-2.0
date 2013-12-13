@@ -107,6 +107,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "save_menu":
 			require_once("local_site.save_menu.php");
 			break;
+		case "save_meteo_settings":
+			require_once("save_meteo_settings.php");
+			break;
 		case "save_page":
 			require_once("local_site.save_page.php");
 			break;

@@ -337,17 +337,18 @@
 					<input type="number" name="meteo_lng" id="meteo_lng" value="" tabindex="23" />
 				</span>
 				<br />
+				<label>Altitudine:</label>
 				<span class="left">
-					<label for="meteo_altitude_mt">Altitudine (metri):</label>
+					<label for="meteo_altitude_mt">metri:</label>
 					<input type="number" name="meteo_altitude_mt" id="meteo_altitude_mt" size="2" value="" tabindex="24" />
 				</span>
 				<span class="left">
-					<label for="meteo_altitude_ft">Altitudine (piedi):</label>
-					<input type="number" name="meteo_altitude_ft" id="meteo_altitude_ft" size="3" value="" tabindex="25" />
+					<label for="meteo_altitude_ft">piedi:</label>
+					<input type="number" name="meteo_altitude_ft" id="meteo_altitude_ft" size="4" value="" tabindex="25" />
 				</span>
 				<br />
 				<span class="left">
-					<label for="meteo_altitude_unit">Unit&agrave; di misura per l'altitudine:</label>
+					<label for="meteo_altitude_unit">Unit&agrave; di misura predefinita:</label>
 					<select name="meteo_altitude_unit" id="meteo_altitude_unit" style="width: 100px;" tabindex="26">
 						<option value=""></option>
 						<option value="mt" selected>metri</option>
@@ -364,31 +365,41 @@
 					In caso di difficolt&agrave; ad acquisire i dati dalla propria Stazione, con poche risorse economiche &egrave; possibile valutare la possibilit&agrave; di utilizzare dei dispositivi <acronym title="Advanced RISC Machine">ARM</acronym> adattati allo scopo.
 				</p>
 				<br />
+				<span class="left">
+					<label for="db_type">Tipo di database:</label>
+					<select name="db_type" id="db_type" style="width: 100px;" tabindex="27">
+						<option value="mysql" selected></option>
+						<option value="sqlite" selected>metri</option>
+						<option value="postgresql">piedi</option>
+					</select>
+				</span>
+				<br />
+				<br />
 				<label for="mysql_host">Host:</label>
-				<input type="text" name="mysql_host" id="mysql_host" value="localhost" tabindex="27" />
+				<input type="text" name="mysql_host" id="mysql_host" value="localhost" tabindex="28" />
 				<br />
 				<br />
 				<span class="left">
 					<label for="mysql_username">Username:</label>
-					<input type="text" name="mysql_username" id="mysql_username" value="" tabindex="28" />
+					<input type="text" name="mysql_username" id="mysql_username" value="" tabindex="29" />
 				</span>
 				<span class="left">
 					<label for="mysql_password">Password:</label>
-					<input type="password" name="mysql_password" id="mysql_password" value="" tabindex="29" />
+					<input type="password" name="mysql_password" id="mysql_password" value="" tabindex="30" />
 				</span>
 				<br />
 				<br />
 				<span class="left">
 					<label for="mysql_db_name">Nome del database:</label>
-					<input type="text" name="mysql_db_name" id="mysql_db_name" value="" tabindex="30" />
+					<input type="text" name="mysql_db_name" id="mysql_db_name" value="" tabindex="31" />
 				</span>
 				<span class="left">
 					<label for="mysql_db_table">Nome della tabella:</label>
-					<input type="text" name="mysql_db_table" id="mysql_db_table" value="Meteo" tabindex="31" />
+					<input type="text" name="mysql_db_table" id="mysql_db_table" value="Meteo" tabindex="32" />
 				</span>
 			</div>
 		</fieldset>
 		<hr />
-		<button id="install" <?php print $btn_next_disabled; ?> tabindex="32">Installa</button>
+		<button id="install" <?php print $btn_next_disabled; ?> tabindex="33">Installa</button>
 	</form>
 </div>

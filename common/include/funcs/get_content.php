@@ -19,6 +19,7 @@
 								include("common/tpl/general_settings.tpl");
 								break;
 							case "impostazioni_meteo":
+								include("common/tpl/meteo_settings.tpl");
 								break;
 							case "nas_collegati":
 								include("common/tpl/linked_nas.tpl");
