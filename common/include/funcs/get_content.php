@@ -35,6 +35,9 @@
 						include("common/tpl/login.tpl");
 					}
 					break;
+				case "elenco_voip":
+					include("common/tpl/elenco_voip.tpl");
+					break;
 				default:
 					include("common/tpl/load_page.tpl");
 					break;

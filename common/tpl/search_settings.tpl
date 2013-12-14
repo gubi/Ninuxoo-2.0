@@ -4,7 +4,6 @@ require_once("common/include/classes/rsa.class.php");
 $rsa = new rsa();
 $pubkey = file_get_contents("common/include/conf/rsa_2048_pub.pem");
 $token = $rsa->get_token($pubkey);
-print $token;
 $crypted = base64_encode($rsa->simple_private_encrypt($token));
 ?>
 <link href="common/js/chosen/chosen.css" rel="stylesheet" />
