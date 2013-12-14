@@ -143,7 +143,7 @@ if(isset($_GET["op"]) && trim($_GET["op"]) !== "") {
 			
 			$_get = preg_replace("/^\//", $GLOBALS["replace_uri"], $_GET["path"]);
 			if($_get == $GLOBALS["replace_uri"] || trim($_get) == ""){
-				$matched[0] = $config["NAS"]["smb_shares"];
+				$matched[0] = $config["NAS"]["nas_shares"];
 			} else {
 				preg_match_all("/^" . str_replace("/", "\/", escapeshellcmd($_get)) . ".*/im", $listing_list, $matched);
 			}

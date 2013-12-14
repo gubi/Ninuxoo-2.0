@@ -71,7 +71,7 @@ class scan {
 	}
 	private function smb_conf_file() {
 		$get_config = $this->get_config();
-		return trim(preg_replace("/;(.*?)$/i", "", $get_config["NAS"]["smb_conf_dir"])) . "smb.conf";
+		return trim(preg_replace("/;(.*?)$/i", "", $get_config["NAS"]["root_share_dir"])) . "smb.conf";
 	}
 	private function parse_smb_conf() {
 		if (!class_exists("manage_conf_file", false)) {
@@ -94,7 +94,7 @@ class scan {
 	}
 	private function scan() {
 		$get_config = $this->get_config();
-		foreach($get_config["NAS"]["smb_shares"] as $scan_dir){
+		foreach($get_config["NAS"]["nas_shares"] as $scan_dir){
 			$share_ = array();
 			
 			$splitted_dir = array_values(array_filter(explode("/", trim(str_replace("./", "", $scan_dir)))));
@@ -112,8 +112,8 @@ class scan {
 		$get_config = $this->get_config();
 		
 		$scan = $this->scan();
-		sort($get_config["NAS"]["smb_shares"]);
-		foreach($get_config["NAS"]["smb_shares"] as $f) {
+		sort($get_config["NAS"]["nas_shares"]);
+		foreach($get_config["NAS"]["nas_shares"] as $f) {
 			$info = pathinfo($f);
 			$shares[] = $info["basename"];
 			$scans = str_replace($info["dirname"] . "/", "", $scan);
