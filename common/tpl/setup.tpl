@@ -51,19 +51,8 @@
 		check_internet();
 		
 		$("#nlloader").show();
-		get_samba($("#smb_conf_dir").val());
-		$("#remote_nas").change(function() {
-			if($(this).is(":checked")) {
-				$("#smb_conf_dir").val("/mnt/NAS/").focus();
-				get_samba($("#smb_conf_dir").val());
-				$("#info_mount_btn").show();
-			} else {
-				$("#smb_conf_dir").val("/etc/samba/").focus();
-				get_samba($("#smb_conf_dir").val());
-				$("#info_mount_btn").hide();
-			}
-		});
-		$("#smb_conf_dir").change(function() {
+		get_samba($("#root_share_dir").val());
+		$("#root_share_dir").change(function() {
 			get_samba($(this).val());
 		});
 		var title = $("title").text();
@@ -258,27 +247,32 @@
 		</fieldset>
 		<fieldset>
 			<legend><acronym title="Network Attached Storage">NAS</acronym></legend>
+			
 			<label for="nas_name" class="required">Nome di questo NAS:</label>
 			<input type="text" name="nas_name" id="nas_name" style="width: 50%;" value="" tabindex="8" />
 			
 			<label for="nas_description" class="required">Descrizione (titolo della pagina):</label>
 			<input type="text" name="nas_description" id="nas_description" style="width: 90%;" value="" tabindex="9" />
+			<br />
+			<br />
+			
+			<p>La directory di default per le condivisioni &egrave; <tt>/mnt/NAS</tt>.<br />
+			Se si vuole condividere un Hard Disk esterno, &egrave; necessario che sia montato in maniera permanente in questo NAS.<br />
+			Ricaricare quindi la pagina per poter operare sulle nuove modifiche.<br />
+			&Egrave; comunque possibile stabilire un altro percorso a propria scelta.</p>
+			<p><b>Nota</b>: &egrave; importante che la directory principale delle condivisioni sia fuori da <tt><?php print getcwd() . "/"; ?></tt> altrimenti sar&agrave; tutto raggiungibile in chiaro!</p>
+			<label for="root_share_dir" class="required">Directory principale dei files in condivisione:</label>
+			<input type="text" name="root_share_dir" id="root_share_dir" style="width: 25%;" value="/mnt/NAS/" placeholder="/mnt/NAS/" tabindex="12" />
+			
+			<label for="shared_paths" class="required">Directories che si desidera siano scansionate e condivise:</label>
+			<textarea name="shared_paths" id="shared_paths" rows="5" style="width: 50%;" disabled tabindex="13"></textarea>
 			<hr />
 			<button id="show_nas_advanced_options" class="save grey">Avanzate...</button>
 			<div class="advanced" id="nas_advanced_options" style="display: none;">
 				<h3>Impostazioni <acronym title="Network Attached Storage">NAS</acronym> avanzate</h3>
 				<label for="uri_address">Indirizzo <acronym title="Uniform Resource Identifier">URI</acronym>:</label>
 				<input type="text" name="uri_address" id="uri_address" style="width: 50%;" value="<?php print (($_SERVER["HTTPS"]) ? "https//" : "http://") . $_SERVER["SERVER_ADDR"]; ?>" tabindex="10" />
-				<br />
-				<br />
-				<label><input type="checkbox" name="remote_nas" id="remote_nas" tabindex="11" /> Il NAS &egrave; in una posizione remota ed &egrave; gestito da controller apposito</label>
-				<br />
-				<label for="smb_conf_dir">Directory del file di configurazione SAMBA:</label>
-				<input type="text" name="smb_conf_dir" id="smb_conf_dir" style="width: 25%;" value="" placeholder="/etc/samba/" tabindex="12" />
-				<p id="info_mount_btn" style="display: none;" class="info">Per poter rintracciare i files, &egrave; necessario che il NAS sia montato in maniera permanente</p>
 				
-				<label for="smb_conf_paths">Directories SAMBA che si desidera siano scansionate:</label>
-				<textarea name="smb_conf_paths" id="smb_conf_paths" rows="5" style="width: 50%;" disabled tabindex="13"></textarea>
 				
 				<label for="server_root">Directory root del Server:</label>
 				<input type="text" name="server_root" id="server_root" style="width: 50%;" value="<?php print getcwd() . "/"; ?>" placeholder="/var/www/" tabindex="14" />

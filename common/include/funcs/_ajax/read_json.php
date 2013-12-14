@@ -21,7 +21,9 @@ if(isset($_GET["uri"]) && trim($_GET["uri"]) !== ""){
 		print $curl_cmd . "\n\n";
 	}
 	$contents = shell_exec($curl_cmd);
-	//$contents = browse($uri);
+	if(strlen($contents) == 0){
+		$contents = browse($uri);
+	}
 	if(strlen($contents) > 0){
 		print $contents;
 	} else {

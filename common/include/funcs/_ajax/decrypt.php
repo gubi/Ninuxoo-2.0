@@ -86,8 +86,8 @@ if(isset($_GET["getPublicKey"])) {
 		case "download_data":
 			require_once("editor.download_data.php");
 			break;
-		case "get_samba":
-			require_once("install.smb_conf.php");
+		case "get_shares":
+			require_once("install.get_shares.php");
 			break;
 		case "install":
 			require_once("install.generate_smb_conf.php");

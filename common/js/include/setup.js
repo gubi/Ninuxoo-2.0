@@ -119,18 +119,18 @@ function get_nodes() {
 					}
 				});
 			}
+		}).error(function(data) {
+			apprise("Non &egrave; stato possibile rilevare l'albero dei nodi dal MapServer.<br />L'errore riscontrato &egrave; il seguente:<br /><code>" + data.responseText + "</code>", {icon: "error", title: "Ouch!"});
 		});
 	}
 }
 function get_samba(remote_nas) {
-	$("#smb_conf_dir_error").remove();
-	$("#smb_conf_dir").after('<span id="lloader">&nbsp;&nbsp;&nbsp;&nbsp;<img src="common/media/img/loader.gif" width="16" /> Controllo la configurazione SAMBA...</span>');
 	if (remote_nas == undefined) {
 		var remote_nas = "";
 	}
 	var password = makeid();	
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt(remote_nas, password);
+		var encryptedString = $.jCryption.encrypt("file=" + remote_nas, password);
 		
 		$.ajax({
 			url: "common/include/funcs/_ajax/decrypt.php",
@@ -138,29 +138,24 @@ function get_samba(remote_nas) {
 			type: "POST",
 			data: {
 				jCryption: encryptedString,
-				type: "get_samba"
+				type: "get_shares"
 			},
 			success: function(result) {
 				$("#lloader").remove();
-				if(result["error"] == false) {
-					$.each(result["smb"], function(item, data) {
-						if(data["valid_smb_conf"]) {
-							var paths = "";
-							$("#remote_nas").attr("checked", true);
-							$("#smb_conf_dir").val("/mnt/NAS/");
-							$("#info_mount_btn").show();
-							$.each(data["smb_shares"], function(key, val) {
-								paths += val + "\n";
-							});
-							$("#smb_conf_paths").val(paths).attr("disabled", false);
-							$("#smb_conf_dir_error").remove();
+				if(!result["alert"]) {
+					var paths = "";
+					$.each(result["shares"], function(item, data) {
+						paths += data + "\n";
+						$("#shared_paths").val(paths).attr("disabled", false);
+						if($("#root_share_dir_error").length > 0) {
+							$("#root_share_dir").removeClass("error");
 						}
+						$("#root_share_dir_error").remove();
 					});
 				} else {
-					$("#info_mount_btn").hide();
-					$("#remote_nas").attr("checked", false);
-					$("#smb_conf_dir").after('<span id="smb_conf_dir_error" class="error">&nbsp;&nbsp;&nbsp;&nbsp;' + result["error"] + '</span>');
-					$("smb_conf_paths").attr("disabled", false);
+					$("#root_share_dir").addClass("error").after('<span id="root_share_dir_error" class="error">&nbsp;&nbsp;&nbsp;&nbsp;' + result["alert"] + '</span>');
+					$("#shared_paths").val("").attr("disabled", "disabled");
+					apprise(result["alert"], {icon: "warning", title: "Mmmm..."});
 				}
 			}
 		});
@@ -321,6 +316,10 @@ function install() {
 					$("#nas_name").addClass("error").focus();
 				} else if($("#nas_description").val().length == 0) {
 					$("#nas_description").addClass("error").focus();
+				} else if($("#root_share_dir").val().length == 0) {
+					$("#root_share_dir").addClass("error").focus();
+				} else if($("#shared_paths").val().length == 0) {
+					$("#shared_paths").addClass("error").focus();
 				} else if($("#meteo_name").val().length == 0) {
 					$("#meteo_name").addClass("error").focus();
 				}
