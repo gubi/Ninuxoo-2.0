@@ -20,7 +20,9 @@ class local_search {
 	private $params;
 	
 	public function __construct() {
-		$this->conf = parse_ini_file("../conf/config.ini", true);
+		$this->class_dir = __DIR__;
+		$this->dir = str_replace("classes", "conf", $this->class_dir);
+		$this->conf = parse_ini_file($this->dir . "/config.ini", true);
 		$this->root_dir = $this->conf["NAS"]["root_dir"];
 		$this->root_share_dir = $this->conf["NAS"]["root_share_dir"];
 	}
@@ -257,15 +259,18 @@ class local_search {
 		}
 	}
 	public function scan($type) {
-		$root_dir = $this->get_root_path();
-		if(!file_exists($root_dir . "API/listing")){
+		if (!class_exists("rsa", false)) {
+			require($this->class_dir . "/rsa.class.php");
+		}
+		$rsa = new rsa();
+		if(!file_exists($this->root_dir . "API/listing")){
 			ob_start();
-			require_once($root_dir . "scan.php");
+			require_once($this->root_dir . "scan.php");
 			$data = ob_get_clean();
 			ob_end_clean();
 		}
-		$scanned_files = file_get_contents($root_dir . "API/listing");
-		$local_conf_lines = explode("\n", $scanned_files);
+		$scanned_files = shell_exec("cat " . $this->root_dir . "API/listing");
+		$local_conf_lines = explode("\n", $rsa->simple_decrypt($scanned_files));
 		
 		switch($type){
 			case "count":
