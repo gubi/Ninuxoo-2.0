@@ -16,7 +16,7 @@ class mdns {
 		}
 		return $untrusted;
 	}
-	private function get_owner($key) {
+	public function get_owner($key) {
 		require_once($this->include_path() . "lib/simplehtmldom_1_5/simple_html_dom.php");
 		
 		$mit = "http://pgp.mit.edu:11371";
@@ -33,6 +33,22 @@ class mdns {
 			return $o;
 		}
 	}
+	public function get_owner_key($email) {
+		require_once($this->include_path() . "lib/simplehtmldom_1_5/simple_html_dom.php");
+		
+		$mit = "http://pgp.mit.edu:11371";
+		if($own = @file_get_html($mit . "/pks/lookup?search=" . urlencode($email))) {
+			$ret = $own->find("a");
+			$owner = array();
+			foreach($ret as $a) {
+				if(strpos($a->href, "lookup")) {
+					$owner_key[] = $a->plaintext;
+				}
+			}
+			return trim($owner_key[0]);
+		}
+	}
+	
 	private function get_address($out, $hostname) {
 		foreach($out as $kp => $parsed) {
 			$o = explode(";", $parsed);

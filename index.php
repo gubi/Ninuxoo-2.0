@@ -13,14 +13,8 @@ if(isset($_COOKIE["n"])) {
 // Generate RSA key
 if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 	shell_exec('openssl genrsa -out common/include/conf/rsa_2048_priv.pem 2048');
-	if(file_exists("common/include/conf/rsa_2048_priv.pem")) {
-		if(!file_exists("common/include/conf/rsa_2048_pub.pem")) {
-			shell_exec('openssl rsa -pubout -in common/include/conf/rsa_2048_priv.pem -out common/include/conf/rsa_2048_pub.pem');
-		}
-	} else {
-		header("Content-type: text/plain");
-		print "OUCH!\nNon riesco a creare le chiavi RSA per questo device.\nPer favore dai i permessi in scrittura alla directory common/include/conf.";
-		exit();
+	if(!file_exists("common/include/conf/rsa_2048_pub.pem")) {
+		shell_exec('openssl rsa -pubout -in common/include/conf/rsa_2048_priv.pem -out common/include/conf/rsa_2048_pub.pem');
 	}
 }
 if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
@@ -40,7 +34,7 @@ if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 $has_config = (!file_exists("common/include/conf/config.ini")) ? false : true;
 if(!$has_config) {
 	if(!isset($_GET["setup"])) {
-		header("Location: http://" . preg_replace("/\/+/", "/", str_replace(array($_GET["s"], $_GET["id"], $_GET["q"]), "", $_SERVER[HTTP_HOST] . "/" . $_SERVER["REQUEST_URI"]) . "/?setup"));
+		header("Location: http://" . preg_replace("/\/+/", "/", str_replace(array($_GET["s"], $_GET["id"], $_GET["q"]), "", $_SERVER[HTTP_HOST] . "/" . $_SERVER["REQUEST_URI"]) . "?setup"));
 	} else {
 		$config["NAS"]["name"] = "Local Semantic Ninuxoo setup";
 		$NAS_absolute_uri = "http://" . $_SERVER["SERVER_ADDR"];

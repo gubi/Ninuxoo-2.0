@@ -309,41 +309,44 @@
 				<label for="meteo_city">Citt&agrave;:</label>
 				<input type="text" name="meteo_city" id="meteo_city" style="width: 50%;" value="" tabindex="18" />
 				
+				<label for="meteo_zone">Zona</label>
+				<input type="text" name="meteo_zone" id="meteo_zone" style="width: 50%;" value="" tabindex="19" />
+				
 				<label for="meteo_region">Regione:</label>
-				<input type="text" name="meteo_region" id="meteo_region" style="width: 50%;" value="" tabindex="19" />
+				<input type="text" name="meteo_region" id="meteo_region" style="width: 50%;" value="" tabindex="20" />
 				
 				<label for="meteo_country">Paese:</label>
-				<input type="text" name="meteo_country" id="meteo_country" style="width: 50%;" value="" tabindex="20" />
+				<input type="text" name="meteo_country" id="meteo_country" style="width: 50%;" value="" tabindex="21" />
 				
 				<br />
 				
 				<label for="meteo_owid">OpenWeather ID:</label>
-				<input type="text" name="meteo_owid" id="meteo_owid" value="" tabindex="21" />
+				<input type="text" name="meteo_owid" id="meteo_owid" value="" tabindex="22" />
 				
 				<br />
 				<br />
 				<span class="left">
 					<label for="meteo_lat">Latitudine:</label>
-					<input type="number" name="meteo_lat" id="meteo_lat" value="" tabindex="22" />
+					<input type="number" name="meteo_lat" id="meteo_lat" value="" tabindex="23" />
 				</span>
 				<span class="left">
 					<label for="meteo_lng">Longitudine:</label>
-					<input type="number" name="meteo_lng" id="meteo_lng" value="" tabindex="23" />
+					<input type="number" name="meteo_lng" id="meteo_lng" value="" tabindex="24" />
 				</span>
 				<br />
 				<label>Altitudine:</label>
 				<span class="left">
 					<label for="meteo_altitude_mt">metri:</label>
-					<input type="number" name="meteo_altitude_mt" id="meteo_altitude_mt" size="2" value="" tabindex="24" />
+					<input type="number" name="meteo_altitude_mt" id="meteo_altitude_mt" size="2" value="" tabindex="25" />
 				</span>
 				<span class="left">
 					<label for="meteo_altitude_ft">piedi:</label>
-					<input type="number" name="meteo_altitude_ft" id="meteo_altitude_ft" size="4" value="" tabindex="25" />
+					<input type="number" name="meteo_altitude_ft" id="meteo_altitude_ft" size="4" value="" tabindex="26" />
 				</span>
 				<br />
 				<span class="left">
 					<label for="meteo_altitude_unit">Unit&agrave; di misura predefinita:</label>
-					<select name="meteo_altitude_unit" id="meteo_altitude_unit" style="width: 100px;" tabindex="26">
+					<select name="meteo_altitude_unit" id="meteo_altitude_unit" style="width: 100px;" tabindex="27">
 						<option value=""></option>
 						<option value="mt" selected>metri</option>
 						<option value="ft">piedi</option>
@@ -361,39 +364,39 @@
 				<br />
 				<span class="left">
 					<label for="db_type">Tipo di database:</label>
-					<select name="db_type" id="db_type" style="width: 100px;" tabindex="27">
-						<option value="mysql" selected></option>
-						<option value="sqlite" selected>metri</option>
-						<option value="postgresql">piedi</option>
+					<select name="db_type" id="db_type" style="width: 100px;" tabindex="28">
+						<option value="mysql" selected>MySQL</option>
+						<option value="sqlite">SQLite</option>
+						<option value="postgresql">PostgreSQL</option>
 					</select>
 				</span>
 				<br />
 				<br />
 				<label for="mysql_host">Host:</label>
-				<input type="text" name="mysql_host" id="mysql_host" value="localhost" tabindex="28" />
+				<input type="text" name="mysql_host" id="mysql_host" value="localhost" tabindex="29" />
 				<br />
 				<br />
 				<span class="left">
 					<label for="mysql_username">Username:</label>
-					<input type="text" name="mysql_username" id="mysql_username" value="" tabindex="29" />
+					<input type="text" name="mysql_username" id="mysql_username" value="" tabindex="30" />
 				</span>
 				<span class="left">
 					<label for="mysql_password">Password:</label>
-					<input type="password" name="mysql_password" id="mysql_password" value="" tabindex="30" />
+					<input type="password" name="mysql_password" id="mysql_password" value="" tabindex="31" />
 				</span>
 				<br />
 				<br />
 				<span class="left">
 					<label for="mysql_db_name">Nome del database:</label>
-					<input type="text" name="mysql_db_name" id="mysql_db_name" value="" tabindex="31" />
+					<input type="text" name="mysql_db_name" id="mysql_db_name" value="" tabindex="32" />
 				</span>
 				<span class="left">
 					<label for="mysql_db_table">Nome della tabella:</label>
-					<input type="text" name="mysql_db_table" id="mysql_db_table" value="Meteo" tabindex="32" />
+					<input type="text" name="mysql_db_table" id="mysql_db_table" value="Meteo" tabindex="33" />
 				</span>
 			</div>
 		</fieldset>
 		<hr />
-		<button id="install" <?php print $btn_next_disabled; ?> tabindex="33">Installa</button>
+		<button id="install" <?php print $btn_next_disabled; ?> tabindex="34">Installa</button>
 	</form>
 </div>

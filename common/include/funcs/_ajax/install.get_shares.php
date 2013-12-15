@@ -13,7 +13,7 @@ if(!$file_exists) {
 		$parsed["error"] = false;
 		foreach(array_filter($dirs) as $kf => $dir) {
 			$info = pathinfo($dir);
-			$parsed["shares"][] = "/" . $info["basename"];
+			$parsed["shares"][] = $info["basename"];
 		}
 		print json_encode($parsed);
 	} else {

@@ -97,10 +97,9 @@ class scan {
 		foreach($get_config["NAS"]["nas_shares"] as $scan_dir){
 			$share_ = array();
 			
-			$splitted_dir = array_values(array_filter(explode("/", trim(str_replace("./", "", $scan_dir)))));
-			$this->listing .= shell_exec("find " . str_replace(" ", "\ ", escapeshellcmd($scan_dir)) . " -mindepth 1 | sort");
+			$splitted_dir = array_values(array_filter(explode("/", trim(str_replace("./", "", str_replace("//", "/", $get_config["NAS"]["root_share_dir"] . "/") . $scan_dir)))));
+			$this->listing .= shell_exec("find " . str_replace(" ", "\ ", escapeshellcmd(str_replace("//", "/", $get_config["NAS"]["root_share_dir"] . "/") . $scan_dir)) . " -mindepth 1 | sort");
 		}
-		
 		return $this->listing;
 	}
 	public function save($type = "") {

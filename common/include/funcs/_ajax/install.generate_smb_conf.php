@@ -1,6 +1,8 @@
 <?php
 header("Content-type: text/plain");
 require_once("../../classes/logging.class.php");
+require_once("../../classes/mdns.class.php");
+require_once("../../classes/rsa.class.php");
 
 $log = new Logging();
 $log->file("../../log/ninuxoo.log");
@@ -11,9 +13,13 @@ $output["server_root"] = str_replace("//", "/", $output["server_root"] . "/");
 $output["api_dir"] = str_replace("//", "/", $output["api_dir"] . "/");
 
 
+	$mdns = new mdns();
+	$owner_key = $mdns->get_owner_key($output["user_username"]);
+	$owner = $mdns->get_owner($owner_key);
+	
 $user_conf = '[User]' . "\n";
-$user_conf .= 'name = ""' . "\n";
-$user_conf .= 'key = ""' . "\n";
+$user_conf .= 'name = "' . $owner["name"] . '"' . "\n";
+$user_conf .= 'key = "' . $owner_key . '"' . "\n";
 $user_conf .= 'username = "' . $output["user_username"] . '"' . "\n";
 $user_conf .= 'pass = "' . sha1($output["user_password"]) . '"' . "\n\n";
 $user_conf .= 'use_editor_always = "true"' . "\n";
@@ -23,7 +29,7 @@ $general_settings = '[login]' . "\n";
 $general_settings .= 'session_length = 3600' . "\n";
 $general_settings .= 'allow_user_registration = "true"' . "\n\n";
 $general_settings .= 'admin[] = "' . sha1($output["user_username"]) . '"' . "\n\n";
-$general_settings = '[searches]' . "\n";
+$general_settings .= '[searches]' . "\n";
 $general_settings .= 'allow_advanced_research = "true"' . "\n";
 $general_settings .= 'research_type = "query"' . "\n";
 $general_settings .= 'research_results = 200' . "\n";
@@ -32,7 +38,7 @@ $config_ini = '; NINUXOO CONFIGURATION FILE' . "\n\n";
 $config_ini .= '[Ninux node]' . "\n";
 $config_ini .= 'name = "' . $output["node_name"] . '"' . "\n";
 $config_ini .= 'map_server_uri = "' . $output["node_map"] . '"' . "\n";
-$config_ini .= 'node_type = "' . $output["node_type"] . '" ;Use "hotspot", "active" or "potential"' . "\n\n";
+$config_ini .= 'node_type = "' . $output["node_type"] . '" ;Use "hotspot" or "active"' . "\n\n";
 $config_ini .= '[NAS]' . "\n";
 $config_ini .= 'name = "' . $output["nas_name"] . '" ;NAS name' . "\n";
 $config_ini .= 'description = "' . $output["nas_description"] . '" ;NAS Description' . "\n";
@@ -44,7 +50,7 @@ $config_ini .= ';Public shared directories array' . "\n";
 $shared_dirs = explode("\n", trim($output["shared_paths"]));
 foreach($shared_dirs as $kshared => $shared) {
 	$info = pathinfo($shared);
-	$config_ini .= 'smb_shares[] = "/' . trim($info["basename"]) . '"' . "\n" . (($kshared == (count($shared_dirs) - 1)) ? "\n" : "");
+	$config_ini .= 'nas_shares[] = "/' . trim($info["basename"]) . '"' . "\n" . (($kshared == (count($shared_dirs) - 1)) ? "\n" : "");
 }
 $config_ini .= ';Auto updated data (do not edit)' . "\n";
 $config_ini .= 'last_scan_date = "' . date("Y-m-d") . '"' . "\n";
@@ -79,6 +85,18 @@ $db_conf .= 'username = "' . $output["mysql_username"] . '"' . "\n";
 $db_conf .= 'password = "' . $output["mysql_password"] . '"' . "\n";
 $db_conf .= 'table = "' . $output["mysql_db_table"] . '"' . "\n";
 
+$avahi_service = '<?xml version="0.0" standalone="no"?>' . "\n";
+$avahi_service .= '<!DOCTYPE service-group SYSTEM "avahi-service.dtd">' . "\n";
+$avahi_service .= '<service-group>' . "\n";
+$avahi_service .= '	<name replace-wildcards="yes">' . $output["nas_name"] . '</name>' . "\n";
+$avahi_service .= '	<service>' . "\n";
+$avahi_service .= '    	<type>_dns-sd._udp</type>' . "\n";
+$avahi_service .= '		<port>64689</port>' . "\n";
+	$rsa = new rsa();
+	$token = $rsa->get_token(file_get_contents($output["server_root"] . "common/include/conf/rsa_2048_pub.pem"));
+$avahi_service .= ' 		<txt-record>Hello guys I\'m a Ninuxoo device:' . base64_encode($owner_key . "::" . $output["meteo_city"] . " ~ " . $output["meteo_zone"] . "::" . $token) . '</txt-record>' . "\n";
+$avahi_service .= '	</service>' . "\n";
+$avahi_service .= '</service-group>';
 
 // Files creation
 // Main config file
@@ -97,6 +115,8 @@ if($fp = @fopen($output["server_root"] . "common/include/conf/config.ini", "w"))
 		if(!file_exists($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]))) {
 			mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/");
 			chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/", 0777);
+			mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/");
+			chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/", 0777);
 		}
 		if($fu = @fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/user.conf", "w")) {
 			fwrite($fu, $user_conf . PHP_EOL);
@@ -109,29 +129,39 @@ if($fp = @fopen($output["server_root"] . "common/include/conf/config.ini", "w"))
 				fclose($fpgp);
 				$log->write("notice", "[install] The new file 'pubkey.asc' is located in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'");
 				
-				// Database config file
-				if($fdb = @fopen($output["server_root"] . "common/include/conf/db.ini", "w")) {
-					fwrite($fdb, $db_conf . PHP_EOL);
-					fclose($fdb);
-					$log->write("notice", "[install] The new file 'db.ini' is located in 'common/include/conf/'");
+				// Avahi service
+				if($fas = @fopen($output["server_root"] . "common/include/conf/ninuxoo.service", "w")) {
+					fwrite($fas, $avahi_service . PHP_EOL);
+					fclose($fas);
+					$log->write("notice", "[install] The new file 'ninuxoo.service' is located in 'common/include/conf/'");
 					
-					// Crontab
-					if($fc = @fopen($output["server_root"] . "crontab", "w+")) {
-						fwrite($fc, "# Ninuxoo Local scan job\n00 */6 * * * root /usr/bin/php " . $output["server_root"] . "scan.php" . PHP_EOL);
-						fclose($fc);
+					// Database config file
+					if($fdb = @fopen($output["server_root"] . "common/include/conf/db.ini", "w")) {
+						fwrite($fdb, $db_conf . PHP_EOL);
+						fclose($fdb);
+						$log->write("notice", "[install] The new file 'db.ini' is located in 'common/include/conf/'");
 						
-						if(!exec("crontab " . $output["server_root"] . "crontab")) {
-							$log->write("notice", "[warning] A problem has occurred during installation of crontab. Please open and copy '" . $output["server_root"] . "crontab' and paste in '$ (sudo) crontab -e' manually.");
+						// Crontab
+						if($fc = @fopen($output["server_root"] . "crontab", "w+")) {
+							fwrite($fc, "# Ninuxoo Local scan job\n00 */6 * * * root /usr/bin/php " . $output["server_root"] . "scan.php" . PHP_EOL);
+							fclose($fc);
+							
+							if(!exec("crontab " . $output["server_root"] . "crontab")) {
+								$log->write("notice", "[warning] A problem has occurred during installation of crontab. Please open and copy '" . $output["server_root"] . "crontab' and paste in '$ (sudo) crontab -e' manually.");
+							}
+							mail($output["user_username"], "Benvenuto in Ninuxoo!", "Prova", "From: ninuxoo@ninux.org");
+							$data = "ok";
+						} else {
+							$log->write("error", "[install] Can't create 'crontab' file in '" . $output["server_root"] . "'. Installation malformed");
+							$data = "error::Sono stati riscontrati dei problemi nella creazione del crontab.\nInstallazione avvenuta con successo.\nInstallare il cronjob manualmente.\nConsultare la documentazione per maggiori informazioni.";
 						}
-						mail($output["user_username"], "Benvenuto in Ninuxoo!", "Prova", "From: ninuxoo@ninux.org");
-						$data = "ok";
 					} else {
-						$log->write("error", "[install] Can't create 'crontab' file in '" . $output["server_root"] . "'. Installation malformed");
-						$data = "error::Sono stati riscontrati dei problemi nella creazione del crontab.\nInstallazione avvenuta con successo.\nInstallare il cronjob manualmente.\nConsultare la documentazione per maggiori informazioni.";
+						$log->write("error", "[install] Can't create 'db.ini' in 'common/include/conf/'. Installation malformed");
+						$data = "error::Non si gode dei permessi sufficienti per salvare la chiave PGP dell'utente.\nInstallazione parzialmente riuscita :/";
 					}
 				} else {
-					$log->write("error", "[install] Can't create 'db.ini' in 'common/include/conf/'. Installation malformed");
-					$data = "error::Non si gode dei permessi sufficienti per salvare la chiave PGP dell'utente.\nInstallazione parzialmente riuscita :/";
+					$log->write("error", "[install] Can't create 'ninuxoo.service' in 'common/include/conf/'. Installation malformed");
+					$data = "error::Non si gode dei permessi sufficienti per salvare il file per annunciare il NAS in rete.\nSar&agrave; necessario generarlo manualmente. Per maggiori info seguire la documentazione.\nInstallazione parzialmente riuscita :/";
 				}
 			} else {
 				$log->write("error", "[install] Can't create 'pubkey.asc' in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'. Installation malformed");

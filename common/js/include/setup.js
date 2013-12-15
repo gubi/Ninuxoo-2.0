@@ -220,6 +220,7 @@ function calculate_meteo_data(latitude, longitude) {
 		regioni["VEN"] = "Veneto";
 		var zona = (geodata["address"].suburb != undefined) ? geodata["address"].suburb : (geodata["address"].bus_stop != undefined) ? geodata["address"].bus_stop.replace(/via /gi, "") : geodata["address"].road.multi_replace(hash);
 		$("#meteo_name").val("Meteo " + $.trim($("#node_name").val()) + " (" + geodata["address"].city + " ~ " + $.trim(zona) + ")");
+		$("#meteo_zone").val($.trim(zona));
 		$("#meteo_city").attr("disabled", false).val(geodata["address"].city);
 		$("#meteo_region").attr("disabled", false).val(regioni[geodata["address"].state]);
 		$("#meteo_country").attr("disabled", false).val(geodata["address"].country);
