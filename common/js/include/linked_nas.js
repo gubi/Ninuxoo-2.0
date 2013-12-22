@@ -217,3 +217,14 @@ function linked_nas_functions() {
 		}
 	});
 }
+$(document).ready(function() {
+	check_nas(1);
+	
+	$("#add_nas_ip").click(function() {
+		apprise("Inserisci l'indirizzo IP del NAS", {"input": true}, function(r){
+			if(r) {
+				console.log(r);
+			}
+		});
+	});
+});

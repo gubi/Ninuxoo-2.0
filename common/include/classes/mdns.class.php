@@ -107,5 +107,8 @@ class mdns {
 		}
 		return $ndata;
 	}
+	public function check_ip($ip) {
+		return (shell_exec("nc -zu " . $ip . " 64689; echo $?") == 0) ? true : false;
+	}
 }
 ?>

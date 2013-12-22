@@ -1,12 +1,7 @@
 <script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
 <script src="common/js/include/common.js"></script>
 <script src="common/js/include/linked_nas.js"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-	check_nas(1);
-	$("html, body").animate({ scrollTop: ($("h1").eq(1).offset().top) }, 300);
-});
-</script>
+
 <fieldset class="frm">
 	<legend>NAS nel vicinato</legend>
 	<p>
@@ -30,5 +25,7 @@ $(document).ready(function() {
 			<td colspan="6" align="center"><img src="common/media/img/loader.gif" style="vertical-align: -6px;" />&nbsp;&nbsp;&nbsp;<span class="info">Scansiono la zona...</span></td>
 		</tr>
 	</table>
+	<hr />
+	&rsaquo; <a href="javascript:void(0);" id="add_nas_ip">Aggiungi un NAS conosciuto</a>
 </fieldset>
 
