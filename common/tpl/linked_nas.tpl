@@ -25,7 +25,28 @@
 			<td colspan="6" align="center"><img src="common/media/img/loader.gif" style="vertical-align: -6px;" />&nbsp;&nbsp;&nbsp;<span class="info">Scansiono la zona...</span></td>
 		</tr>
 	</table>
-	<hr />
-	&rsaquo; <a href="javascript:void(0);" id="add_nas_ip">Aggiungi un NAS conosciuto</a>
 </fieldset>
-
+<br />
+<fieldset class="frm">
+	<legend>NAS in attesa di autorizzazione</legend>
+	&rsaquo; <a href="javascript:void(0);" id="add_nas_ip">Aggiungi un NAS conosciuto</a>
+	
+	<?php
+	foreach(glob("common/include/conf/trusted/*.pem~") as $filename) {
+		$info = pathinfo($filename);
+		$files[] = $info["filename"];
+	}
+	if(is_array($file)) {
+		?>
+		<hr />
+		<ul>
+			<?php
+			foreach($filename as $file) {
+				print '<li>' . $file . '</li>';
+			}
+			?>
+		</ul>
+		<?php
+	}
+	?>	
+</fieldset>

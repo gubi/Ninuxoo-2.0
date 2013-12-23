@@ -99,10 +99,20 @@ $(document).ready(function() {
 	<fieldset class="frm">
 		<legend>Ricerche <a name="Ricerche" id="Ricerche"></a></legend>
 		
+		<p>
+			Durante le ricerche tutti i NAS collegati sono coinvolti.<br />
+			Per impostazione predefinita i NAS non riportano mai il proprio indirizzo IP, di conseguenza  non &egrave; possibile sapere dove risiedono i files dei risultati.<br />
+			&Egrave; tuttavia possibile stabilire se <u>questo NAS</u> mostrer&agrave; in chiaro il proprio indirizzo IP.<br />
+			<br />
+			<b>IMPORTANTE</b>: questa opzione &egrave; disponibile solo per risolvere particolari esigenze.<br />
+			Se non si &egrave; veramente sicuri di ci&ograve; che si fa e si vuole rimanere in sicurezza, lasciare il campo NON spuntato.
+		</p>
+		<label><input type="checkbox" name="show_ip" id="show_ip" <?php print ($settings["searches"]["show_ip"] == "true") ? "checked" : ""; ?> tabindex="2" /> Consenti l'indirizzamento diretto (attenzione: mostra il tuo indirizzo IP)</label>
+		<hr />
 		<label><input type="checkbox" name="allow_advanced_research" id="allow_advanced_research" <?php print ($settings["searches"]["allow_advanced_research"] == "true") ? "checked" : ""; ?> tabindex="2" /> Consenti le ricerche avanzate</label>
 		<br />
 		<span class="left">
-			<label for="research_type">Tipo di ricerca: </label>
+			<label for="research_type">Tipo di ricerca predefinita: </label>
 			<select name="research_type" id="research_type" tabindex="3">
 				<?php
 				$research_types = array("query" => "Tutti i risultati possibili", "exactquery" => "Per frase esatta", "orquery" => "Per singola parola", "likequery" => "Per parole simili", "whatsnew" => "Sull'ultima scansione");

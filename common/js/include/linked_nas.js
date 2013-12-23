@@ -223,7 +223,21 @@ $(document).ready(function() {
 	$("#add_nas_ip").click(function() {
 		apprise("Inserisci l'indirizzo IP del NAS", {"input": true}, function(r){
 			if(r) {
-				console.log(r);
+				$("#page_loader").fadeIn(300);
+				$.get("API/index.php", {action: "make_friend", ip: r}, function(response) {
+					var resp = response.split(" ");
+					if (resp[0] !== "Hello") {
+						$("#page_loader").fadeOut(300);
+						$("#aOverlay").fadeOut(300);
+						$(".appriseOuter").fadeOut(300);
+						apprise("Si &egrave; verificato un errore durante il processo:\n" + response, {icon: "error", title: "Ouch!"});
+					} else {
+						$("#page_loader").fadeOut(300);
+						$("#aOverlay").fadeOut(300);
+						$(".appriseOuter").fadeOut(300);
+						apprise("okay");
+					}
+				});
 			}
 		});
 	});

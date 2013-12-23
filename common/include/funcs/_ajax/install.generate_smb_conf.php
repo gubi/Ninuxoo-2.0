@@ -30,6 +30,7 @@ $general_settings .= 'session_length = 3600' . "\n";
 $general_settings .= 'allow_user_registration = "true"' . "\n\n";
 $general_settings .= 'admin[] = "' . sha1($output["user_username"]) . '"' . "\n\n";
 $general_settings .= '[searches]' . "\n";
+$general_settings .= 'show_ip = "false"' . "\n";
 $general_settings .= 'allow_advanced_research = "true"' . "\n";
 $general_settings .= 'research_type = "query"' . "\n";
 $general_settings .= 'research_results = 200' . "\n";
