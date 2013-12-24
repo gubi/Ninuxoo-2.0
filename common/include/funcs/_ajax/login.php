@@ -44,9 +44,11 @@ if(file_exists("../../conf/user/" . sha1($output["username"]))) {
 		}
 		print json_encode($user_data);
 	} else {
+		// Fare il check su altri NAS prima
 		print json_encode(array("error" => true, "message" => "Username o password errati"));
 	}
 } else {
+	// Fare il check su altri NAS prima
 	print json_encode(array("error" => true, "message" => "Username o password errati"));
 }
 ?>

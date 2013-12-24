@@ -113,6 +113,12 @@ if(isset($_GET["getPublicKey"])) {
 		case "save_page":
 			require_once("local_site.save_page.php");
 			break;
+		case "reset_password.send_mail":
+			require_once("reset_password.send_mail.php");
+			break;
+		case "reset_password":
+			require_once("reset_password.php");
+			break;
 		case "save_script":
 			require_once("editor.save_script.php");
 			break;

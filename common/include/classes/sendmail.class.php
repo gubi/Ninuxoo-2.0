@@ -54,7 +54,7 @@ class Sendmail {
 				return $mail;
 			}
 		} else {
-			return mail($to, $subject, wordwrap($body, 100, "\n"), $this->headers());
+			return mail($to, $subject, wordwrap($body, 120, "\n"), $this->headers());
 		}
 	}
 }
