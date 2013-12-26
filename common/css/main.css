@@ -1062,10 +1062,10 @@ a.copy_btn {
 }
 
 .error {
-	color: #ff0000;
+	color: #ff0000 !important;
 }
 input.error, textarea.error, select.error {
-	border-color: #ff9999;
+	border-color: #ff9999 !important;
 }
 .left {
 	float: left;

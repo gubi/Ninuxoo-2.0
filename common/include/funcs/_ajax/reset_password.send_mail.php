@@ -4,7 +4,7 @@ function get_body($name, $username) {
 	
 	$message = "Ciao " . $name . ",\n";
 	$message .= "hai richiesto di poter reimpostare la tua password di accesso a Ninuxoo, e questa e-mail contiene il link per procedere al processo di reset.\n";
-	$message .= "Clicca (o copia e incolla il link nel tuo browser) il link a seguire:\n\n";
+	$message .= "Clicca (o copia e incolla nel tuo browser) il link a seguire:\n\n";
 	$message .= "> " . $config["NAS"]["http_root"] . "/Accedi/Password_dimenticata/" . urlencode(base64_encode($username . "::::" . sha1(date("d-m-Y")))) . "\n\n";
 	$message .= "Il link per la validazione sara' attivo fino alla mezzanotte di oggi.";
 	

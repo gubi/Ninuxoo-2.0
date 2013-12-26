@@ -95,11 +95,20 @@ if(isset($_GET["getPublicKey"])) {
 		case "login":
 			require_once("login.php");
 			break;
+		case "register_user":
+			require_once("register_user.php");
+			break;
 		case "remove_page":
 			require_once("local_site.remove_page.php");
 			break;
 		case "remove_script":
 			require_once("editor.remove_script.php");
+			break;
+		case "reset_password.send_mail":
+			require_once("reset_password.send_mail.php");
+			break;
+		case "reset_password":
+			require_once("reset_password.php");
 			break;
 		case "save_editor_theme":
 			require_once("save_editor_theme.php");
@@ -112,12 +121,6 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "save_page":
 			require_once("local_site.save_page.php");
-			break;
-		case "reset_password.send_mail":
-			require_once("reset_password.send_mail.php");
-			break;
-		case "reset_password":
-			require_once("reset_password.php");
 			break;
 		case "save_script":
 			require_once("editor.save_script.php");

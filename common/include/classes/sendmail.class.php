@@ -30,7 +30,7 @@ class Sendmail {
 	}
 	
 	public function send($to, $subject, $body) {
-		$body .= "\n\n--=20\nNinuxoo\nThe Ninux.org Community Network";
+		$body .= "\n\nUn saluto\n--=20\nNinuxoo\nThe Ninux.org Community Network";
 		
 		if($this->get_program() == "program") {
 			require_once($this->lib_dir . "/PEAR/Mail.php");

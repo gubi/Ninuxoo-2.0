@@ -38,6 +38,9 @@
 				case "elenco_voip":
 					include("common/tpl/elenco_voip.tpl");
 					break;
+				case "registrati":
+					include("common/tpl/registration_form.tpl");
+					break;
 				default:
 					include("common/tpl/load_page.tpl");
 					break;
