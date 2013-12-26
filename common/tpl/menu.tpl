@@ -12,18 +12,54 @@
 			<?php
 			if(isset($_COOKIE["n"])) {
 				$data = explode("~", PMA_blowfish_decrypt($_COOKIE["n"], "ninuxoo_cookie"));
-				if(trim($_GET["s"]) == "Admin" && !isset($_GET["q"])) {
-					?>
-					<li><a href="javascript:void(0);"><?php print $data[0]; ?></a></li>
-					<li class="separator">&nbsp;</li>
-					<li><a href="./Esci">Esci</a></li>
-					<?php
+				$name = explode(" ", $data[0]);
+				if($GLOBALS["is_admin"]) {
+					if(trim($_GET["s"]) == "Admin" && !isset($_GET["q"])) {
+						?>
+						<li><small><?php print $name[0]; ?></small></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="javascript:void(0);">Admin</a></li>
+						<li><a href="./Dashboard">Dashboard</a></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="./Esci">Esci</a></li>
+						<?php
+					} else if(trim($_GET["s"]) == "Dashboard" && !isset($_GET["q"])) {
+						?>
+						<li><small><?php print $name[0]; ?></small></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="./Admin">Admin</a></li>
+						<li><a href="javascript:void(0);">Dashboard</a></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="./Esci">Esci</a></li>
+						<?php
+					} else {
+						?>
+						<li><small><?php print $name[0]; ?></small></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="./Admin">Admin</a></li>
+						<li><a href="./Dashboard">Dashboard</a></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="./Esci">Esci</a></li>
+						<?php
+					}
 				} else {
-					?>
-					<li><a href="./Admin"><?php print $data[0]; ?></a></li>
-					<li class="separator">&nbsp;</li>
-					<li><a href="./Esci">Esci</a></li>
-					<?php
+					if(trim($_GET["s"]) == "Dashboard" && !isset($_GET["q"])) {
+						?>
+						<li><small><?php print $name[0]; ?></small></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="javascript:void(0);">Dashboard</a></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="./Esci">Esci</a></li>
+						<?php
+					} else {
+						?>
+						<li><small><?php print $name[0]; ?></small></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="./Dashboard">Dashboard</a></li>
+						<li class="separator">&nbsp;</li>
+						<li><a href="./Esci">Esci</a></li>
+						<?php
+					}
 				}
 			} else {
 				if(isset($_GET["s"]) && trim($_GET["s"]) == "accedi") {

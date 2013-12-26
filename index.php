@@ -9,6 +9,16 @@ if(isset($_GET["s"]) && trim($_GET["s"]) == "Esci") {
 if(isset($_COOKIE["n"])) {
 	$c = explode("~", PMA_blowfish_decrypt($_COOKIE["n"], "ninuxoo_cookie"));
 	$username = $c[1];
+	$general_settings = parse_ini_file("common/include/conf/general_settings.ini", 1);
+	
+	if(in_array(sha1($username), $general_settings["login"]["admin"])) {
+		$GLOBALS["is_admin"] = true;
+	} else {
+		$GLOBALS["is_admin"] = false;
+		if(isset($_GET["s"]) && trim(strtolower($_GET["s"])) == "admin") {
+			header("Location: ./Dashboard");
+		}
+	}
 }
 // Generate RSA key
 if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
@@ -109,7 +119,7 @@ if(!$has_config) {
 				</tr>
 			</table>
 		</div>
-		<?php if($_GET["s"] !== "Admin" || isset($_GET["q"])) { require_once("common/tpl/breadcrumb.tpl"); } ?>
+		<?php if($_GET["s"] !== "Admin" && $_GET["s"] !== "Dashboard" || isset($_GET["q"])) { require_once("common/tpl/breadcrumb.tpl"); } ?>
 		<div id="container">
 			<?php
 			require_once("common/include/funcs/get_content.php");

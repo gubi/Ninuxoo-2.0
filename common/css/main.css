@@ -1113,7 +1113,8 @@ div.menu a, div.menu span.separator {
 	width: 20%;
 }
 div.menu span.separator {
-	width: 10px;
+	width: 1% !important;
+	padding: 1em 0;
 }
 div.menu span.separator.transparent {
 	background-image: none;
