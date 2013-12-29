@@ -4,9 +4,9 @@ $(document).ready(function(){
 		window.onbeforeunload = null;
 		return false;
 	});
-	$("#save_editor_btn, #remove_btn").click(function() {
+	$("#save_page_btn, #remove_btn").click(function() {
 		switch($(this).attr("id")) {
-			case "save_editor_btn":
+			case "save_page_btn":
 				$("#page_loader").fadeIn(300);
 				var password = makeid();
 				$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {

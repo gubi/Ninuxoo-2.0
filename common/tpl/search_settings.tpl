@@ -27,7 +27,8 @@ $crypted = base64_encode($rsa->simple_private_encrypt($token));
 			<tr><td>Elementi scansionati:</td><td id="last_items_count"><b><?php print $config["NAS"]["last_items_count"]; ?></b></td></tr>
 		</table>
 		<p>
-			&rsaquo; <a id="start_scan_btn" href="javascript:void(0);" tabindex="1">Avvia una scansione manuale</a>
+			<input type="hidden" value="<?php print $crypted; ?>" id="token" />
+			<a id="start_scan_btn" class="btn btn-default" href="javascript:void(0);" tabindex="1">Avvia una scansione manuale&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-refresh"></span></a>
 		</p>
 	</fieldset>
 	<fieldset class="frm">
@@ -67,5 +68,5 @@ $crypted = base64_encode($rsa->simple_private_encrypt($token));
 			<input type="number" name="research_results" id="research_results" value="<?php print $settings["searches"]["research_results"]; ?>" size="2" maxlength="3" tabindex="4" />
 		</span>
 	</fieldset>
-	<button id="save_search_params_btn">Salva</button>
+	<button class="btn btn-primary right" id="save_search_params_btn">Salva&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></button>
 </form>

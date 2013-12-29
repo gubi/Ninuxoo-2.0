@@ -37,7 +37,7 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 			?>
 		</table>
 	</fieldset>
-	<a class="btn" href="./Admin/Config_editor/Nuova_configurazione">Nuova config</a>
+	<a class="btn btn-primary right" href="./Admin/Config_editor/Nuova_configurazione">Nuova config&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-plus"></a>
 	<?php
 } else {
 	$user_config = parse_ini_file("common/include/conf/user/" . sha1($username) . "/user.conf", true);
@@ -48,12 +48,12 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 	} else {
 		$filename = base64_decode($_GET["id"]);
 		$info = pathinfo($filename);
-		$file_name = (strpos($filename, "/user/") ? '<span class="left" style="width: 50%"><label for="config_name">Nome del file:</label> <input type="text" value="' . $info["basename"] . '" style="width: 30%;" id="config_name" name="config_name" autofocus tabindex="1" />&emsp;<span class="info" id="rename_suggestion" style="display: none;">Sar&agrave; rinominato in "<span></span>"</span><input type="hidden" value="' . $info["basename"] . '" name="original_name" id="original_name" /></span>' : '<b>Nome del file:</b> <input type="hidden" value="' . $info["basename"] . '" name="config_name" /><span class="info">' . $info["basename"] . '</span>');
+		$file_name = (strpos($filename, "/user/") ? '<span class="left" style="width: 50%"><label for="config_name">Nome del file:</label> <input type="text" value="' . $info["basename"] . '" style="width: 30%;" id="config_name" name="config_name" autofocus tabindex="1" />&emsp;<span class="info" id="rename_suggestion" style="display: none;">Sar&agrave; rinominato in "<span></span>"</span><input type="hidden" value="' . $info["basename"] . '" name="original_name" id="original_name" /></span>' : '<b>Nome del file:</b> <input type="hidden" value="' . $info["basename"] . '" name="config_name" id="config_name" /><span class="info">' . $info["basename"] . '</span>');
 		$file = file_get_contents($filename);
 		$script_name = '"' . $info["basename"] . '"';
 		$dir_name = $info["dirname"];
 	}
-	$remove_btn = (strpos($filename, "/user/") ? '<button id="remove_btn" class="red left remove" style="margin-right: 10px;">Elimina</button>' : '');
+	$remove_btn = (strpos($filename, "/user/") ? '<button id="remove_btn" class="btn btn-danger" style="margin-right: 10px;">Elimina&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-trash"></span></button>' : '');
 	$themes_select = str_replace('<option>' . $user_config["User"]["editor_theme"] . '</option>', '<option selected="selected">' . $user_config["User"]["editor_theme"] . '</option>', '<div class="right">Tema dell\'editor: <select id="code_theme" style="width: 200px;"><option>default</option><option>3024-day</option><option>3024-night</option><option>ambiance</option><option>base16-dark</option><option>base16-light</option><option>blackboard</option><option>cobalt</option><option>eclipse</option><option>elegant</option><option>erlang-dark</option><option>lesser-dark</option><option>mbo</option><option>midnight</option><option>monokai</option><option>neat</option><option>night</option><option>paraiso-dark</option><option>paraiso-light</option><option>rubyblue</option><option>solarized dark</option><option>solarized light</option><option>the-matrix</option><option>tomorrow-night-eighties</option><option>twilight</option><option>vibrant-ink</option><option>xq-dark</option><option>xq-light</option></select></div>');
 	?>
 	<link href="common/js/chosen/chosen.css" rel="stylesheet" />
@@ -91,17 +91,24 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 		&Egrave; possibile utilizzare le scorciatoie di tastiera per abilitare funzionalit&agrave; aggiuntive.<br />
 		Trascinando un file di testo all'interno dell'editor ne verr&agrave; acquisito il testo.<br />
 	</p>
-	<h3>Scorciatoie da tastiera (attivando il focus nell'editor)</h3>
-	<p>
-		<b>F11</b>: Attiva la modalit&agrave; schermo intero<br />
-		<b>Esc</b>: Esce dalla modalit&agrave; schermo intero<br />
-		<b>CTRL+F</b>: Cerca nel testo<br />
-		<b>Shift+CTRL+F</b>: Sostituisce un termine nel testo<br />
-		<b>CTRL+Invio</b>: Attiva l'autocompletamento<br />
-		<b>CTRL+S</b>: Salva il file<br />
-		<b>CTRL+D</b>: Scarica il file
-	</p>
-	<br />
+	<div class="panel-group" id="accordion">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Scorciatoie da tastiera (attivando il focus nell'editor) <span class="caret"></span></a>
+			</div>
+			<div id="collapseOne" class="panel-collapse collapse">
+				<div class="panel-body">
+					<b>F11</b>: Attiva la modalit&agrave; schermo intero<br />
+					<b>Esc</b>: Esce dalla modalit&agrave; schermo intero<br />
+					<b>CTRL+F</b>: Cerca nel testo<br />
+					<b>Shift+CTRL+F</b>: Sostituisce un termine nel testo<br />
+					<b>CTRL+Invio</b>: Attiva l'autocompletamento<br />
+					<b>CTRL+S</b>: Salva il file<br />
+					<b>CTRL+D</b>: Scarica il file
+				</div>
+			</div>
+		</div>
+	</div>
 	<hr />
 	<br />
 	<form method="post" action="" class="editor_frm" id="editor_frm">
@@ -120,8 +127,10 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 	</form>
 	<hr />
 	<?php print $remove_btn; ?>
-	<button id="save_editor_btn">Salva</button>
-	<button id="export_btn" class="grey save" style="margin-right: 10px;">Scarica</button>
+	<div class="btn-group right">
+		<button id="export_btn" type="button" class="btn btn-default">Scarica&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-download-alt"></span></button>
+		<button id="save_editor_btn" type="button" class="btn btn-primary">Salva&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span></button>
+	</div>
 	<?php
 }
 ?>

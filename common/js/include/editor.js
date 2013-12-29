@@ -39,6 +39,8 @@ $(document).ready(function(){
 				});
 				break;
 			case "export_btn":
+				window.onbeforeunload = null;
+				
 				var password = makeid();
 				$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 					var encryptedString = $.jCryption.encrypt($("#editor_frm").serialize(), password);
@@ -178,4 +180,16 @@ $(document).ready(function(){
 	$("#code_theme").bind("change", function() {
 		select_theme(editor, $(this).val());
 	});
+	$("#config_name").keyup(function() {
+		if($(this).val().length == 0) {
+			$("#export_btn").addClass("disabled");
+		} else {
+			$("#export_btn").removeClass("disabled");
+		}
+	});
+	if($("#config_name").length > 0) {
+		if($("#config_name").val().length == 0) {
+			$("#export_btn").addClass("disabled");
+		}
+	}
 });

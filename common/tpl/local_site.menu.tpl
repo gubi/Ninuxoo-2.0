@@ -120,7 +120,7 @@ if($user_config["User"]["use_editor_always"]) {
 $(document).ready(function() {
 	$("html, body").animate({ scrollTop: ($("h1").eq(1).offset().top) }, 300);
 	
-	$("#save_editor_btn").click(function() {
+	$("#save_menu_btn").click(function() {
 		$("#page_loader").fadeIn(300);
 		var password = makeid();
 		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
@@ -174,4 +174,4 @@ $(document).ready(function() {
 	</fieldset>
 </form>
 <hr />
-<button id="save_editor_btn">Salva</button>
+<button class="btn btn-primary right" id="save_menu_btn">Salva&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span></button>

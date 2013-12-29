@@ -29,7 +29,7 @@
 <br />
 <fieldset class="frm">
 	<legend>NAS in attesa di autorizzazione</legend>
-	&rsaquo; <a href="javascript:void(0);" id="add_nas_ip">Aggiungi un NAS conosciuto</a>
+	<a class="btn btn-default" href="javascript:void(0);" id="add_nas_ip">Aggiungi un NAS conosciuto&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-saved"></span></a>
 	
 	<?php
 	foreach(glob("common/include/conf/trusted/*.pem~") as $filename) {

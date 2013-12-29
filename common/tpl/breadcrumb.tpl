@@ -1,20 +1,55 @@
-<?
-if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
+<?php
+function truncate($text, $length) {
+	$length = abs((int)$length);
+	if(strlen($text) > $length) {
+		$text = preg_replace("/^(.{1,$length})(\s.*|$)/s", '\\1...', $text);
+	}
+	return($text);
+}
+function checkBase64Encoded($encodedString) {
+	$length = strlen($encodedString);
+	
+	// Check every character.
+	for ($i = 0; $i < $length; ++$i) {
+		$c = $encodedString[$i];
+		if (($c < '0' || $c > '9') && ($c < 'a' || $c > 'z') && ($c < 'A' || $c > 'Z') && ($c != '+') && ($c != '/') && ($c != '=')) {
+			// Bad character found.
+			return false;
+		}
+	}
+	// Only good characters found.
+	return true;
+}
+function optimize($string) {
+	$string = str_replace("_", " ", $string);
+	
+	if(strpos($string, "/") !== false) {
+		$info = pathinfo($string);
+		$string = $info["basename"];
+	}
+	
+	return truncate($string, 120);
+}
+
+$do_not_show_for_this_page = array("admin", "dashboard", "sito locale");
+
+if(isset($_GET["s"]) && trim($_GET["s"]) !== "" && !in_array(strtolower($page_name), $do_not_show_for_this_page)) {
 	?>
 	<div id="breadcrumb">
 		<ul>
 			<li><a href="./" id="home"></a></li>
 			<?php
 			if(isset($_GET["q"]) && trim($_GET["q"]) !== "") {
-				print '<li><a href="./' . $_GET["s"] . '">' . str_replace("_", " ", $_GET["s"]) . '</a></li>';
+				print '<li><a class="btn-link" href="./' . $_GET["s"] . '">' . optimize($_GET["s"]) . '</a></li>';
 				
 				if(isset($_GET["id"]) && trim($_GET["id"]) !== "") {
-					print '<li><a href="./' . $_GET["s"] . '/' . $_GET["q"] . '">' . str_replace("_", " ", $_GET["q"]) . '</a></li><li>' . str_replace("_", " ", $_GET["id"]) . '</li>';
+					
+					print '<li><a class="btn-link" href="./' . $_GET["s"] . '/' . $_GET["q"] . '">' . optimize($_GET["q"]) . '</a></li><li>' . (base64_decode($_GET["id"] . "~", true) ? optimize(base64_decode($_GET["id"])) : optimize(($_GET["id"]))) . '</li>';
 				} else {
-				print '<li>' . str_replace("_", " ", $_GET["q"]) . '</li>';
+					print '<li>' . optimize($_GET["q"]) . '</li>';
 				}
 			} else {
-				print '<li>' . str_replace("_", " ", $_GET["s"]) . '</li>';
+				print '<li>' . optimize($_GET["s"]) . '</li>';
 			}
 			?>
 		</ul>

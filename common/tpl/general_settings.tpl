@@ -7,68 +7,8 @@ $usetting = parse_ini_file("common/include/conf/user/" . sha1($username) . "/use
 <script type="text/javascript" src="common/js/chosen/chosen.jquery.min.js"></script>
 <script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
 <script type="text/javascript" src="common/js/include/common.js"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-	$("#session_length").on("keyup change", function() {
-		get_duration($(this));
-	});
-	$("#session_length").val("<?php print $setting["login"]["session_length"]; ?>");
-	
-	get_duration($("#session_length"));
-	if(window.location.hash) {
-		var hash = window.location.hash.substring(1).replace(/\s+/g, "_"),
-		target = $("#" + hash).offset().top;
-	} else {
-		var target = $("h1").eq(1).offset().top;
-	}
-	$("html, body").animate({ scrollTop: target }, 300);
-	
-	$("#save_editor_btn").click(function() {
-		$("#page_loader").fadeIn(300);
-		var password = makeid();
-		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-			var encryptedString = $.jCryption.encrypt($("#settings_frm").serialize(), password);
-			
-			$.ajax({
-				url: "common/include/funcs/_ajax/decrypt.php",
-				dataType: "json",
-				type: "POST",
-				data: {
-					jCryption: encryptedString,
-					type: "save_settings"
-				},
-				success: function(response) {
-					if (response["data"] !== "ok") {
-						var risp = response["data"].split("::");
-						if(risp[0] == "error") {
-							alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
-						}
-					} else {
-						window.location.href = "./Admin";
-					}
-				}
-			});
-		}, function() {
-			$("#page_loader").fadeOut(300);
-			alert("Si &egrave; verificato un errore durante il salvataggio.", {icon: "error", title: "Ouch!"});
-		});
-		return false;
-	});
-	$("#show_shortcut_btn").click(function() {
-		$("#shortcut_legend").slideToggle(300, function() {
-			if($(this).css("display") == "none") {
-				$("#show_shortcut_btn > span").text("Visualizza");
-			} else {
-				$("#show_shortcut_btn > span").text("Nascondi");
-			}
-		});
-	});
-	$("select").chosen({
-		disable_search_threshold: 5,
-		allow_single_deselect: true
-	});
-});
-</script>
+<script type="text/javascript" src="common/js/include/general_settings.js"></script>
+
 <h1>Impostazioni generali</h1>
 <br />
 <br />
@@ -77,7 +17,7 @@ $(document).ready(function() {
 	<fieldset class="frm">
 		<legend>Accesso al Sistema <a name="Accesso_al_Sistema" id="Accesso_al_Sistema"></a></legend>
 		<label for="session_length">Durata generale della sessione</label>
-		<input type="number" size="5" maxlength="7" min="0" step="10" id="session_length" name="session_length" value="" autofocus tabindex="1" />&nbsp;&nbsp;<span id="hour"></span>
+		<input type="number" size="5" maxlength="7" min="0" step="10" id="session_length" name="session_length" value="<?php print $setting["login"]["session_length"]; ?>" autofocus tabindex="1" />&nbsp;&nbsp;<span id="hour"></span>
 	</fieldset>
 	<fieldset id="user_management">
 		<legend>Gestione utenti <a name="Gestione_utenti" id="Gestione_utenti"></a></legend>
@@ -202,5 +142,5 @@ $(document).ready(function() {
 			</select>
 		</span>
 	</fieldset>
-	<button id="save_editor_btn">Salva</button>
+	<button class="btn btn-primary right" id="save_settings_btn">Salva&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></button>
 </form>

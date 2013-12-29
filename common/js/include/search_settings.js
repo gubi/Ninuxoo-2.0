@@ -6,10 +6,10 @@ $(document).ready(function() {
 	$("html, body").animate({ scrollTop: ($("h1").eq(1).offset().top) }, 300);
 	
 	$("#start_scan_btn").click(function() {
-		$("#page_loader").fadeIn(300);
+		apprise("Scansione dei files locali in corso...", {"progress": true});
 		var password = makeid();
 		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-			var encryptedString = $.jCryption.encrypt("token=<?php print $crypted; ?>", password);
+			var encryptedString = $.jCryption.encrypt("token=" + $("#token").val(), password);
 			
 			$.ajax({
 				url: "common/include/funcs/_ajax/decrypt.php",
@@ -23,7 +23,8 @@ $(document).ready(function() {
 					$("#last_scan_date").html("<b>" + response["data"]["date"] + "</b>");
 					$("#last_scanning_time").html("<b>" + response["data"]["elapsed_time"] + "</b>");
 					$("#last_items_count").html("<b>" + response["data"]["files_count"] + "</b>");
-					$("#page_loader").fadeOut(300);
+					$(".appriseOuter").fadeOut(300);
+					$(".appriseOverlay").fadeOut(300);
 				}
 			});
 		}, function() {

@@ -29,12 +29,15 @@ if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 }
 if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 	$page_title = ucfirst(str_replace("_", " ", $_GET["s"]));
+	$page_name = ucfirst(str_replace("_", " ", $_GET["s"]));
 	
 	if(isset($_GET["q"]) && trim($_GET["q"]) !== "") {
 		$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["q"]));
+		$page_name = ucfirst(str_replace("_", " ", $_GET["q"]));
 		
 		if(isset($_GET["id"]) && trim($_GET["id"]) !== "") {
 			$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["id"]));
+			$page_name = ucfirst(str_replace("_", " ", $_GET["id"]));
 		}
 	}
 } else {
@@ -71,11 +74,13 @@ if(!$has_config) {
 	<meta name="description" content="Ninux.org search engine" />
 	
 	<link rel="shortcut icon" href="common/media/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="common/css/bootstrap.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/css/main.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/css/device.css" type="text/css" media="screen" />
 	<link rel="search" type="application/opensearchdescription+xml" title="Ninuxoo" href="osd.xml" />
 	
 	<script type="text/javascript" src="common/js/jquery-1.7.2.min.js"></script>
+	<script src="common/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="common/js/Apprise/apprise-1.5.full.js"></script>
 	<link rel="stylesheet" href="common/js/Apprise/apprise.css" type="text/css">
 	<?php

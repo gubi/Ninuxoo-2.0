@@ -37,7 +37,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 					</tr>
 				</table>
 			</fieldset>
-			<button id="login_btn" tabindex="3">Accedi</button>
+			<button class="btn btn-primary right" id="login_btn" tabindex="3">Accedi&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-log-in"></span></button>
 		</form>
 	</div>
 	<?php
