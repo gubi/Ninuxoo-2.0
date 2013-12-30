@@ -101,6 +101,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "remove_page":
 			require_once("local_site.remove_page.php");
 			break;
+		case "remove_personal_page":
+			require_once("remove_personal_page.php");
+			break;
 		case "remove_script":
 			require_once("editor.remove_script.php");
 			break;
@@ -121,6 +124,9 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "save_page":
 			require_once("local_site.save_page.php");
+			break;
+		case "save_personal_page":
+			require_once("save_personal_page.php");
 			break;
 		case "save_script":
 			require_once("editor.save_script.php");

@@ -7,37 +7,32 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 	<script type="text/javascript" src="common/js/include/login.js"></script>
 	<div>
 		<div id="loader"></div>
-		<form method="post" action="" class="frm" id="login_frm" onsubmit="login(); return false;">
-			<fieldset>
-				<legend>Dati per l'accesso</legend>
-				<p>
-					Inserire i dati di accesso creati in fase di installazione di Ninuxoo e relativi alla propria chiave di cifratura PGP.<br />
-				</p>
-				<hr />
-				<table cellspacing="5" cellpadding="5" class="login">
-					<tr>
-						<td>
-							<label for="username">Indirizzo e-mail:</label>
-							<input type="email" style="width: 50%;" id="username" name="username" value="" placeholder="Indirizzo e-mail" autocomplete="off" tabindex="1" />
-							
-							<label for="password">Password:</label>
-							<input type="password" id="password" name="password" value="" placeholder="Una password valida" autocomplete="off" tabindex="2" />
-						</td>
-						<td class="separator"></td>
-						<td>
-							<ul>
-								<li><a href="./Accedi/Password_dimenticata">Non ricordo pi&ugrave; la password</a></li>
-								<?php
-								if($setting["login"]["allow_user_registration"] == "true") {
-									print '<li><a href="./Registrati">Registrati</a></li>';
-								}
-								?>
-							</ul>
-						</td>
-					</tr>
-				</table>
-			</fieldset>
-			<button class="btn btn-primary right" id="login_btn" tabindex="3">Accedi&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-log-in"></span></button>
+		<form method="post" action="" class="form-horizontal" id="login_frm" onsubmit="login(); return false;" role="form">
+			<h1>Accedi</h1>
+			<br />
+			<p class="help-block"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;Nota: Gli utenti amministratori dovranno inserire i dati di accesso creati in fase di installazione e relativi alla propria chiave di cifratura <acronym title="Pretty Good Privacy">PGP</acronym>.</p>
+			<br />
+			<div class="well">
+				<div class="input-group">
+					<label for="username" class="control-label input-group-addon btn"><span class="glyphicon glyphicon-envelope" title="Indirizzo e-mail"></span></label>
+					<input type="email" class="form-control input-lg" id="username" name="username" placeholder="Indirizzo e-mail" autocomplete="off" tabindex="1" />
+				</div>
+				<br />
+				<div class="input-group">
+					<label for="password" class="control-label input-group-addon btn"><span class="glyphicon glyphicon-lock" title="password"></span></label>
+					<input type="password" class="form-control input-lg" id="password" name="password" placeholder="Una password valida" autocomplete="off" tabindex="2" />
+				</div>
+				<br />
+				<a class="btn btn-link" href="./Accedi/Password_dimenticata"><span class="glyphicon glyphicon-remove"></span> Password dimenticata</a>
+			</div>
+			<div class="btn-group right">
+				<?php
+				if($setting["login"]["allow_user_registration"] == "true") {
+					print '<a class="btn btn-default" href="./Registrati"><span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;&nbsp;Registrati</a>';
+				}
+				?>
+				<button class="btn btn-primary right" id="login_btn" tabindex="3">Accedi&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-log-in"></span></button>
+			</div>
 		</form>
 	</div>
 	<?php
@@ -46,13 +41,16 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 		if(!isset($_GET["id"])) {
 			?>
 			<script type="text/javascript" src="common/js/include/reset_password.send_mail.js"></script>
-			<form method="post" action="" class="frm" id="reset_pwd_frm" onsubmit="return false;">
-				<fieldset>
-					<legend>Reset della password</legend>
-					
-					<label for="username">Indirizzo e-mail: <input type="email" style="width: 50%;" id="username" name="username" value="" placeholder="Indirizzo e-mail" autocomplete="off" tabindex="1" /></label>
-				</fieldset>
-				<button id="reset_btn" tabindex="2">Prosegui</button>
+			<form method="post" action="" class="form-horizontal" id="reset_pwd_frm" onsubmit="return false;">
+				<h1>Reset della password</h1>
+				<br />
+				<div class="well">
+					<div class="input-group">
+						<label for="username" class="control-label input-group-addon btn"><span class="glyphicon glyphicon-envelope" title="Indirizzo e-mail"></span></label>
+						<input type="email" class="form-control input-lg" id="username" name="username" placeholder="Indirizzo e-mail" autocomplete="off" tabindex="1" />
+					</div>
+				</div>
+				<button id="reset_btn" class="btn btn-primary right" tabindex="2">Invia&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-send"></span></button>
 			</form>
 			<?php
 		} else {
@@ -60,18 +58,22 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 			if($hash[1] == sha1(date("d-m-Y"))) {
 				?>
 				<script type="text/javascript" src="common/js/include/reset_password.js"></script>
-				<form method="post" action="" class="frm" id="reset_pwd_frm" onsubmit="return false;">
-					<fieldset>
-						<legend>Imposta una nuova password</legend>
-						
+				<form method="post" action="" class="form-horizontal" id="reset_pwd_frm" onsubmit="return false;">
+					<h1>Imposta una nuova password</h1>
+					<br />
+					<div class="well">
 						<input type="hidden" name="username" value="<?php print $hash[0]; ?>" />
-						<label for="password">Password:</label>
-						<input type="password" id="password" name="password" value="" placeholder="Una password valida" autocomplete="off" tabindex="1" />
-						
-						<label for="password">Password:</label>
-						<input type="password" id="password2" name="password2" value="" placeholder="Ripeti password" autocomplete="off" tabindex="2" />
-					</fieldset>
-					<button id="reset_btn" tabindex="3">Resetta</button>
+						<div class="input-group">
+							<label for="password" class="control-label input-group-addon btn"><span class="glyphicon glyphicon-lock" title="password"></span></label>
+							<input type="password" class="form-control input-lg" id="password" name="password" placeholder="Una password valida" autocomplete="off" tabindex="1" />
+						</div>
+						<br />
+						<div class="input-group">
+							<label for="password2" class="control-label input-group-addon btn"><span class="glyphicon glyphicon-lock" title="password"></span></label>
+							<input type="password" class="form-control input-lg" id="password2" name="password2" placeholder="Ripeti password" autocomplete="off" tabindex="2" />
+						</div>
+					</div>
+					<button id="reset_btn" class="btn btn-primary right" tabindex="3">Resetta</button>
 				</form>
 				<?php
 			} else {

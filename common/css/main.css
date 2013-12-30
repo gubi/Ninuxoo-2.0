@@ -571,7 +571,7 @@ a#poster img {
 	padding: 15px 15px 30px 15px;
 	/*margin-bottom: 2em;*/
 	color: #333;
-	font-size: 1.2em;
+	/*font-size: 1.2em;*/
 }
 #content p + hr, #abstract + hr {
 	margin: 30px 0;

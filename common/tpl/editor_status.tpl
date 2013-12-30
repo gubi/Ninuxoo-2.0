@@ -1,7 +1,13 @@
 <?php
-if($user_config["User"]["use_editor_always"]) {
-	print 'L\'editor degli script &egrave; <b>attivo</b>.<br />&Egrave; possibile disattivarlo e visualizzare la legenda delle relative scorciatoie nella <a href="./Admin/Impostazioni_generali#Editor degli script">pagina delle impostazioni generali</a>.';
+if($user_config["User"]["use_editor_always"] == "true") {
+	?>
+	L'editor degli script &egrave; <a href="./Admin/Impostazioni_generali#Editor degli script" title="Disattiva l'editor degli script">attivo</a>.<br />
+	&Egrave; possibile disattivarlo e usare al suo posto l'editor di testo per il Markdown.
+	<?php
 } else {
-	print 'L\'editor degli script &egrave; <b>disattivo</b>.<br />&Egrave; possibile attivarlo nella <a href="./Admin/Impostazioni_generali#Editor degli script">pagina delle impostazioni generali</a>.';
+	?>
+	L'editor degli script &egrave; <a href="./Admin/Impostazioni_generali#Editor degli script" title="Attiva l'editor degli script">disattivo</a>.<br />
+	Al suo posto viene usato l'editor di testo per il Markdown.
+	<?php
 }
 ?>
