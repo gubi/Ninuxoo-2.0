@@ -34,7 +34,7 @@ $crypted = base64_encode($rsa->simple_private_encrypt($token));
 		</table>
 	</div>
 	<input type="hidden" value="<?php print $crypted; ?>" id="token" />
-	<a id="start_scan_btn" class="btn btn-primary right" href="javascript:void(0);" tabindex="1">Scansione manuale&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-refresh"></span></a>
+	<a id="start_scan_btn" class="btn btn-warning right" href="javascript:void(0);" tabindex="1">Scansione manuale&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-refresh"></span></a>
 	<br />
 	<br />
 	<br />

@@ -8,6 +8,9 @@ if(isset($_GET["s"]) && trim($_GET["s"]) == "Esci") {
 }
 if(isset($_COOKIE["n"])) {
 	$c = explode("~", PMA_blowfish_decrypt($_COOKIE["n"], "ninuxoo_cookie"));
+		$user["name"] = strstr($c[0], " ", true);
+		$user["username"] = $c[1];
+		$user["key"] = "0x" . $c[2];
 	$username = $c[1];
 	$general_settings = parse_ini_file("common/include/conf/general_settings.ini", 1);
 	
@@ -43,6 +46,7 @@ if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 } else {
 	$page_title = "";
 }
+$advanced_pages = array("admin", "dashboard", "sito locale");
 // Check if config exist else start setup
 $has_config = (!file_exists("common/include/conf/config.ini")) ? false : true;
 if(!$has_config) {
@@ -75,6 +79,7 @@ if(!$has_config) {
 	
 	<link rel="shortcut icon" href="common/media/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="common/css/bootstrap.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="common/js/font-awesome/css/font-awesome.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/css/main.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/css/device.css" type="text/css" media="screen" />
 	<link rel="search" type="application/opensearchdescription+xml" title="Ninuxoo" href="osd.xml" />
@@ -86,8 +91,6 @@ if(!$has_config) {
 	<?php
 	if($has_config && trim(strtolower($_GET["s"])) !== "admin") {
 		require_once("common/tpl/has_config.tpl");
-	} else {
-		//
 	}
 	?>
 	<script type="text/javascript">
@@ -96,6 +99,12 @@ if(!$has_config) {
 			return apprise(string, args, callback);
 		};
 	})();
+	$(document).ready(function() {
+		$("a[title]:not(#footer > a)").tooltip({placement: "auto"});
+		$("button[title], abbr[title], acronym[title]").tooltip({placement: "auto"});
+		$("*[data-content]:not(#footer > a)").popover({placement: "auto"});
+		$("#footer a[title]").popover({placement: "auto", trigger: "hover"});
+	});
 	</script>
 </head>
 <body>
@@ -128,10 +137,8 @@ if(!$has_config) {
 		<div id="container">
 			<?php
 			require_once("common/include/funcs/get_content.php");
+			require_once("common/tpl/footer.tpl");
 			?>
-			<div id="footer">
-				Powered by Ninux Community ~ the Ninux Software &amp; Communication Team :: icons made by <a href="http://www.picol.org/" target="_blank" title="PIctorial COmmunication Language - Richiede inoltro a Internet">Picol project</a>
-			</div>
 		</div>
 	</div>
 </body>

@@ -5,7 +5,7 @@ if(trim($_GET["id"]) == "Pagine") {
 	<h1>Gestione delle pagine</h1>
 	<br />
 	<div class="panel panel-default">
-		<div class="panel-heading"><h5>Pagine salvate</h5></div>
+		<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Pagine salvate<small class="help-block"></small></span></div>
 		<table class="table" cellpadding="10" cellspacing="10">
 			<thead>
 				<tr>

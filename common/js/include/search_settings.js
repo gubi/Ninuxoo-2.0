@@ -6,7 +6,7 @@ $(document).ready(function() {
 	$("html, body").animate({ scrollTop: ($("h1").eq(1).offset().top) }, 300);
 	
 	$("#start_scan_btn").click(function() {
-		apprise("Scansione dei files locali in corso...", {"progress": true});
+		$(this).removeClass("btn-success").addClass("btn-warning").addClass("disabled").find("span").addClass("spin");
 		var password = makeid();
 		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 			var encryptedString = $.jCryption.encrypt("token=" + $("#token").val(), password);
@@ -20,9 +20,10 @@ $(document).ready(function() {
 					type: "start_scan"
 				},
 				success: function(response) {
-					$("#last_scan_date").html("<b>" + response["data"]["date"] + "</b>");
-					$("#last_scanning_time").html("<b>" + response["data"]["elapsed_time"] + "</b>");
-					$("#last_items_count").html("<b>" + response["data"]["files_count"] + "</b>");
+					$("#start_scan_btn").removeClass("disabled").toggleClass("btn-warning btn-success").find("span").removeClass("spin");
+					$("#last_scan_date").html(response["data"]["date"]);
+					$("#last_scanning_time").html(response["data"]["elapsed_time"]);
+					$("#last_items_count").html(response["data"]["files_count"]);
 					$(".appriseOuter").fadeOut(300);
 					$(".appriseOverlay").fadeOut(300);
 				}

@@ -83,6 +83,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "check_neighbor":
 			require_once("linked_nas.check_neighbor.php");
 			break;
+		case "check_notify":
+			require_once("notifications.detect.php");
+			break;
 		case "download_data":
 			require_once("editor.download_data.php");
 			break;
@@ -97,6 +100,9 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "register_user":
 			require_once("register_user.php");
+			break;
+		case "remove_notify":
+			require_once("notifications.remove.php");
 			break;
 		case "remove_page":
 			require_once("local_site.remove_page.php");
@@ -136,6 +142,9 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "save_settings":
 			require_once("save_settings.php");
+			break;
+		case "send_notify":
+			require_once("notifications.send.php");
 			break;
 		case "start_scan":
 			require_once("local_scan.php");

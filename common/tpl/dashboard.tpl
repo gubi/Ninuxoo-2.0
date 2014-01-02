@@ -1,23 +1,22 @@
-<div id="content">
-	<div class="menu">
-		<div class="group">
-			<a href="./Dashboard/Ricerche">
-				<img src="common/media/img/admin_panel/search_history_128_333.png" />
-				<p>STORICO DELLE RICERCHE</p>
-				<small>Visualizza lo storico delle ricerche effettuate</small>
+<div class="menu">
+	<div class="group row">
+		<div class="col-lg-4">
+			<a href="./Dashboard/Notifiche">
+				<img src="common/media/img/admin_panel/chat_128_333.png" />
+				<p>Notifiche</p>
+				<small>Comunica con altri NAS</small>
 			</a>
+		</div>
+		<div class="col-lg-4">
 			<a href="./Dashboard/Pagine">
 				<img src="common/media/img/admin_panel/document_text_edit_128_333.png" />
 				<p>PAGINE PERSONALI</p>
 				<small>Gestisci le tue pagine personali</small>
 			</a>
-			<a href="./Dashboard/Jukebox">
-				<img src="common/media/img/admin_panel/music_128_333.png" />
-				<p>JUKEBOX</p>
-				<small>La tua musica preferita</small>
-			</a>
-			<span class="separator"></span>
-			<a href="./Dashboard/Impostazioni_personali">
+		</div>
+		<div class="col-lg-1"></div>
+		<div class="col-lg-3">
+			<a href="./Dashboard/Impostazioni_personali" style="opacity: 0.75;">
 				<img src="common/media/img/admin_panel/settings_128_333.png" />
 				<br />
 				<br />

@@ -3,10 +3,7 @@
 <script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/jquery.treeview/jquery.treeview.js"></script>
 <script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/jquery.treeview/jquery.treeview.edit.js"></script>
 <script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/jquery.treeview/jquery.treeview.async.js"></script>
-<!-- qTip -->
-<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/jquery.qtip-1.0.0-rc3.min.js"></script>
-<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/qtip-integration.js"></script>
-<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/jquery.highlight-4.js"></script>
+
 <?php if(isset($_GET["s"]) && trim($_GET["s"]) == "advanced") { ?>
 	<!--Chosen-->
 	<link rel="stylesheet" href="<?php print $NAS_absolute_uri; ?>/common/js/chosen/chosen.css" />
@@ -15,6 +12,14 @@
 <!--Zoombox-->
 <script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/zoombox/zoombox.js"></script>
 <link rel="stylesheet" href="<?php print $NAS_absolute_uri; ?>/common/js/zoombox/zoombox.css" />
+<?php
+if(isset($_GET["s"]) && trim($_GET["s"]) !== "" && in_array(strtolower($_GET["s"]), $advanced_pages)) {
+	?>
+	<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
+	<script type="text/javascript" src="common/js/include/common.js"></script>
+	<?php
+}
+?>
 <script type="text/javascript">
 $.ultrie = function(resourcetrie, resuri, realuri) {
 	var res = "",
@@ -305,8 +310,8 @@ $(document).ready(function() {
 								$("#page_content").append('<div class="search_results"><h1>Termine di ricerca</h1>' + ul_tree_control + '<ul id="treeview_' + index + '" class="exactresults filetree treeview"></ul><div id="otherresults"></div></div>');
 								var start_collapsed = false;
 								
-								$(".filetree a[title]").qtip({style: {border: {width: 2, radius: 3}, color: "white", name: "dark", textAlign: "center", tip: true}, position: {corner: {target: "topMiddle", tooltip: "bottomMiddle"}}});
-								$(".treecontrol a[title]").qtip({style: {border: {width: 2, radius: 3}, color: "white", name: "dark", textAlign: "center", tip: true}, position: {corner: {target: "topRight", tooltip: "bottomLeft"}}});
+								$(".filetree a[title]").tooltip();
+								$(".treecontrol a[title]").tooltip();
 							} else {
 								$("#otherresults").append('<h1>Risultati per &quot;' + value.resultlabel + '&quot;</h1>' + ul_tree_control + '<ul id="treeview_' + index + '" class="otherresults filetree treeview"></ul>')
 								var start_collapsed = true;
@@ -541,5 +546,6 @@ $(document).ready(function() {
 	if($._GET("s") != undefined && $._GET("s") == "advanced"){
 		$("select").chosen();
 	}
+	check_notify();
 });
 </script>

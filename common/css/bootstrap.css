@@ -1832,7 +1832,7 @@ textarea.input-lg {
 }
 @media (min-width: 768px) {
   .form-inline .form-group {
-    display: inline-block;
+    /*display: inline-block;*/
     margin-bottom: 0;
     vertical-align: middle;
   }
@@ -4330,11 +4330,11 @@ textarea.input-group-sm > .input-group-btn > .btn {
   display: inline-block;
   min-width: 10px;
   padding: 3px 7px;
-  font-size: 1em;
+  font-size: 0.3em;
   font-weight: bold;
   color: #ffffff;
   line-height: 1;
-  vertical-align: baseline;
+  vertical-align: super;
   white-space: nowrap;
   text-align: center;
   background-color: #999999;
@@ -4342,6 +4342,42 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 .badge:empty {
   display: none;
+}
+.badge-primary {
+  background-color: #ef531d;
+}
+.badge-primary:hover {
+  background-color: #fcf8e3;
+}
+.badge-error {
+  background-color: #ebcccc;
+}
+.badge-error:hover {
+  background-color: #ebcccc;
+}
+.badge-warning {
+  background-color: #fcf8e3;
+}
+.badge-warning:hover {
+  background-color: #faf2cc;
+}
+.badge-success {
+  background-color: #dff0d8;
+}
+.badge-success:hover {
+  background-color: #d0e9c6;
+}
+.badge-info {
+	background-color: #31708;
+}
+.badge-info:hover {
+	background-color: #245269;
+}
+.badge-inverse {
+  background-color: #333333;
+}
+.badge-inverse:hover {
+  background-color: #1a1a1a;
 }
 .btn .badge {
   position: relative;
@@ -5175,7 +5211,7 @@ button.close {
   left: 0;
   z-index: 1010;
   display: none;
-  max-width: 276px;
+  max-width: 400px;
   padding: 1px;
   text-align: left;
   background-color: #ffffff;
@@ -5984,4 +6020,38 @@ td.visible-print {
   td.hidden-print {
     display: none !important;
   }
+}
+
+.spin {
+	-webkit-animation: spin .5s infinite linear;
+	-moz-animation: spin .5s infinite linear;
+	-o-animation: spin .5s infinite linear;
+	animation: spin .5s infinite linear;
+	-webkit-transform-origin: 50% 50%;
+	transform-origin: 50% 50%;
+	-ms-transform-origin: 50% 50%; /* IE 9 */
+}
+@-moz-keyframes spin {
+	from {
+		-moz-transform: rotate(0deg);
+	}
+	to {
+		-moz-transform: rotate(360deg);
+	}
+}
+@-webkit-keyframes spin {
+	from {
+		-webkit-transform: rotate(0deg);
+	}
+	to {
+		-webkit-transform: rotate(360deg);
+	}
+}
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }

@@ -42,8 +42,8 @@
 				case "dashboard":
 					if(isset($_COOKIE["n"])) {
 						switch(strtolower($_GET["q"])) {
-							case "ricerche":
-								include("common/tpl/personal_researches.tpl");
+							case "notifiche":
+								include("common/tpl/notifications.tpl");
 								break;
 							case "pagine":
 								include("common/tpl/personal_pages.tpl");

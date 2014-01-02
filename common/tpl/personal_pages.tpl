@@ -3,7 +3,7 @@ if(trim($_GET["id"]) == "") {
 	require_once("common/include/lib/mime_types.php");
 	?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h5>Pagine personali</h5></div>
+		<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Pagine personali<small class="help-block"></small></span></div>
 		<table class="table" cellpadding="10" cellspacing="10">
 			<thead>
 				<tr>

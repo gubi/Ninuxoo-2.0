@@ -3,12 +3,12 @@
 <script src="common/js/include/linked_nas.js"></script>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h5>NAS nel vicinato</h5></div>
+	<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-transfer"></span>&nbsp;&nbsp;Nel vicinato<small class="help-block">NAS rilevati nelle vicinanze</small></span></div>
 	<div class="panel-body">
 		A seguire l'elenco dei NAS nelle vicinanze.<br />
 		Per attivare o meno il collegamento con uno dei quali fare click sul flag corrispondente nella colonna dello stato.
 		<br />
-		Il prossimo controllo dei NAS presenti sar&agrave; tra <span id="counter"></span>...
+		Il prossimo controllo dei NAS presenti sar&agrave; fra <strong><span id="counter"></span></strong>...
 	</div>
 	<table class="table" id="finded_nas">
 		<thead>
@@ -30,9 +30,9 @@
 </div>
 <br />
 <div class="panel panel-default">
-	<div class="panel-heading"><h5>NAS in attesa di autorizzazione</h5></div>
+	<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;In attesa di autorizzazione<small class="help-block">NAS che hanno richiesto la connessione e che attendono di essere collegati</small></span></div>
 	<div class="panel-body">
-		<a class="btn btn-default" href="javascript:void(0);" id="add_nas_ip">Aggiungi un NAS conosciuto&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-saved"></span></a>
+		<a class="btn btn-default" href="javascript:void(0);" id="add_nas_ip">Aggiungi un NAS conosciuto&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-plus"></span></a>
 		
 		<?php
 		foreach(glob("common/include/conf/trusted/*.pem~") as $filename) {

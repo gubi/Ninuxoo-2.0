@@ -15,12 +15,12 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 			<div class="well">
 				<div class="input-group">
 					<label for="username" class="control-label input-group-addon btn"><span class="glyphicon glyphicon-envelope" title="Indirizzo e-mail"></span></label>
-					<input type="email" class="form-control input-lg" id="username" name="username" placeholder="Indirizzo e-mail" autocomplete="off" tabindex="1" />
+					<input type="email" class="form-control input-lg" id="username" name="username" placeholder="Indirizzo e-mail" autocomplete="off" autofocus required tabindex="1" />
 				</div>
 				<br />
 				<div class="input-group">
 					<label for="password" class="control-label input-group-addon btn"><span class="glyphicon glyphicon-lock" title="password"></span></label>
-					<input type="password" class="form-control input-lg" id="password" name="password" placeholder="Una password valida" autocomplete="off" tabindex="2" />
+					<input type="password" class="form-control input-lg" id="password" name="password" placeholder="Una password valida" autocomplete="off" required tabindex="2" />
 				</div>
 				<br />
 				<a class="btn btn-link" href="./Accedi/Password_dimenticata"><span class="glyphicon glyphicon-remove"></span> Password dimenticata</a>

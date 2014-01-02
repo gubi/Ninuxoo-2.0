@@ -3,7 +3,7 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 	require_once("common/include/lib/mime_types.php");
 	?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h5>Files di configurazione salvati</h5></div>
+		<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;Tutte le tue config<small class="help-block">Files di configurazione salvati</small></span></div></div>
 		<table class="table" cellpadding="10" cellspacing="10">
 			<thead>
 				<tr>

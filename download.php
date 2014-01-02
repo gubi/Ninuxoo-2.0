@@ -9,7 +9,6 @@ $info = pathinfo(urldecode($data));
 $filename = $info["basename"];
 
 $config = parse_ini_file("common/include/conf/config.ini", 1);
-$file = $config["NAS"]["smb_conf_dir"] . ltrim($data, "/");
 
 if(file_exists($file)) {
 	if(!is_file($file)) {

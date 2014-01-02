@@ -23,11 +23,9 @@
 			<?php
 			if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 				?>
-				<form class="navbar-form navbar-right" role="search">
+				<form class="navbar-form navbar-right" role="search" action="./Cerca:">
 					<div class="input-group">
-						<input type="search" id="search_input" class="form-control" name="q" value="<?php print (isset($_GET["q"]) ? $_GET["q"] : ""); ?>" placeholder="Cerca in Ninuxoo" >
-						<input type="hidden" name="op" value="query" style="display: none;">
-						<input type="hidden" name="nresults" value="200" style="display: none;">
+						<input type="search" id="search_input" class="form-control" name="q" value="<?php print ((isset($_GET["s"]) && strpos($_GET["s"], "Cerca:") !== false) ? str_replace("Cerca:", "", urldecode($_GET["s"])) : ""); ?>" placeholder="Cerca in Ninuxoo" >
 						<input type="submit" value="" style="display: none;">
 						<a class="input-group-addon btn btn-default btn-xs" href="./Ricerca_avanzata<?php if(isset($_GET["q"]) && trim($_GET["q"]) !== ""){ print "/Cerca:" . $_GET["q"]; } ?>" title="Ricerca avanzata"><span class="glyphicon glyphicon-cog"></span></a>
 					</div>
@@ -48,17 +46,17 @@
 							if($GLOBALS["is_admin"]) {
 								if(trim($_GET["s"]) == "Admin" && !isset($_GET["q"])) {
 									?>
-									<li class="active"><a href="javascript:void(0);"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Admin</a></li>
+									<li class="active"><a href="javascript:void(0);"><span class="fa fa-gears"></span>&nbsp;&nbsp;Admin</a></li>
 									<li><a href="./Dashboard"><span class="glyphicon glyphicon-dashboard"></span>&nbsp;&nbsp;Dashboard</a></li>
 									<?php
 								} else if(trim($_GET["s"]) == "Dashboard" && !isset($_GET["q"])) {
 									?>
-									<li><a href="./Admin"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Admin</a></li>
+									<li><a href="./Admin"><span class="fa fa-gears"></span>&nbsp;&nbsp;Admin</a></li>
 									<li class="active"><a href="javascript:void(0);"><span class="glyphicon glyphicon-dashboard"></span>&nbsp;&nbsp;Dashboard</a></li>
 									<?php
 								} else {
 									?>
-									<li><a href="./Admin"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Admin</a></li>
+									<li><a href="./Admin"><span class="fa fa-gears"></span>&nbsp;&nbsp;Admin</a></li>
 									<li><a href="./Dashboard"><span class="glyphicon glyphicon-dashboard"></span>&nbsp;&nbsp;Dashboard</a></li>
 									<?php
 								}
@@ -74,6 +72,8 @@
 								}
 							}
 							?>
+							<li class="divider"></li>
+							<li><a href="./Dashboard/Chat" id="notify_btn"><span class="fa fa-comments-o"></span>&nbsp;&nbsp;Chat di gruppo</a></li>
 							<li class="divider"></li>
 							<li><a href="./Esci"><span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;Esci</a></li>
 						</ul>

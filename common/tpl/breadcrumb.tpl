@@ -31,13 +31,11 @@ function optimize($string) {
 	return truncate($string, 120);
 }
 
-$do_not_show_for_this_page = array("admin", "dashboard", "sito locale");
-
-if(isset($_GET["s"]) && trim($_GET["s"]) !== "" && !in_array(strtolower($page_name), $do_not_show_for_this_page)) {
+if(isset($_GET["s"]) && trim($_GET["s"]) !== "" && !in_array(strtolower($page_name), $advanced_pages)) {
 	?>
 	<div id="breadcrumb">
 		<ul>
-			<li><a href="./" id="home"></a></li>
+			<li><a title="Pagina Principale" href="./" id="home"></a></li>
 			<?php
 			if(isset($_GET["q"]) && trim($_GET["q"]) !== "") {
 				print '<li><a class="btn-link" href="./' . $_GET["s"] . '">' . optimize($_GET["s"]) . '</a></li>';
