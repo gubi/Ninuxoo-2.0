@@ -33,16 +33,17 @@
 			</div>
 		</form>
 	</div>
-	<table class="table table-striped">
+	<table class="table">
 		<thead>
 			<tr>
 				<td style="width: 20px;"></td>
+				<th style="width: 30px;">#</th>
 				<th>Nome</th>
 				<th>Messaggio</th>
 			</tr>
 		</thead>
 		<tbody id="dash_notifications">
-			<tr><td colspan="3" align="center"><span class="info">Rilevo aggiornamenti...</span></td></tr>
+			<tr><td colspan="4" align="center"><span class="info">Rilevo aggiornamenti...</span></td></tr>
 		</tbody>
 	</table>
 </div>
@@ -53,6 +54,7 @@
 	<form id="editor_frm" method="post" action="" onsubmit="return false;">
 		<div class="panel-body">
 			<fieldset id="send_notice_area">
+				<span class="info">&Egrave; possibile celare il proprio indirizzo ip antecedendo <code>noip:</code> al testo.</span> 
 				<div class="input-group">
 					<input type="hidden" id="user_data" value="<?php print $user["name"]; ?>" />
 					<input type="hidden" id="send_previous_notice" value="" />

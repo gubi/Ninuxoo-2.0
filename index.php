@@ -93,6 +93,20 @@ if(!$has_config) {
 		require_once("common/tpl/has_config.tpl");
 	}
 	?>
+	<?php
+	if(isset($_COOKIE["n"])) {
+		?>
+		<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
+		<script type="text/javascript" src="common/js/include/common.js"></script>
+		<script type="text/javascript" src="common/js/jquery.easing.1.3.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function() {
+			check_notify();
+		});
+		</script>
+		<?php
+	}
+	?>
 	<script type="text/javascript">
 	(function() {
 		window.alert = function(string, args, callback) {
@@ -104,14 +118,23 @@ if(!$has_config) {
 		$("button[title], abbr[title], acronym[title]").tooltip({placement: "auto"});
 		$("*[data-content]:not(#footer > a)").popover({placement: "auto"});
 		$("#footer a[title]").popover({placement: "auto", trigger: "hover"});
+		$(window).scroll(function(){
+			if ($(this).scrollTop() > 100) {
+				$("#superfooter").fadeIn();
+			} else {
+				$("#superfooter").fadeOut();
+			}
+		});
 	});
 	</script>
 </head>
 <body>
 	<div id="page_loader"></div>
-	<?php
-	require_once("common/tpl/menu.tpl");
-	?>
+	<header>
+		<?php
+		require_once("common/tpl/menu.tpl");
+		?>
+	</header>
 	<div id="main_container">
 		<div id="<?php print ($has_config ? "main_header" : "header"); ?>">
 			<table>
@@ -140,6 +163,10 @@ if(!$has_config) {
 			require_once("common/tpl/footer.tpl");
 			?>
 		</div>
+	</div>
+	<div id="superfooter">
+		<a href="javascript:void(0);" onclick="$('html, body').animate({ scrollTop: ($('body').offset().top) }, 300);" class="btn btn-link"><span class="fa fa-angle-up"></span> <small>Top</small></a>
+		<a href="javascript:void(0);" onclick="$('html, body').animate({ scrollTop: ($('body').offset().top) }, 300);" class="btn btn-link right"><small>Top</small> <span class="fa fa-angle-up"></span></a>
 	</div>
 </body>
 </html>

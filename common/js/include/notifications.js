@@ -18,7 +18,7 @@ function filter(that) {
 		var inputText = $(that).val().toLowerCase();
 		if(inputText != "") {
 			$(".search-query-sf").remove();
-			tableBody.prepend('<tr class="search-query-sf"><td colspan="3"><span class="info"><span class="glyphicon glyphicon-sort"></span>&nbsp;Filtro su "' + $(that).val() + '" (nascost' + (((items-1) == 1) ? 'o ' : 'i ') + (items-1) + ')</span></td></tr>');
+			tableBody.prepend('<tr class="search-query-sf"><td colspan="4"><span class="info"><span class="glyphicon glyphicon-sort"></span>&nbsp;Filtro su "' + $(that).val() + '" (nascost' + (((items-1) == 1) ? 'o ' : 'i ') + (items-1) + ')</span></td></tr>');
 		} else {
 			$(".search-query-sf").remove();
 		}
@@ -31,8 +31,21 @@ function filter(that) {
 		}
 	});
 	if(tableRowsClass.children(":visible").length == 0) {
-		tableBody.append('<tr class="search-sf"><td class="info" colspan="3" align="center">Nessun risultato.</td></tr>');
+		tableBody.append('<tr class="search-sf"><td class="info" colspan="4" align="center">Nessun risultato.</td></tr>');
 	}
+}
+function mark_id_as_read() {
+	var id = "",
+	read = [];
+	localStorage.removeItem("read");
+	$.each($("#dash_notifications > tr"), function(k, v) {
+		if(!$(this).hasClass("warning")) {
+			id = $(this).attr("id");
+		}
+		read.push(id);
+	});
+	read = $.unique(read);
+	localStorage.setItem("read", JSON.stringify(read));
 }
 function remove_notice() {
 	$("#send_notice_area").attr("disabled", "disabled");
@@ -102,7 +115,7 @@ $(document).ready(function() {
 		filter(this);
 	});
 	$("#check_notify_btn").click(function() {
-		check_notify();
+		check_notify(null, false);
 	});
 	$("#send_notice_btn").click(function() {
 		if($("#send_notice").val().length > 0) {

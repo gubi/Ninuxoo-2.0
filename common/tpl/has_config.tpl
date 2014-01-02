@@ -12,14 +12,6 @@
 <!--Zoombox-->
 <script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/zoombox/zoombox.js"></script>
 <link rel="stylesheet" href="<?php print $NAS_absolute_uri; ?>/common/js/zoombox/zoombox.css" />
-<?php
-if(isset($_GET["s"]) && trim($_GET["s"]) !== "" && in_array(strtolower($_GET["s"]), $advanced_pages)) {
-	?>
-	<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
-	<script type="text/javascript" src="common/js/include/common.js"></script>
-	<?php
-}
-?>
 <script type="text/javascript">
 $.ultrie = function(resourcetrie, resuri, realuri) {
 	var res = "",
@@ -546,6 +538,5 @@ $(document).ready(function() {
 	if($._GET("s") != undefined && $._GET("s") == "advanced"){
 		$("select").chosen();
 	}
-	check_notify();
 });
 </script>
