@@ -3,21 +3,37 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<span class="lead text-primary">
-			<span class="fa fa-comments-o"></span>&nbsp;&nbsp;Chat di gruppo<span id="check_loader" class="right info"><img src="common/media/img/loader.gif" /></span><small class="help-block">Messaggistica in multicast</small>
+			<span class="fa fa-comments-o"></span>&nbsp;&nbsp;Chat di gruppo 
+				<span id="check_loader" class="right info"><img src="common/media/img/loader.gif" /></span>
+				<small class="help-block">Messaggistica in multicast</small>
+			</span>
+			<div class="text-right">
+				<a data-toggle="collapse" href="#collapseOne" class="text-info">
+					Informazioni sulla chat di gruppo&nbsp;&nbsp;<span class="fa fa-info"></span>
+				</a>
+			</div>
+			<div class="panel panel-info">
+				<div id="collapseOne" class="panel-collapse collapse">
+					<div class="panel-body text-info text-right">
+						<p>Comunica con tutti gli utenti degli altri NAS: scrivi un messaggio da diffondere nell'etere o per iniziare una chiacchierata pubblica.</p>
+						<p>Per i pi&ugrave; esperti, si tratta di messaggi inviati via <acronym title="Transmission Control Protocol">TCP</acronym> in <acronym title="Multicast DNS">MDNS</acronym>, nella porta 64689.</p>
+					</div>
+				</div>
+			</div>
 		</span>
 	</div>
-	<div class="panel-body right">
-		<form action="" method="get" onsubmit="return false">
-			<div class="input-group">
-				<!-- USE TWITTER TYPEAHEAD JSON WITH API TO SEARCH -->
-				<input class="form-control" id="system-search" style="height: 2.3em;" placeholder="Filtra messaggi per..." required />
+	<div class="panel-body">
+		<button class="btn btn-default" title="Aggiorna l'elenco dei messaggi" id="check_notify_btn">Aggiorna&nbsp;&nbsp;<span class="glyphicon glyphicon-repeat"></span></button>
+		<form action="" method="get" onsubmit="return false" class="right">
+			<div class="input-group ">
+				<input class="form-control" id="system-search" style="height: 2.3em;" placeholder="Filtra messaggi per..." />
 				<span class="input-group-btn">
-						<button type="submit" class="btn btn-default" onclick="filter($('#system-search'));"><i class="glyphicon glyphicon-search"></i></button>
+					<button class="btn btn-default" onclick="filter($('#system-search'));"><span class="glyphicon glyphicon-search"></span></button>
 				</span>
 			</div>
 		</form>
 	</div>
-	<table class="table">
+	<table class="table table-striped">
 		<thead>
 			<tr>
 				<td style="width: 20px;"></td>
