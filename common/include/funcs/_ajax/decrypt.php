@@ -134,6 +134,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "save_personal_page":
 			require_once("save_personal_page.php");
 			break;
+		case "save_personal_settings":
+			require_once("save_personal_settings.php");
+			break;
 		case "save_script":
 			require_once("editor.save_script.php");
 			break;

@@ -73,7 +73,7 @@
 							}
 							?>
 							<li class="divider"></li>
-							<li><a href="./Dashboard/Chat" id="notify_btn"><span class="fa fa-comments-o"></span>&nbsp;&nbsp;Chat di gruppo</a></li>
+							<li><a href="./Dashboard/Chat" id="notify_btn" class="<?php print ($GLOBALS["user_settings"]["Notification"]["new_chat_messages"] == "true") ? "notify" : ""; ?>"><span class="fa fa-comments-o"></span>&nbsp;&nbsp;Chat di gruppo</a></li>
 							<li class="divider"></li>
 							<li><a href="./Esci"><span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;Esci</a></li>
 						</ul>

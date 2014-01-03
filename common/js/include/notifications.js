@@ -18,7 +18,7 @@ function filter(that) {
 		var inputText = $(that).val().toLowerCase();
 		if(inputText != "") {
 			$(".search-query-sf").remove();
-			tableBody.prepend('<tr class="search-query-sf"><td colspan="4"><span class="info"><span class="glyphicon glyphicon-sort"></span>&nbsp;Filtro su "' + $(that).val() + '" (nascost' + (((items-1) == 1) ? 'o ' : 'i ') + (items-1) + ')</span></td></tr>');
+			tableBody.prepend('<tr class="search-query-sf"><td colspan="4"><span class="info"><span class="glyphicon glyphicon-sort"></span>&nbsp;Filtro su "' + $(that).val() + (((items-1) > 0) ? '" (nascost' + (((items-1) == 1) ? 'o ' : 'i ') + (items-1) + ')' : '"') + '</span></td></tr>');
 		} else {
 			$(".search-query-sf").remove();
 		}
@@ -81,7 +81,7 @@ function send_notice() {
 	$("#send_notice_area").attr("disabled", "disabled");
 	var password = makeid();
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt("message=" + $("#send_notice").val() + "&host=" + $("#user_data").val(), password);
+		var encryptedString = $.jCryption.encrypt("message=" + $("#send_notice").val() + "&host=" + $("#user_data").val() + "&user_name=" + $("#user_name").val(), password);
 		
 		$.ajax({
 			url: "common/include/funcs/_ajax/decrypt.php",

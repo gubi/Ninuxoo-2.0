@@ -400,6 +400,9 @@ table.grid td {
 	-moz-transition-property: box-shadow, border;
 	-o-transition-timing-function: ease-in-out;
 }
+#search_input {
+	height: 1.5em;
+}
 
 #search {
 	background-color: #2d2d2d;
@@ -471,7 +474,7 @@ table.grid td {
 	background: url("../media/img/dirty-shade.png") bottom left repeat-x;
 	background-size: 5px;
 	margin: 0;
-	padding: 20px 0;
+	padding: 13px 0;
 }
 #breadcrumb li {
     color: #666666;

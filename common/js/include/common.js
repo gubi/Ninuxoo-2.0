@@ -26,19 +26,33 @@ function setFullScreen(cm, full) {
 	}
 	cm.refresh();
 }
-function get_duration(timeSecs){
+$.fn.get_duration = function(options) {
+	var options = $.extend({
+		timetype: "milliseconds",
+		time: $(this).val()
+	}, options);
+	if(options.timetype == "milliseconds") {
+		milliseconds = true;
+	} else {
+		milliseconds = false;
+	}
 	var total_time = "";
-	if(parseInt(timeSecs.val()) > 0) {
+	if(parseInt(options.time) > 0) {
 		var str = [],
 		units = [
+			{label:"milliseconds",   mod:1000},
 			{label:"seconds",   mod:60},
 			{label:"minutes",   mod:60},
 			{label:"hours",	 mod:24},
 			{label:"days",	  mod:7},
 			{label:"weeks",	 mod:52}
 		],
-		duration = new Object(),
-		x = timeSecs.val();
+		duration = new Object();
+		if(milliseconds) {
+			var x = options.time;
+		} else {
+			var x = options.time*1000;
+		}
 		
 		for (i = 0; i < units.length; i++){
 			var tmp = x % units[i].mod;
@@ -60,6 +74,9 @@ function get_duration(timeSecs){
 		if(duration.seconds > 0) {
 			str.push(duration.seconds + " second" + ((duration.seconds == 1) ? "o" : "i"));
 		}
+		if(duration.milliseconds > 0) {
+			str.push(duration.milliseconds + " millisecond" + ((duration.milliseconds == 1) ? "o" : "i"));
+		}
 		
 		if(str.length > 0) {
 			var tott = "";
@@ -77,13 +94,23 @@ function get_duration(timeSecs){
 		} else {
 			tott = str.join(", ");
 		}
-		total_time =  "second" + ((parseInt(timeSecs.val()) == 1) ? "o" : "i") + " (" + tott + ")";
+		if(milliseconds) {
+			total_time =  "millisecond" + ((parseInt(options.time) == 1) ? "o" : "i") + " (" + tott + ")";
+		} else {
+			total_time =  "second" + ((parseInt(options.time) == 1) ? "o" : "i") + " (" + tott + ")";
+		}
 	} else {
 		total_time = "fino alla chiusura della sessione";
 	}
-	timeSecs.val(Math.round(timeSecs.val()));
-	$("#hour").text(total_time);
+	var final_res = (Math.round(options.time)) ? Math.round(options.time) : 0;
+	$(this).val(final_res);
+	if($(this).next(".hour").length == 0) {
+		$(this).after('&nbsp;&nbsp;<span class="hour">' + total_time + '</span>');
+	} else {
+		$(this).next(".hour").text(total_time);
+	}
 }
+
 $.download = function(url, data, method){ if( url && data ){ data = typeof data == 'string' ? data : jQuery.param(data); var inputs = ''; jQuery.each(data.split('&'), function(){ var pair = this.split('='); inputs+='<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; }); jQuery('<form action="'+ url +'" method="'+ (method||'post') +'">'+inputs+'</form>').appendTo('body').submit().remove(); }; };
 
 function check_notify(active, autoupdate) {
@@ -139,7 +166,9 @@ function check_notify(active, autoupdate) {
 							}
 							$("#dash_notifications a[title]").tooltip({placement: "auto"});
 							$("#dash_notifications").removeClass("disabled");
-							$("#check_notify_btn").removeClass("disabled");
+							if(parseInt($("#notification_refresh").text()) > 6000) {
+								$("#check_notify_btn").removeClass("disabled");
+							}
 						});
 						mark_id_as_read();
 					}
@@ -160,6 +189,9 @@ function check_notify(active, autoupdate) {
 						tot = response["messages"]["count"];
 					}
 					if(tot == 0) {
+						notify = false;
+					}
+					if(!$("#notify_btn").hasClass("notify")) {
 						notify = false;
 					}
 					if(notify) {
@@ -190,7 +222,9 @@ function check_notify(active, autoupdate) {
 						}
 					}
 				} else {
-					$("#check_notify_btn").removeClass("disabled");
+					if(parseInt($("#notification_refresh").text()) > 6000) {
+						$("#check_notify_btn").removeClass("disabled");
+					}
 					if($("#notify_btn > span.badge").length > 0) {
 						$("#notify_btn > span.badge").remove();
 					}
@@ -205,15 +239,15 @@ function check_notify(active, autoupdate) {
 	if(autoupdate) {
 		// If user sent a notification the area will be refreshed
 		// each 5 seconds for 1 minute, then the refresh returns to 30 seconds
-		var time = 30000;
+		var time = parseInt($("#notification_refresh").text());
 		if(active != undefined && active != null) {
 			time = 5000;
 			if(active >= 1 && active < 10) { active++; }
-			if(active >= 10) { active = null; time = 30000; }
+			if(active >= 10) { active = null; time = parseInt($("#notification_refresh").text()); }
 			if(active == "0") { active = 1; }
 			if(active == "true") { active = "0"; }
 		} else {
-			time = 30000;
+			time = parseInt($("#notification_refresh").text());
 		}
 		setTimeout(function() {
 			check_notify(active);

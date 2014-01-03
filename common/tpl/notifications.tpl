@@ -23,7 +23,11 @@
 		</span>
 	</div>
 	<div class="panel-body">
-		<button class="btn btn-default" title="Aggiorna l'elenco dei messaggi" id="check_notify_btn">Aggiorna&nbsp;&nbsp;<span class="glyphicon glyphicon-repeat"></span></button>
+		<?php
+		$manual_refresh = ($GLOBALS["user_settings"]["Chat"]["refresh_interval"] < 6000) ? " disabled" : "";
+		$manual_refresh_info = ($GLOBALS["user_settings"]["Chat"]["refresh_interval"] < 6000) ? '&nbsp;<small class="panel text-muted">Il tempo di refresh &egrave; troppo breve per poter avviare l\'aggiornamento manuale</small>' : "";
+		?>
+		<button class="btn btn-default<?php print $manual_refresh; ?>" title="Aggiorna l'elenco dei messaggi" id="check_notify_btn">Aggiorna&nbsp;&nbsp;<span class="glyphicon glyphicon-repeat"></span></button><?php print $manual_refresh_info; ?>
 		<form action="" method="get" onsubmit="return false" class="right">
 			<div class="input-group ">
 				<input class="form-control" id="system-search" style="height: 2.3em;" placeholder="Filtra messaggi per..." />
@@ -54,9 +58,20 @@
 	<form id="editor_frm" method="post" action="" onsubmit="return false;">
 		<div class="panel-body">
 			<fieldset id="send_notice_area">
-				<span class="info">&Egrave; possibile celare il proprio indirizzo ip antecedendo <code>noip:</code> al testo.</span> 
+				<?php
+				if($GLOBALS["user_settings"]["Chat"]["show_ip"] == "false") {
+					?>
+					<div class="alert alert-warning"><span class="fa fa-info"></span>&nbsp;&nbsp;Come da impostazioni, l'indirizzo IP dei tuoi messaggi sar&agrave; celato</div> 
+					<?php
+				} else {
+					?>
+					<span class="info">&Egrave; possibile celare il proprio indirizzo ip antecedendo <code>noip:</code> al testo.</span> 
+					<?php
+				}
+				?>
 				<div class="input-group">
 					<input type="hidden" id="user_data" value="<?php print $user["name"]; ?>" />
+					<input type="hidden" id="user_name" value="<?php print $user["username"]; ?>" />
 					<input type="hidden" id="send_previous_notice" value="" />
 					<input type="text" class="form-control" id="send_notice" style="height: 2.3em;" placeholder="Scrivi un messaggio" value="" />
 					<span class="input-group-btn">

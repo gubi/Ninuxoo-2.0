@@ -16,7 +16,7 @@
 		</div>
 		<div class="col-lg-1"></div>
 		<div class="col-lg-3">
-			<a href="./Dashboard/Impostazioni_personali" style="opacity: 0.75;">
+			<a href="./Dashboard/Impostazioni_personali">
 				<img src="common/media/img/admin_panel/settings_128_333.png" />
 				<br />
 				<br />

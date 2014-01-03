@@ -328,9 +328,9 @@ Copyright (c) 2011 by Harvest
         style: 'width: ' + this.f_width + 'px;'
       });
       if (this.is_multiple) {
-        container_div.html('<ul class="chzn-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default" autocomplete="off" style="width:25px;" /></li></ul><div class="chzn-drop" style="left:-9000px;"><ul class="chzn-results"></ul></div>');
+        container_div.html('<ul class="chzn-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default form-control" autocomplete="off" style="width:25px;" /></li></ul><div class="chzn-drop" style="left:-9000px;"><ul class="chzn-results"></ul></div>');
       } else {
-        container_div.html('<a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chzn-drop" style="left:-9000px;"><div class="chzn-search"><input type="text" autocomplete="off" /></div><ul class="chzn-results"></ul></div>');
+        container_div.html('<a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chzn-drop" style="left:-9000px;"><div class="chzn-search"><input type="text" autocomplete="off" class="form-control" /></div><ul class="chzn-results"></ul></div>');
       }
       this.form_field_jq.hide().after(container_div);
       this.container = $('#' + this.container_id);
@@ -339,7 +339,7 @@ Copyright (c) 2011 by Harvest
       dd_top = this.container.height();
       dd_width = this.f_width - get_side_border_padding(this.dropdown);
       this.dropdown.css({
-        "width": dd_width + "px",
+        "width": dd_width + 2 + "px",
         "top": dd_top + "px"
       });
       this.search_field = this.container.find('input').first();
@@ -352,7 +352,8 @@ Copyright (c) 2011 by Harvest
       } else {
         this.search_container = this.container.find('div.chzn-search').first();
         this.selected_item = this.container.find('.chzn-single').first();
-        sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
+        //sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
+        sf_width = dd_width - get_side_border_padding(this.search_container);
         this.search_field.css({
           "width": sf_width + "px"
         });

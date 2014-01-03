@@ -23,7 +23,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 					<input type="password" class="form-control input-lg" id="password" name="password" placeholder="Una password valida" autocomplete="off" required tabindex="2" />
 				</div>
 				<br />
-				<a class="btn btn-link" href="./Accedi/Password_dimenticata"><span class="glyphicon glyphicon-remove"></span> Password dimenticata</a>
+				<a class="btn btn-link" href="./Accedi/Password_dimenticata"><span class="glyphicon glyphicon-remove"></span> Password dimenticata?</a>
 			</div>
 			<div class="btn-group right">
 				<?php

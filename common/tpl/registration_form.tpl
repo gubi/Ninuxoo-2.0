@@ -1,7 +1,6 @@
 <?php
 $conf_dir = "common/include/conf";
-$general_settings = parse_ini_file($conf_dir . "/general_settings.ini", true);
-if($general_settings["login"]["allow_user_registration"] == "true") {
+if($GLOBALS["general_settings"]["login"]["allow_user_registration"] == "true") {
 	?>
 	<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
 	<script type="text/javascript" src="common/js/include/common.js"></script>
@@ -12,7 +11,6 @@ if($general_settings["login"]["allow_user_registration"] == "true") {
 		if($key[4] == sha1(date("d-m-Y"))) {
 			?>
 			<?php
-			$config = parse_ini_file("common/include/conf/config.ini", true);
 			if(!file_exists($conf_dir . "/user/" . sha1($key[1]))) {
 				require_once("common/include/classes/sendmail.class.php");
 				$sendmail = new Sendmail();
@@ -33,7 +31,7 @@ if($general_settings["login"]["allow_user_registration"] == "true") {
 					$user_message = "Ciao " . $key[0] . ",\nla tua registrazione a Ninuxoo e' stata effettuata con successo e da ora potrai accedere con le tue credenziali appena create.";
 					$sendmail->send($key[0] . " <" . $key[1] . ">", "Registrazione effettuata con successo", $user_message);
 					
-					foreach($general_settings["login"]["admin"] as $admins) {
+					foreach($GLOBALS["general_settings"]["login"]["admin"] as $admins) {
 						$admin = parse_ini_file($conf_dir . "/user/" . $admins . "/user.conf", true);
 						
 						$nome = explode(" ", ucwords($admin["User"]["name"]));
@@ -43,7 +41,7 @@ if($general_settings["login"]["allow_user_registration"] == "true") {
 					}
 					?>
 					<p>Attendere...</p>
-					<meta http-equiv="refresh" content="0; url=<?php print $config["NAS"]["http_root"]; ?>/Accedi">
+					<meta http-equiv="refresh" content="0; url=<?php print $GLOBALS["config"]["NAS"]["http_root"]; ?>/Accedi">
 					<?php
 				}
 			} else {
@@ -61,45 +59,70 @@ if($general_settings["login"]["allow_user_registration"] == "true") {
 		}
 	} else {
 		?>
+		<link href="common/js/chosen/chosen.css" rel="stylesheet" />
+		<link href="common/js/chosen/chosen-bootstrap.css" rel="stylesheet" />
+		<script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
+		<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
+		<script language="Javascript" src="common/js/GnuPG/sha1.js" type="text/javascript"></script>
+		<script language="Javascript" src="common/js/GnuPG/base64.js" type="text/javascript"></script>
+		<script language="Javascript" src="common/js/GnuPG/PGpubkey.js" type="text/javascript"></script>
 		<script type="text/javascript" src="common/js/include/registration_form.js"></script>
-		<form method="post" action="" id="registration_frm" onsubmit="return false;">
-			<fieldset class="frm">
-				<legend>Entra a far parte dei nostri!</legend>
-				<table cellspacing="0" cellpadding="0">
-					<tr>
-						<td><img src="common/media/img/group_full_plus_128_333.png" /></td>
-						<td>
-							<p>
-								La registrazione a Ninuxoo consente di poter usufruire di moltissime funzionalit&agrave; personalizzate.<br />
-								Traccia dello storico delle ricerche, avvisi via e-mail sulle novit&agrave;, jukebox personalizzabile, pagine proprie, e tanto altro ancora...
-							</p>
-							<p>Per registrarsi &egrave; necessario appartenere a un nodo Ninux attivo.</p>
-						</td>
-					</tr>
-				</table>
-				<hr />
-				<label for="user_name" class="required">Nome:</label>
-				<input id="user_name" name="user_name" type="text" value="" autocomplete="off" tabindex="1" />
-				
-				<label for="node_name" class="required">Nodo Ninux:</label>
-				<small style="margin-bottom: 20px;">Puoi controllare il nome sulla <a href="http://map.ninux.org" target="_blank">mappa</a></small><br />
-				<input id="node_name" name="node_name" type="text" value="" autocomplete="off" tabindex="2" />
-				
-				<br />
-				<label for="user_username" class="required">Indirizzo e-mail:</label>
-				<input id="user_username" name="user_username" type="email" value="" autocomplete="off" tabindex="3" />
-				<br />
-				<br />
-				<span class="left">
-					<label for="user_password" class="required">Password:</label>
-					<input type="password" id="user_password" name="user_password" value="" autocomplete="off" tabindex="4" />
-				</span>
-				<span class="left">
-					<label for="user_password2" class="required">Ripeti la password:</label>
-					<input type="password" id="user_password2" name="user_password2" value="" autocomplete="off" tabindex="5" />
-				</span>
-			</fieldset>
-			<button id="register_btn" tabindex="6">Registrati</button>
+		<form method="post" action="" id="registration_frm" onsubmit="$('#page_loader').fadeIn(300); save(); return false;" class="form-horizontal">
+			<div class="panel panel-default">
+			<div class="panel-heading"><span class="lead text-primary"><span class="fa fa-user"></span>&nbsp;&nbsp;Entra a far parte dei nostri! <a name="Mappa" id="Mappa"></a><small class="help-block">Un sacco di personalizzazioni ti aspettano</small></span></div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-md-1">
+						<img class="img-responsive" src="common/media/img/group_full_plus_128_333.png" />
+					</div>
+					<div class="col-md-11">
+						<p>
+							Personalizza le funzionalit&agrave; di Ninuxoo!<br />
+							Imposta avvisi via e-mail sulle novit&agrave;, crea tue pagine personali, accedi alla chat collettiva e tanto altro ancora...
+						</p>
+						<p>Per registrarsi &egrave; necessario appartenere a un nodo Ninux attivo.</p>
+					</div>
+				</div>
+			</div>
+			<hr />
+			<div class="panel-body">
+				<div class="form-group">
+					<label for="user_name" class="col-sm-2 control-label">Nome:</label>
+					<div class="col-sm-4">
+						<input id="user_name" name="user_name" class="form-control" type="text" value="" autocomplete="off" tabindex="1" required />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="node_name" class="col-sm-2 control-label">Nome del nodo di riferimento:</label>
+					<div class="col-sm-4">
+						<select name="node_name" id="node_name" disabled="disabled" class="form-control chosen-select" tabindex="2" required><option value=""></option></select>
+						<span class="help-block">Puoi controllare il nome sulla <a href="http://map.ninux.org" target="_blank">mappa</a></span>
+					</div>
+					<span id="nlloader" style="display: none;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="common/media/img/loader.gif" width="16" /></span>
+				</div>
+			</div>
+			<div class="panel-body">
+				<div class="form-group">
+					<label for="user_username" class="col-sm-2 control-label">Indirizzo e-mail:</label>
+					<div class="col-sm-4">
+						<input id="user_username" name="user_username" class="form-control" type="email" value="" autocomplete="off" tabindex="3" required />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="user_password" class="col-sm-2 control-label">Password:</label>
+					<div class="col-sm-3">
+						<input type="password" id="user_password" name="user_password" class="form-control" value="" autocomplete="off" tabindex="4" required />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="user_password2" class="col-sm-2 control-label">Ripeti la password:</label>
+					<div class="col-sm-3">
+						<input type="password" id="user_password2" name="user_password2" class="form-control" value="" autocomplete="off" tabindex="5" required />
+					</div>
+				</div>
+			</div>
+			<hr />
+			<button class="btn btn-primary right" id="register_btn" tabindex="6">Registrati&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></button>
 		</form>
 		<?php
 	}
