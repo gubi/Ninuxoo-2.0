@@ -4964,7 +4964,8 @@ a.list-group-item.active:focus .list-group-item-text {
 }
 .close {
   float: right;
-  font-size: 1.5em;
+  /*font-size: 1.5em;*/
+  font-size: 1.2em;
   font-weight: bold;
   line-height: 1;
   color: #000000;

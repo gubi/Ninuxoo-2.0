@@ -2397,7 +2397,7 @@ else
 			// The header.
 			var header = doc.createElement("div");
 			header.className = "modal-header";
-			header.innerHTML = '<a class="close" data-dismiss="modal">×</a> <h3 class="modal-title">'+title+'</h3>';
+			header.innerHTML = '<button type="button" data-dismiss="modal" class="close" aria-hidden="true">&times;</button> <h3 class="modal-title">'+title+'</h3>';
 			content.appendChild(header);
 
 			// The body.
@@ -3606,9 +3606,17 @@ else
 
 		// Default settings
 		var settings = $.extend( {
-			'sanatize'				: true,
-			'help'						: null,
-			'hooks'						: Array()
+			'sanatize': true,
+			'help': function () {
+				apprise('<p>Markdown &egrave; un linguaggio di markup creato da <a target="_blank" href="http://en.wikipedia.org/wiki/John_Gruber">John Gruber</a> e <a target="_blank" href="http://it.wikipedia.org/wiki/Aaron_Swartz">Aaron Swartz</a> che consente a blogger e scrittori di ogni tipo di scrivere testi in maniera veloce utilizzando una sintassi estremamente semplice ed efficace.</p>I motivi principali dell\'uso del Markdown sono i seguenti:<ul><li>&egrave; semplice</li><li>&egrave; veloce</li><li>&egrave; pulito</li><li>&egrave; mobile</li><li>&egrave; flessibile</li><li>si adatta ad ogni flusso di lavoro</li></ul><p>Un esempio del suo utilizzo a seguire:</p><br /><code>Primo livello di intestazione</code><br /><code>=============================</code><br /><code>Secondo livello di intestazione</code><br /><code>-------------------------------</code><br /></code><br /><code>Laoreet accumsan, ullamcorper iriure suscipit commodo dolore</code><br /><code>iusto ea blandit accumsan illum amet nostrud autem ipsum</code><br /><code>tincidunt at blandit.</code><br /><br /><code>Vulputate, nulla enim dolore nostrud qui eu nisl tation</code><br /><code>facilisi minim lorem, ut commodo qui. Luptatum augue magna</code><br /><code>aliquip nonummy dolore quis eu, ut molestie eum nostrud.</code><br /><code>### Header 3</code><br /><br /><code> > Questa è una citazione.</code><br /><code> ></code><br /><code> > Questo è il secondo paragrafo nella citazione. ></code><br /><code> > # # Questo è un Header di secondo livello in una citazione</code>', {
+					title: "Formattazione Markdown", 
+					icon: "fa-edit"
+				}, function(e) {
+					console.log(e);
+				});
+				return false;
+			},
+			'hooks': Array()
 		}, options);
 
 		return this.each(function() {   

@@ -2,28 +2,31 @@
 if(trim($_GET["id"]) == "") {
 	require_once("common/include/lib/mime_types.php");
 	?>
+	<script type="text/javascript" src="common/js/include/personal_pages.js"></script>
 	<div class="panel panel-default">
 		<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Pagine personali<small class="help-block"></small></span></div>
 		<table class="table" cellpadding="10" cellspacing="10">
 			<thead>
 				<tr>
-					<th>Nome</th><th>Tipo di file</th>
+					<th style="width: 20px;"></th>
+					<th>Nome</th>
+					<th>Tipo di file</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="pages_dash">
 				<?php
-				if(!file_exists("common/md/pages/" . sha1($data[1]))) {
-					mkdir("common/md/pages/" . sha1($data[1]));
-					chmod("common/md/pages/" . sha1($data[1]), 0777);
+				if(!file_exists("common/md/pages/" . sha1($GLOBALS["username"]))) {
+					mkdir("common/md/pages/" . sha1($GLOBALS["username"]));
+					chmod("common/md/pages/" . sha1($GLOBALS["username"]), 0777);
 				}
-				foreach(glob("common/md/pages/" . sha1($data[1]) . "/*.md") as $filename) {
+				foreach(glob("common/md/pages/" . sha1($GLOBALS["username"]) . "/*.md") as $filename) {
 					$file[] = $filename;
 				}
 				if(count($file) > 0) {
 					foreach($file as $filename) {
 						$info = pathinfo($filename);
 						
-						print '<tr><td><a href="./Dashboard/Pagine/' . base64_encode($filename) . '">' . $info["filename"] . '</a></td><td style="color: #999;">' . $mime_type[$info["extension"]] . '</td><td></td></tr>';
+						print '<tr><td><input type="hidden" class="script_dir" value="' . $info["dirname"] . '"><input type="hidden" class="page_name" value="' . $info["filename"] . '"><a href="javascript:void(0);" title="Rimuovi questa pagina" class="text-danger remove_notice_btn remove_btn"><span class="glyphicon glyphicon-remove"></span></a></td><td><a href="./Dashboard/Pagine/' . rawurlencode(trim($info["filename"])) . '">' . base64_decode(rawurldecode(trim($info["filename"]))) . '</a></td><td style="color: #999;">' . $mime_type[$info["extension"]] . '</td><td></td></tr>';
 					}
 				} else {
 					print '<tr><td colspan="2" align="center"><span class="info">Nessuna pagina personale salvata</span></td></tr>';
@@ -37,53 +40,49 @@ if(trim($_GET["id"]) == "") {
 	<a class="btn btn-primary right" href="./Dashboard/Pagine/Nuova_pagina">Nuova pagina&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-plus"></span></a>
 	<?php
 } else {
-	$user_config = parse_ini_file("common/include/conf/user/" . sha1($username) . "/user.conf", true);
-	
-	if($_GET["id"] == "Nuova_pagina") {
-		$dir_name = "common/md/pages/" . sha1($data[1]);
-		$file_name = '<div class="col-md-8"><label for="page_name">Nome del file della pagina:</label> <input type="text" value="' . $info["filename"] . '" id="page_name" name="page_name" autofocus tabindex="1" />&emsp;<span class="info" id="rename_suggestion" style="display: none;">Sar&agrave; rinominato in "<span></span>"</span><input type="hidden" value="' . $info["filename"] . '" name="original_name" id="original_name" /></div>';
-		$remove_btn = "";
-	} else {
-		$filename = base64_decode($_GET["id"]);
+	$dir_name = "common/md/pages/" . sha1($GLOBALS["username"]);
+	if($_GET["id"] !== "Nuova_pagina") {
+		$filename = base64_decode(rawurldecode($_GET["id"]));
 		$info = pathinfo($filename);
-		$file_name = (strpos($filename, "/pages/") ? '<div class="col-md-3"><span><label for="page_name">Nome del file della pagina:</label> <input type="text" value="' . $info["filename"] . '" id="page_name" name="page_name" autofocus tabindex="1" /></div><div class="col-md-5"><span class="info" id="rename_suggestion" style="display: none;">Sar&agrave; rinominato in "<span></span>"</span><input type="hidden" value="' . $info["filename"] . '" name="original_name" id="original_name" /></span></div>' : '<b>Nome della pagina:</b> <input type="hidden" value="' . $info["filename"] . '" name="page_name" /><span class="info">' . $info["filename"] . '</span></div>');
-		$file = file_get_contents($filename);
-		$script_name = '"' . $info["filename"] . '"';
-		$dir_name = $info["dirname"];
-		$remove_btn = '<button id="remove_btn" class="btn btn-danger" style="margin-right: 10px;">Elimina&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-trash"></span></button>';
+		$file = file_get_contents($dir_name . "/" . rawurlencode(base64_encode($filename)) . ".md");
 	}
 	?>
-	
-	<link href="common/js/chosen/chosen.css" rel="stylesheet" />
-	<script type="text/javascript" src="common/js/chosen/chosen.jquery.min.js"></script>
-	<script src="common/js/pagedown-bootstrap/js/jquery.pagedown-bootstrap.combined.min.js"></script>
+	<script src="common/js/pagedown-bootstrap/js/jquery.pagedown-bootstrap.combined.js"></script>
 	<link href="common/js/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="common/js/pagedown-bootstrap/css/jquery.pagedown-bootstrap.css" />
-	<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
-		<script src="common/js/include/common.js"></script>
 	<script type="text/javascript" src="common/js/include/personal_pages.js"></script>
 	
-	<h1>Gestione della pagina <span id="script_name"><?php print $script_name; ?></span></h1>
-	<hr />
+	<h1><?php print ($_GET["id"] == "Nuova_pagina") ? "Creazione di una nuova pagina" : $info["filename"]; ?></h1>
+	<?php print ($_GET["id"] !== "Nuova_pagina") ? "<h2>Gestione della pagina</h2>" : ""; ?>
 	<br />
-	<form method="post" action="" class="editor_frm" id="editor_frm">
+	<br />
+	<form method="post" action="" class="editor_frm form-horizontal" id="editor_frm" onsubmit="save_page(); return false;">
 		<div class="row">
-			<?php print $file_name; ?>
+			<label for="page_name" class="col-sm-2 control-label">Nome della pagina:</label>
+			<div class="col-sm-10">
+				<?php
+				if($_GET["id"] !== "Nuova_pagina") {
+					?>
+					<input type="hidden" value="<?php print ($_GET["id"] !== "Nuova_pagina") ? $info["filename"] : ""; ?>" name="original_name" id="original_name" required />
+					<?php
+				}
+				?>
+				<input type="text" value="<?php print ($_GET["id"] !== "Nuova_pagina") ? $info["filename"] : ""; ?>" class="form-control" id="page_name" name="page_name" autofocus tabindex="1" required />
+			</div>
+			</div>
+		<br />
+		<br />
+		<input type="hidden" value="<?php print $GLOBALS["username"]; ?>" name="user_username" id="user_username" />
+		<input type="hidden" value="<?php print $dir_name; ?>" name="script_dir" />
+		<textarea name="page_content" class="form-control" id="page_content" style="width: 100%; height: 450px;" tabindex="2"><?php print $file; ?></textarea>
+		<hr />
+		<div id="response" style="display: none;"></div>
+		<a class="btn btn-default" href="./Dashboard/Pagine"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;&nbsp;Torna all'elenco di pagine</a>
+		<div class="btn-group right">
+			<button class="btn btn-default" id="preview_btn">Anteprima&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></button>
+			<button type="submit" class="btn btn-primary<?php print ($_GET["id"] !== "Nuova_pagina") ? " disabled" : ""; ?>" id="save_editor_btn">Salva&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span></button>
 		</div>
-			<tr>
-				<td style="padding-top: 10px;">
-					<input type="hidden" value="<?php print $username; ?>" name="user_username" id="user_username" />
-					<input type="hidden" value="<?php print $dir_name; ?>" name="script_dir" />
-					
-					<textarea name="page_content" class="form-control" id="page_content" style="width: 100%; height: 450px;" tabindex="2"><?php print $file; ?></textarea>
-				</td>
-			</tr>
-		</table>
 	</form>
-	<hr />
-	<?php print $remove_btn; ?>
-	<button class="btn btn-default" id="preview_btn">Anteprima&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></button>
-	<button class="btn btn-primary right" id="save_editor_btn">Salva&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span></button>
 	<?php
 }
 ?>

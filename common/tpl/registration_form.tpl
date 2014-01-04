@@ -17,7 +17,7 @@ if($GLOBALS["general_settings"]["login"]["allow_user_registration"] == "true") {
 				
 				$user_conf = '[User]' . "\n";
 				$user_conf .= 'name = "' . $key[0] . '"' . "\n";
-				$user_conf .= 'username = "' . $key[1] . '"' . "\n";
+				$user_conf .= 'email = "' . $key[1] . '"' . "\n";
 				$user_conf .= 'pass = "' . $key[2] . '"' . "\n\n";
 				$user_conf .= 'node = "' . $key[3] . '"';
 				
@@ -37,7 +37,7 @@ if($GLOBALS["general_settings"]["login"]["allow_user_registration"] == "true") {
 						$nome = explode(" ", ucwords($admin["User"]["name"]));
 						$admin_message = "Ciao " . $nome[0] . ",\nl'utente " . $key[0] . " (" . $key[1] . "), con riferimento al nodo \"" . $key[3] . "\", si e' appena iscritto al tuo NAS con successo.";
 						
-						$sendmail->send(ucwords($admin["User"]["name"]) . " <" . $admin["User"]["username"] . ">", "Un utente si e' iscritto a Ninuxoo", $admin_message);
+						$sendmail->send(ucwords($admin["User"]["name"]) . " <" . $admin["User"]["email"] . ">", "Un utente si e' iscritto a Ninuxoo", $admin_message);
 					}
 					?>
 					<p>Attendere...</p>

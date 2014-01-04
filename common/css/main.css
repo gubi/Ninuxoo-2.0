@@ -189,13 +189,7 @@ input, textarea, select {
 input + .left, textarea + .left, select + .left, br + .left {
 	clear: left;
 }
-input:hover, textarea:hover, select:hover {
-	border: #999 1px solid;
-}
-input[type="text"]:active, input[type="text"]:focus, .frm input:active, .frm input:focus {
-	border: #999 1px solid;
-	box-shadow: 0 0 6px #666;
-}
+
 hr + button {
   margin-bottom: 10px;
 }
@@ -400,7 +394,7 @@ table.grid td {
 	-moz-transition-property: box-shadow, border;
 	-o-transition-timing-function: ease-in-out;
 }
-#search_input {
+nav #search_input {
 	height: 1.5em;
 }
 

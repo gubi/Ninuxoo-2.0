@@ -2,7 +2,7 @@
 $setting = parse_ini_file("../../conf/general_settings.ini", true);
 if(file_exists("../../conf/user/" . sha1($output["username"]))) {
 	$user_conf = parse_ini_file("../../conf/user/" . sha1($output["username"]) . "/user.conf", true);
-	if($output["username"] == $user_conf["User"]["username"] && sha1($output["password"]) == $user_conf["User"]["pass"]) {
+	if($output["username"] == $user_conf["User"]["email"] && sha1($output["password"]) == $user_conf["User"]["pass"]) {
 		$config = parse_ini_file("../../conf/config.ini", true);
 		
 		require_once("../../funcs/_blowfish.php");

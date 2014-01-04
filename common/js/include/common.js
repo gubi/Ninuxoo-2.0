@@ -26,6 +26,7 @@ function setFullScreen(cm, full) {
 	}
 	cm.refresh();
 }
+
 $.fn.get_duration = function(options) {
 	var options = $.extend({
 		timetype: "milliseconds",

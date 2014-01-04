@@ -13,7 +13,7 @@ function get_body($name, $username) {
 
 if(file_exists("../../conf/user/" . sha1($output["username"]))) {
 	$user_conf = parse_ini_file("../../conf/user/" . sha1($output["username"]) . "/user.conf", true);
-	if($output["username"] == $user_conf["User"]["username"]) {
+	if($output["username"] == $user_conf["User"]["email"]) {
 		require_once("../../classes/sendmail.class.php");
 		
 		$sendmail = new sendmail();

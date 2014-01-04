@@ -83,6 +83,7 @@ class manage_conf_file {
 		
 		$snr->setSearchFunction("preg");
 		$snr->doSearch();
+		return $snr->getNumOccurences();
 	}
 }
 ?>

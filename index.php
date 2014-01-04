@@ -52,7 +52,7 @@ if(!$has_config) {
 if(isset($_COOKIE["n"])) {
 	$c = explode("~", PMA_blowfish_decrypt($_COOKIE["n"], "ninuxoo_cookie"));
 		$user["name"] = strstr($c[0], " ", true);
-		$user["username"] = $c[1];
+		$user["email"] = $c[1];
 		$user["key"] = "0x" . $c[2];
 	$username = $c[1];
 	$GLOBALS["user_settings"] = parse_ini_file("common/include/conf/user/" . sha1($username) . "/user.conf", true);
@@ -86,9 +86,9 @@ if(isset($_COOKIE["n"])) {
 	<link rel="search" type="application/opensearchdescription+xml" title="Ninuxoo" href="osd.xml" />
 	
 	<script type="text/javascript" src="common/js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="common/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="common/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="common/js/Apprise/apprise-1.5.full.js"></script>
-	<link rel="stylesheet" href="common/js/Apprise/apprise.css" type="text/css">
+	<script type="text/javascript" src="common/js/apprise-bootstrap.js"></script>
 	<?php
 	if($has_config && trim(strtolower($_GET["s"])) !== "admin") {
 		require_once("common/tpl/has_config.tpl");
