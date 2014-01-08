@@ -3,7 +3,7 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<span class="lead text-primary">
-			<span class="fa fa-comments-o"></span>&nbsp;&nbsp;Chat di gruppo 
+			<span class="fa fa-comments-o"></span>&nbsp;&nbsp;Notifiche di gruppo 
 				<span id="check_loader" class="right info"><img src="common/media/img/loader.gif" /></span>
 				<small class="help-block">Messaggistica in multicast</small>
 			</span>

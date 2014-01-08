@@ -6,6 +6,12 @@ if(isset($_GET["s"]) && trim($_GET["s"]) == "Esci") {
 	setcookie ("n", "", time() - 3600);
 	header("Location: ./");
 }
+if(isset($_GET["c"])) {
+	header("Location: ./Cerca:" . ucfirst($_GET["c"]));
+}
+if(strpos($_GET["s"], "Scarica:") !== false) {
+require_once("common/include/funcs/download.php");
+}
 // Generate RSA key
 if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 	shell_exec('openssl genrsa -out common/include/conf/rsa_2048_priv.pem 2048');
@@ -16,20 +22,31 @@ if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 	$page_title = ucfirst(str_replace("_", " ", $_GET["s"]));
 	$page_name = ucfirst(str_replace("_", " ", $_GET["s"]));
+	$page_name_last = "";
+	$search_term = ((strpos($_GET["s"], "Cerca:") !== false) ? str_replace("Cerca:", "", $_GET["s"]) : "");
 	
 	if(isset($_GET["q"]) && trim($_GET["q"]) !== "") {
 		$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["q"]));
 		$page_name = ucfirst(str_replace("_", " ", $_GET["q"]));
+		$page_name_last = ucfirst(str_replace("_", " ", $_GET["s"]));
+		$search_term = ((strpos($_GET["q"], "Cerca:") !== false) ? str_replace("Cerca:", "", $_GET["q"]) : "");
 		
 		if(isset($_GET["id"]) && trim($_GET["id"]) !== "") {
 			$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["id"]));
 			$page_name = ucfirst(str_replace("_", " ", $_GET["id"]));
+			$page_name_last = ucfirst(str_replace("_", " ", $_GET["q"]));
+			$search_term = ((strpos($_GET["id"], "Cerca:") !== false) ? str_replace("Cerca:", "", $_GET["id"]) : "");
 		}
+	}
+	if(strlen($search_term) > 0 && $page_name_last !== "Ricerca avanzata") {
+		$page_title = "Risultati della ricerca per \"" . $search_term . "\"";
 	}
 } else {
 	$page_title = "";
+	$search_term = "";
 }
-$advanced_pages = array("admin", "dashboard", "sito locale");
+
+$advanced_pages = array("accedi", "admin", "dashboard", "sito_locale");
 // Check if config exist else start setup
 $has_config = (!file_exists("common/include/conf/config.ini")) ? false : true;
 if(!$has_config) {
@@ -48,6 +65,12 @@ if(!$has_config) {
 	$GLOBALS["config"] = parse_ini_file("common/include/conf/config.ini", 1);
 	$NAS_absolute_uri = preg_replace("{/$}", "", $GLOBALS["config"]["NAS"]["http_root"]);
 	$NAS_IP = $GLOBALS["config"]["NAS"]["ipv4"];
+	
+	$GLOBALS["search_term"] = $search_term;
+	$GLOBALS["search_type"] = $GLOBALS["general_settings"]["searches"]["research_type"];
+	$GLOBALS["search_num_results"] = $GLOBALS["general_settings"]["searches"]["research_results"];
+	$GLOBALS["search_ip"] = "-";
+	$GLOBALS["search_filetype"] = "-";
 }
 if(isset($_COOKIE["n"])) {
 	$c = explode("~", PMA_blowfish_decrypt($_COOKIE["n"], "ninuxoo_cookie"));
@@ -66,11 +89,12 @@ if(isset($_COOKIE["n"])) {
 		}
 	}
 }
+$logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (($has_config) ? $GLOBALS["config"]["NAS"]["name"] : "Setup") .'</h1>';
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?php print $GLOBALS["config"]["NAS"]["name"] . " | " . $page_title; ?></title>
+	<title>Ninuxoo <?php print $GLOBALS["config"]["NAS"]["name"] . " | " . $page_title; ?></title>
 	
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 	<base href="<?php print $GLOBALS["config"]["NAS"]["http_root"]; ?>" />
@@ -115,6 +139,7 @@ if(isset($_COOKIE["n"])) {
 		};
 	})();
 	$(document).ready(function() {
+		$(".merged input, .merged-xs input").on({ focus: function() { $(this).parent().addClass("focusedInput") }, blur: function() { $(this).parent().removeClass("focusedInput") }});
 		$("a[title]:not(#footer > a)").tooltip({placement: "auto"});
 		$("button[title], abbr[title], acronym[title]").tooltip({placement: "auto"});
 		$("*[data-content]:not(#footer > a)").popover({placement: "auto"});
@@ -137,37 +162,22 @@ if(isset($_COOKIE["n"])) {
 		require_once("common/tpl/menu.tpl");
 		?>
 	</header>
-	<div id="main_container">
+	<!--div id="main_container"-->
 		<div id="<?php print ($has_config ? "main_header" : "header"); ?>">
-			<table>
-				<tr>
-					<td>
-						<a href="">
-							<img src="common/media/img/logo.png" alt="Logo Ninuxoo" />
-						</a>
-						<h1>
-							<?php
-							if($has_config) {
-								print $GLOBALS["config"]["NAS"]["name"];
-							} else {
-								print "Setup";
-							}
-							?>
-						</h1>
-					</td>
-				</tr>
-			</table>
+			<div>
+				<div id="logo" class="center-block">
+					<?php print (trim($page_name) !== "") ? '<a href="" title="Torna alla Pagina Principale">' . $logo_img . '</a>' : $logo_img; ?>
+				</div>
+			</div>
 		</div>
 		<?php if($_GET["s"] !== "Admin" && $_GET["s"] !== "Dashboard" || isset($_GET["q"])) { require_once("common/tpl/breadcrumb.tpl"); } ?>
 		<div id="container">
 			<?php
 			require_once("common/include/funcs/get_content.php");
-			require_once("common/tpl/footer.tpl");
 			?>
 		</div>
-	</div>
-	<?php
-	require_once("common/tpl/superfooter.tpl");
-	?>
+		<?php require_once("common/tpl/footer.tpl"); ?>
+	<!--/div-->
+	<?php require_once("common/tpl/superfooter.tpl"); ?>
 </body>
 </html>

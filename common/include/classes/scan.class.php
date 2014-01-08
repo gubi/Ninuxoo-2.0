@@ -115,14 +115,13 @@ class scan {
 		foreach($get_config["NAS"]["nas_shares"] as $f) {
 			$info = pathinfo($f);
 			$shares[] = $info["basename"];
-			$scans = str_replace($info["dirname"] . "/", "", $scan);
+			$scans = str_replace("//", "/", str_replace($get_config["NAS"]["root_share_dir"], "", $scan));
 		}
 		/*
 		SAVE LISTING
 		*/
-		$rsa = new rsa();
 		$listing_file = fopen($get_config["NAS"]["listing_file_dir"] . "/listing", "w+");
-		fwrite($listing_file, $rsa->simple_encrypt($scans));
+		fwrite($listing_file, $scans);
 		fclose($listing_file);
 		@chmod($get_config["NAS"]["listing_file_dir"] . "/listing", 0777);
 		

@@ -6,8 +6,8 @@ $pubkey = file_get_contents("common/include/conf/rsa_2048_pub.pem");
 $token = $rsa->get_token($pubkey);
 $crypted = base64_encode($rsa->simple_private_encrypt($token));
 ?>
-<link href="common/js/chosen/chosen.css" rel="stylesheet" />
-<script type="text/javascript" src="common/js/chosen/chosen.jquery.min.js"></script>
+<link href="common/js/chosen/chosen-bootstrap.css" rel="stylesheet" />
+<script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
 <script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
 <script type="text/javascript" src="common/js/include/common.js"></script>
 <script type="text/javascript" src="common/js/include/search_settings.js"></script>
@@ -34,7 +34,7 @@ $crypted = base64_encode($rsa->simple_private_encrypt($token));
 		</table>
 	</div>
 	<input type="hidden" value="<?php print $crypted; ?>" id="token" />
-	<a id="start_scan_btn" class="btn btn-warning right" href="javascript:void(0);" tabindex="1">Scansione manuale&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-refresh"></span></a>
+	<a id="start_scan_btn" class="btn btn-warning right" href="javascript:void(0);" tabindex="1">Scansione manuale&nbsp;&nbsp;&nbsp;<span class="fa fa-refresh"></span></a>
 	<br />
 	<br />
 	<br />

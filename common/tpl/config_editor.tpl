@@ -64,8 +64,8 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 	$remove_btn = (strpos($filename, "/user/") ? '<button id="remove_btn" class="btn btn-danger" style="margin-right: 10px;">Elimina&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-trash"></span></button>' : '');
 	$themes_select = str_replace('<option>' . $user_config["User"]["editor_theme"] . '</option>', '<option selected="selected">' . $user_config["User"]["editor_theme"] . '</option>', '<div class="col-md-4"><div class="right"><label for="code_theme">Tema dell\'editor:</label> <select id="code_theme" style="width: 200px;"><option>default</option><option>3024-day</option><option>3024-night</option><option>ambiance</option><option>base16-dark</option><option>base16-light</option><option>blackboard</option><option>cobalt</option><option>eclipse</option><option>elegant</option><option>erlang-dark</option><option>lesser-dark</option><option>mbo</option><option>midnight</option><option>monokai</option><option>neat</option><option>night</option><option>paraiso-dark</option><option>paraiso-light</option><option>rubyblue</option><option>solarized dark</option><option>solarized light</option><option>the-matrix</option><option>tomorrow-night-eighties</option><option>twilight</option><option>vibrant-ink</option><option>xq-dark</option><option>xq-light</option></select></div></div>');
 	?>
-	<link href="common/js/chosen/chosen.css" rel="stylesheet" />
-	<script type="text/javascript" src="common/js/chosen/chosen.jquery.min.js"></script>
+	<link href="common/js/chosen/chosen-bootstrap.css" rel="stylesheet" />
+	<script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
 	<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
 	<?php require_once("common/tpl/scripts.codemirror.tpl"); ?>
 	<script src="common/js/include/common.js"></script>

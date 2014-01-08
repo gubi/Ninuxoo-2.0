@@ -30,10 +30,9 @@ function optimize($string) {
 	
 	return truncate($string, 120);
 }
-
 if(isset($_GET["s"]) && trim($_GET["s"]) !== "" && !in_array(strtolower($page_name), $advanced_pages)) {
 	?>
-	<div id="breadcrumb">
+	<div id="breadcrumb"<?php print (strlen($search_term) > 0 && $page_name_last !== "Ricerca avanzata") ? ' style="display:none;"' : ""; ?>>
 		<ul>
 			<li><a title="Pagina Principale" href="./" id="home"></a></li>
 			<?php

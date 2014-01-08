@@ -1,9 +1,9 @@
 <div class="menu">
 	<div class="group row">
 		<div class="col-lg-4">
-			<a href="./Dashboard/Chat">
+			<a href="./Dashboard/Notifiche_di_gruppo">
 				<img src="common/media/img/admin_panel/chat_128_333.png" />
-				<p id="dash_notify_btn">CHAT DI GRUPPO</p>
+				<p id="dash_notify_btn">NOTIFICHE DI GRUPPO</p>
 				<span class="help-block">Comunica con tutti gli utenti dei NAS</span>
 			</a>
 		</div>

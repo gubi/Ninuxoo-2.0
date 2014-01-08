@@ -98,6 +98,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "install":
 			require_once("install.generate_smb_conf.php");
 			break;
+		case "local_search":
+			require_once("local_search.php");
+			break;
 		case "login":
 			require_once("login.php");
 			break;

@@ -45,6 +45,26 @@ if(isset($_GET["token"]) && trim($_GET["token"]) !== "") {
 					print $link_nas->third_response($_GET["request"]);
 				}
 				break;
+			case "local_search":
+				require_once("../common/include/classes/local_search.class.php");
+				
+				$conf = parse_ini_file("../common/include/conf/config.ini", true);
+				$local_search = new local_search();
+				$local_search->set_params(array(
+						/*"config_ini_file" => "config.ini",*/
+						"op" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["op"]))),
+						"path" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["path"]))),
+						"q" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["q"]))),
+						"filetype" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["filetype"]))),
+						"uri" => urldecode($_GET["url"])
+				));
+				if($_GET["debug"] == "true"){
+					print_r($local_search->get($_GET["op"], 1));
+					print "\n\n";
+					print str_replace(" ", "\ ", urldecode($_GET["path"]));
+				}
+				print $local_search->get($_GET["op"]);
+				break;
 			/*
 			default:
 				require_once("../common/include/classes/logging.class.php");

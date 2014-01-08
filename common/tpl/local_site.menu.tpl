@@ -7,8 +7,8 @@ if($user_config["User"]["use_editor_always"] == "true") {
 	$themes_select = str_replace('<option>' . $user_config["User"]["editor_theme"] . '</option>', '<option selected="selected">' . $user_config["User"]["editor_theme"] . '</option>', '<div class="right"><label for="code_theme">Tema degli editor:</label> <select id="code_theme" style="width: 200px;"><option>default</option><option>3024-day</option><option>3024-night</option><option>ambiance</option><option>base16-dark</option><option>base16-light</option><option>blackboard</option><option>cobalt</option><option>eclipse</option><option>elegant</option><option>erlang-dark</option><option>lesser-dark</option><option>mbo</option><option>midnight</option><option>monokai</option><option>neat</option><option>night</option><option>paraiso-dark</option><option>paraiso-light</option><option>rubyblue</option><option>solarized dark</option><option>solarized light</option><option>the-matrix</option><option>tomorrow-night-eighties</option><option>twilight</option><option>vibrant-ink</option><option>xq-dark</option><option>xq-light</option></select></div>');
 	$btn_preview = "";
 	?>
-	<link href="common/js/chosen/chosen.css" rel="stylesheet" />
-	<script type="text/javascript" src="common/js/chosen/chosen.jquery.min.js"></script>
+	<link href="common/js/chosen/chosen-bootstrap.css" rel="stylesheet" />
+	<script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
 	<?php require_once("common/tpl/scripts.codemirror.tpl"); ?>
 	<script type="text/javascript" src="common/js/include/local_site.menu.codemirror.js"></script>
 	<?php

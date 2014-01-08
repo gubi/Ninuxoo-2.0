@@ -2935,7 +2935,7 @@ input[type="button"].btn-block {
 .nav.navbar-nav a {
 	float: none;
 	line-height: 19px;
-	padding: 10px 10px 11px;
+	padding: 10px 15px 11px;
 	text-decoration: none;
 }
 .dropdown-menu.pull-right {
@@ -3642,7 +3642,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-collapse {
-  max-height: 340px;
+  /*max-height: 340px;*/
   overflow-x: visible;
   padding-right: 15px;
   padding-left: 15px;
@@ -3830,15 +3830,15 @@ textarea.input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-form {
-  margin-left: -15px;
-  margin-right: -15px;
-  padding: 10px 10px 10px 0;
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid transparent;
-  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-  margin-top: 7px;
-  margin-bottom: 7px;
+	margin-left: -15px;
+	margin-right: -15px;
+	padding: 10px 10px 10px 0;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+	margin-top: 7px;
+	margin-bottom: 7px;
 }
 @media (min-width: 768px) {
   .navbar-form .form-group {
@@ -6055,4 +6055,37 @@ td.visible-print {
 	to {
 		transform: rotate(360deg);
 	}
+}
+
+.merged .input-group-addon, .merged-xs .input-group-addon {
+    border-right: 0px !important;
+    background-color: #fff;
+    color: #999;
+}
+.merged .form-control:focus, .merged-xs .form-control:focus {
+	box-shadow: none;
+	border-left-color: transparent;
+}
+.merged-xs .input-group-addon {
+	padding: 3px 6px;
+}
+.merged input, .merged-xs input {
+    border-left: 0px !important;
+	padding-left: 0px !important;
+    background-color: #fff;
+}
+.focusedInput {
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+    outline: 0;
+    outline: thin dotted \9;
+	-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
+	-webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.focusedInput > label {
+	border-top-color: #66afe9;
+	border-bottom-color: #66afe9;
+	border-left-color: #66afe9;
 }

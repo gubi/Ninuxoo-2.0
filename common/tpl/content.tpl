@@ -1,11 +1,12 @@
 <div id="main_search">
-	<form id="searchform" action="" method="get">
+	<form id="searchform" role="search" action="" method="get">
 		<div class="input-group">
-			<input type="search" id="search_input" class="form-control input-lg" name="q" value="<?php print (isset($_GET["q"]) ? $_GET["q"] : ""); ?>" placeholder="Cerca in Ninuxoo" >
-			<input type="hidden" name="op" value="query" style="display: none;">
-			<input type="hidden" name="nresults" value="200" style="display: none;">
-			<input type="submit" value="" style="display: none;">
-			<a class="input-group-addon btn btn-default" href="./Ricerca_avanzata<?php if(isset($_GET["q"]) && trim($_GET["q"]) !== ""){ print "/Cerca:" . $_GET["q"]; } ?>" title="Ricerca avanzata"><span class="glyphicon glyphicon-cog"></span></a>
+			<div class="input-group merged">
+				<label class="input-group-addon"><span class="fa fa-search"></span></label>
+				<input type="search" id="search_input" class="form-control input-lg" name="c" value="" tabindex="1" placeholder="Cerca in Ninuxoo" >
+			</div>
+			<input type="submit" name="search" value="" style="display: none;">
+			<a class="input-group-addon btn" href="./Ricerca_avanzata" tabindex="2" title="Ricerca avanzata"><span class="glyphicon glyphicon-cog"></span></a>
 		</div>
 	</form>
 </div>

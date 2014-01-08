@@ -1,5 +1,5 @@
-<link href="common/js/chosen/chosen.css" rel="stylesheet" />
-<script type="text/javascript" src="common/js/chosen/chosen.jquery.min.js"></script>
+<link href="common/js/chosen/chosen-bootstrap.css" rel="stylesheet" />
+<script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
 <script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
 <script language="Javascript" src="common/js/GnuPG/sha1.js" type="text/javascript"></script>
 <script language="Javascript" src="common/js/GnuPG/base64.js" type="text/javascript"></script>

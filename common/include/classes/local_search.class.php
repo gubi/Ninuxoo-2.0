@@ -1,5 +1,4 @@
 <?php
-include("../lib/JSON.php");
 if(!function_exists("json_encode")) {
 	function json_encode($data) {
 		$json = new Services_JSON();
@@ -113,6 +112,10 @@ class local_search {
 
 	}
 	private function explodeTree($array, $delimiter = "_", $baseval = false) {
+		if (!class_exists("rsa", false)) {
+			require($this->class_dir . "/rsa.class.php");
+		}
+		$rsa = new rsa();
 		if(!is_array($array)) return false;
 		$splitRE   = "/" . preg_quote($delimiter, "/") . "/";
 		$returnArr = array();
@@ -144,11 +147,13 @@ class local_search {
 						$parentArr["resources"][$k]["filetype"] = "DIRECTORY";
 						$parentArr["resources"][$k]["uri"] = str_replace($this->params["replace_uri"], "", $val);
 						$parentArr["resources"][$k]["filename"] = substr(strrchr($val, "/"), 1);
+						$parentArr["resources"][$k]["hash"] = rawurlencode($rsa->simple_encrypt(str_replace("//", "/", str_replace("Ninuxoo/", $this->conf["NAS"]["root_share_dir"], $val))));
 					}
 				} else {
 					$parentArr["resources"][$k]["filetype"] = strtoupper($parsed["extension"]);
 					$parentArr["resources"][$k]["uri"] = $val;
 					$parentArr["resources"][$k]["filename"] = $parsed["basename"];
+					$parentArr["resources"][$k]["hash"] = rawurlencode($rsa->simple_encrypt(str_replace("//", "/", str_replace("Ninuxoo/", $this->conf["NAS"]["root_share_dir"], $val))));
 				}
 				if(is_array($parentArr["resources"])){
 					//$this->aasort($parentArr["resources"], "filetype");
@@ -168,7 +173,22 @@ class local_search {
 			}
 		}
 	}
+	private function recursive_keys($input, $search_value = null){
+		$output = ($search_value !== null ? array_keys($input, $search_value) : array_keys($input)) ;
+		foreach($input as $sub){
+			if(is_array($sub)){
+				if($sub["resources"] == "") {
+					$output = ($search_value !== null ? array_merge($output, recursive_keys($sub, $search_value)) : array_merge($output, $this->recursive_keys($sub))) ;
+				}
+			}
+		}
+		return $output ;
+	} 
 	private function plotTree($arr, $indent = 0){
+		if (!class_exists("rsa", false)) {
+			require($this->class_dir . "/rsa.class.php");
+		}
+		$rsa = new rsa();
 		$f = -1;
 		$g = -1;
 		foreach($arr as $k => $v){
@@ -185,10 +205,11 @@ class local_search {
 				if($indent > 0){
 					$plot[$f]["rank"] = $rank;
 					$plot[$f]["label"] = $k;
-					if(!is_array($this->plotTree($v, ($indent+1), false))) {
+					$plot[$f]["hash"] = urlencode(base64_encode($rsa->simple_private_encrypt(str_replace("//", "/", $this->conf["NAS"]["root_share_dir"] . implode("/", $this->recursive_keys($arr))))));
+					if(!is_array($this->plotTree($v, ($indent+1)))) {
 						$plot[$f]["children"] = array();
 					} else {
-						$plot[$f]["children"] = $this->plotTree($v, ($indent+1), false);
+						$plot[$f]["children"] = $this->plotTree($v, ($indent+1));
 					}
 					if(is_array($v["resources"])){
 						sort($v["resources"]);
@@ -202,7 +223,7 @@ class local_search {
 				} else {
 					$plot["rank"] = $rank;
 					$plot["label"] = $k;
-					$plot["children"] = $this->plotTree($v, ($indent+1), false);
+					$plot["children"] = $this->plotTree($v, ($indent+1));
 					if(trim($v["resources"][0]["filetype"]) !== ""){
 						$plot["resources"] = $v["resources"];
 						$plot["children"] = array();
@@ -515,11 +536,11 @@ class local_search {
 			switch($this->params["op"]){
 				case "exactquery":
 					$exactresult = true;
-					$scanned_files = shell_exec('grep -i "' . $this->params["q"] . '" ' . $config["NAS"]["listing_file_dir"] . 'listing' . $search_param);
+					$scanned_files = shell_exec('grep -i "' . escapeshellcmd($this->params["q"]) . '" ' . $config["NAS"]["listing_file_dir"] . 'listing' . $search_param);
 					break;
 				case "query":
 					$exactresult = false;
-					$scanned_files = shell_exec('grep -i "' . $this->params["q"] . '" ' . $config["NAS"]["listing_file_dir"] . 'listing' . $search_param);
+					$scanned_files = shell_exec('grep -i "' . escapeshellcmd($this->params["q"]) . '" ' . $config["NAS"]["listing_file_dir"] . 'listing' . $search_param);
 					break;
 				break;
 			}
@@ -529,11 +550,11 @@ class local_search {
 			foreach($scanned_files_lines as $line){
 				@ob_flush();
 				usleep(100);
-				$arrr[$line] = $line;
+				$arrr["Ninuxoo/" . $line] = "Ninuxoo/" . $line;
 			}
 			if(is_array($arrr)){
 				krsort($arrr);
-				$response["nresults"] = count($arrr);
+				$response["nresults"] = count($arrr) - 1;
 				$response["nlabels"] = count(explode(" ", $this->params["q"]));
 				$response["results"] = array($this->iterate_array($arrr));
 			}
@@ -542,23 +563,4 @@ class local_search {
 		return $response;
 	}
 }
-
-header ("Content-type: text/plain; charset=utf-8");
-
-$conf = parse_ini_file("../conf/config.ini", true);
-$local_search = new local_search();
-$local_search->set_params(array(
-					/*"config_ini_file" => "config.ini",*/
-					"op" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["op"]))),
-					"path" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["path"]))),
-					"q" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["q"]))),
-					"filetype" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["filetype"]))),
-					"uri" => urldecode($_GET["url"])
-			));
-if($_GET["debug"] == "true"){
-	print_r($local_search->get($_GET["op"], 1));
-	print "\n\n";
-	print str_replace(" ", "\ ", urldecode($_GET["path"]));
-}
-print $local_search->get($_GET["op"]);
 ?>

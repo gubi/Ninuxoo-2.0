@@ -7,7 +7,7 @@
 <?php if(isset($_GET["s"]) && trim($_GET["s"]) == "advanced") { ?>
 	<!--Chosen-->
 	<link rel="stylesheet" href="<?php print $NAS_absolute_uri; ?>/common/js/chosen/chosen.css" />
-	<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/chosen/chosen.jquery.js"></script>
+	<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/chosen/chosen-bootstrap.jquery.js"></script>
 <?php } ?>
 <!--Zoombox-->
 <script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/zoombox/zoombox.js"></script>
@@ -122,10 +122,10 @@ $.extend({getUrlVars: function(){ var vars = [], hash; var hashes = window.locat
 
 
 function get_stats(){
-	$.getJSON("common/include/classes/local_search.class.php", {op: "resourcestats"}, function(resource) {
+	$.getJSON("API/index.php", {action: "local_search", op: "resourcestats"}, function(resource) {
 		$("#resstats").html();
 		$("#resstats").fadeOut(300, function(){
-			$(this).html(resource.result + " files indicizzati da questa risorsa locale (<?php print $config["NAS"]["name"]; ?>)").fadeIn(300);
+			$(this).html(resource.result + " files indicizzati da questa risorsa locale").fadeIn(300);
 		});
 	});
 }
@@ -145,10 +145,13 @@ $(document).ready(function() {
 		var href = $("#search_input").val();
 		$("#advanced_search_btn").attr("href", $("#advanced_search_btn").attr("href") + "&q=" + href);
 	});
-	$("#searchform input[type=search]").focus();
+	$("#searchform input[type=search]").focus().parent().switchClass("", "focusedInput");
 	
 	$(".resultstree").html("");
 	// Check if there's research term in query string
+	if($._GET("s") == undefined || $._GET("s") != ""){
+		get_stats();
+	}
 	if($._GET("s") != undefined && $._GET("s") == "advanced"){
 		<?php require_once("common/js/include/advanced_search.js"); ?>
 	} else {
@@ -531,8 +534,6 @@ $(document).ready(function() {
 					get_stats();
 				}
 			});
-		} else {
-			get_stats();
 		}
 	}
 	if($._GET("s") != undefined && $._GET("s") == "advanced"){

@@ -5,9 +5,9 @@ $setting = parse_ini_file("common/include/conf/general_settings.ini", true);
 if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 	?>
 	<script type="text/javascript" src="common/js/include/login.js"></script>
-	<div>
+	<div class="row">
 		<div id="loader"></div>
-		<form method="post" action="" class="form-horizontal" id="login_frm" onsubmit="login(); return false;" role="form">
+		<form method="post" action="" class="main form-horizontal center-block" id="login_frm" onsubmit="login(); return false;" role="form">
 			<h1>Accedi</h1>
 			<br />
 			<p class="help-block"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;Nota: Gli utenti amministratori dovranno inserire i dati di accesso creati in fase di installazione e relativi alla propria chiave di cifratura <acronym title="Pretty Good Privacy">PGP</acronym>.</p>

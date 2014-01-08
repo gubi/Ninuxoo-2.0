@@ -23,11 +23,14 @@
 			<?php
 			if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 				?>
-				<form class="navbar-form navbar-right" role="search" action="./Cerca:">
+				<form class="navbar-form navbar-right" role="search" method="get" action="">
 					<div class="input-group">
-						<input type="search" id="search_input" class="form-control" name="q" value="<?php print ((isset($_GET["s"]) && strpos($_GET["s"], "Cerca:") !== false) ? str_replace("Cerca:", "", urldecode($_GET["s"])) : ""); ?>" placeholder="Cerca in Ninuxoo" >
-						<input type="submit" value="" style="display: none;">
-						<a class="input-group-addon btn btn-default btn-xs" href="./Ricerca_avanzata<?php if(isset($_GET["q"]) && trim($_GET["q"]) !== ""){ print "/Cerca:" . $_GET["q"]; } ?>" title="Ricerca avanzata"><span class="glyphicon glyphicon-cog"></span></a>
+						<div class="input-group merged-xs">
+							<label for="search_input" class="input-group-addon btn-default btn-xs"><span class="fa fa-search"></span></label>
+							<input type="search" id="search_input" class="form-control" name="c" value="<?php print $GLOBALS["search_term"]; ?>" placeholder="Cerca in Ninuxoo" >
+						</div>
+						<input type="submit" name="search" value="" style="display: none;">
+						<a class="input-group-addon btn btn-xs" href="./Ricerca_avanzata/Cerca:<?php print $GLOBALS["search_term"]; ?>" title="Ricerca avanzata"><span class="glyphicon glyphicon-cog"></span></a>
 					</div>
 				</form>
 				<?php
@@ -73,20 +76,20 @@
 							}
 							?>
 							<li class="divider"></li>
-							<li><a href="./Dashboard/Chat" id="notify_btn" class="<?php print ($GLOBALS["user_settings"]["Notification"]["new_chat_messages"] == "true") ? "notify" : ""; ?>"><span class="fa fa-comments-o"></span>&nbsp;&nbsp;Chat di gruppo</a></li>
+							<li><a href="./Dashboard/Notifiche_di_gruppo" id="notify_btn" class="<?php print ($GLOBALS["user_settings"]["Notification"]["new_chat_messages"] == "true") ? "notify" : ""; ?>"><span class="fa fa-comments-o"></span>&nbsp;&nbsp;Chat di gruppo</a></li>
 							<li class="divider"></li>
-							<li><a href="./Esci"><span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;Esci</a></li>
+							<li><a href="./Esci"><span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;&nbsp;Esci</a></li>
 						</ul>
 					</li>
 					<?php
 				} else {
 					if(isset($_GET["s"]) && trim($_GET["s"]) == "accedi") {
 						?>
-						<li><a href="javascript:void(0);"><span class="glyphicon glyphicon-log-in"></span></a>&nbsp;&nbsp;Accedi</li>
+						<li><a href="javascript:void(0);"><span class="glyphicon glyphicon-log-in"></span></a><span id="login_btn_txt">&nbsp;&nbsp;Accedi</span></li>
 						<?php
 					} else {
 						?>
-						<li><a href="./Accedi"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;Accedi</a></li>
+						<li><a href="./Accedi"><span class="glyphicon glyphicon-log-in"></span><span id="login_btn_txt">&nbsp;&nbsp;Accedi</span></a></li>
 						<?php
 					}
 				}

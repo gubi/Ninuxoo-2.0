@@ -52,10 +52,12 @@ class rsa {
 	// Thanks to http://stackoverflow.com/a/1289114 :)
 	*/
 	public function simple_encrypt($text) {
-		return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, SALT, $text, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+		return trim(shell_exec('echo "' . $text . '" | openssl enc -base64'));
+		//return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, SALT, $text, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
 	}
 	public function simple_decrypt($text) {
-		return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, SALT, base64_decode($text), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+		return trim(shell_exec('echo "' . $text . '" | openssl enc -base64 -d'));
+		//return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, SALT, base64_decode($text), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
 	}
 	public function simple_private_encrypt($string) {
 		shell_exec("echo '" . $string . "' | openssl rsautl -encrypt -inkey " . str_replace("classes", "conf", __DIR__) . "/rsa_2048_priv.pem > " . str_replace("classes", "conf", __DIR__) . "/message.encrypted");

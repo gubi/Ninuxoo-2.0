@@ -3,9 +3,10 @@ header("Content-type:text/plain; charset=utf-8");
 require_once("common/include/classes/rsa.class.php");
 
 $rsa = new rsa();
-$data = trim($rsa->simple_private_decrypt(rawurldecode($_GET["h"])));
+$hash = rawurldecode(str_replace("/Scarica:?", "", $_SERVER["REQUEST_URI"]));
+$file = trim($rsa->simple_decrypt($hash));
 
-$info = pathinfo(urldecode($data));
+$info = pathinfo($file);
 $filename = $info["basename"];
 
 $config = parse_ini_file("common/include/conf/config.ini", 1);
