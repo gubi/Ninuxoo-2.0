@@ -339,6 +339,12 @@ table.grid td {
 }
 header {
 	display: table-row;
+	/*
+	top: 0;
+	left: 0;
+	right: 0;
+	position: absolute;
+	*/
 }
 #top_menu > div:first-child {
     display: table-row;
@@ -778,7 +784,6 @@ a.copy_btn {
 }
 
 #search_loader {
-	width: 50%;
 	text-align: center;
 }
 div#search_content {

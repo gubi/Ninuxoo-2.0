@@ -32,7 +32,7 @@ function optimize($string) {
 }
 if(isset($_GET["s"]) && trim($_GET["s"]) !== "" && !in_array(strtolower($page_name), $advanced_pages)) {
 	?>
-	<div id="breadcrumb"<?php print (strlen($search_term) > 0 && $page_name_last !== "Ricerca avanzata") ? ' style="display:none;"' : ""; ?>>
+	<div id="breadcrumb"<?php print (strlen($GLOBALS["search_term"]) > 0 && $page_name_last !== "Ricerca avanzata") ? ' style="display:none;"' : ""; ?>>
 		<ul>
 			<li><a title="Pagina Principale" href="./" id="home"></a></li>
 			<?php
@@ -46,7 +46,10 @@ if(isset($_GET["s"]) && trim($_GET["s"]) !== "" && !in_array(strtolower($page_na
 					print '<li>' . optimize($_GET["q"]) . '</li>';
 				}
 			} else {
-				print '<li>' . optimize($_GET["s"]) . '</li>';
+				if(strlen($GLOBALS["breadcrumb"]) == 0) {
+					$GLOBALS["breadcrumb"] = optimize($_GET["s"]);
+				}
+				print '<li>' . $GLOBALS["breadcrumb"] . '</li>';
 			}
 			?>
 		</ul>

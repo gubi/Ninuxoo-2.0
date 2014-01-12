@@ -205,7 +205,7 @@ class local_search {
 				if($indent > 0){
 					$plot[$f]["rank"] = $rank;
 					$plot[$f]["label"] = $k;
-					$plot[$f]["hash"] = urlencode(base64_encode($rsa->simple_private_encrypt(str_replace("//", "/", $this->conf["NAS"]["root_share_dir"] . implode("/", $this->recursive_keys($arr))))));
+					$plot[$f]["hash"] = rawurlencode(base64_encode($rsa->simple_private_encrypt(str_replace("//", "/", $this->conf["NAS"]["root_share_dir"] . implode("/", $this->recursive_keys($arr))))));
 					if(!is_array($this->plotTree($v, ($indent+1)))) {
 						$plot[$f]["children"] = array();
 					} else {
@@ -237,7 +237,6 @@ class local_search {
 	}
 	private function iterate_array($array){
 		$resourcetry = $this->explodeTree($array, "/");
-		$results_array["exactresult"] = false;
 		
 		if ($this->params["path"] == "" || $this->params["path"] == "/") {
 			$results_array["resultlabel"] = "Directory principale";
@@ -291,7 +290,7 @@ class local_search {
 			ob_end_clean();
 		}
 		$scanned_files = shell_exec("cat " . $this->root_dir . "API/listing");
-		$local_conf_lines = explode("\n", $rsa->simple_decrypt($scanned_files));
+		$local_conf_lines = explode("\n", $scanned_files);
 		
 		switch($type){
 			case "count":
@@ -299,9 +298,9 @@ class local_search {
 			break;
 		}
 	}
-	public function get($op, $debug = false) {
-		if(strlen($op) > 0 && trim($op) !== "") {
-			switch($op){
+	public function get() {
+		if(strlen($this->params["op"]) > 0 && trim($this->params["op"]) !== "") {
+			switch($this->params["op"]){
 				case "resourcestats":
 					$this->response = $this->resourcestats($params);
 					break;
@@ -322,14 +321,9 @@ class local_search {
 			}
 			if($this->debug == "true"){
 				print_r(plotTree(array("" => $this->resourcetry)));
-				//print_r($response);
 			}
 		}
-		if($debug == true){
-			return $this->response;
-		} else {
-			return json_encode($this->response);
-		}
+		return json_encode($this->response);
 	}
 	
 	public function set_params($params){
@@ -530,31 +524,37 @@ class local_search {
 		$this->start_time();
 		$config = $this->conf;
 		if(isset($this->params["q"]) && trim($this->params["q"]) !== "") {
-			if(isset($this->params["filetype"]) && trim($this->params["filetype"]) !== "" && trim($this->params["filetype"]) !== "undefined"){
-				$search_param = ' -and -iname "*.' . $this->params["filetype"] . '"';
-			}
+			$filetype = (strlen($this->params["filetype"]) > 0) ? ".*\." . str_replace(".", "", $this->params["filetype"]) : "";
+			$path = (strlen($this->params["path"]) > 0) ? "^/" . trim($this->params["path"]) . "/.*" : "";
 			switch($this->params["op"]){
-				case "exactquery":
-					$exactresult = true;
-					$scanned_files = shell_exec('grep -i "' . escapeshellcmd($this->params["q"]) . '" ' . $config["NAS"]["listing_file_dir"] . 'listing' . $search_param);
-					break;
 				case "query":
-					$exactresult = false;
-					$scanned_files = shell_exec('grep -i "' . escapeshellcmd($this->params["q"]) . '" ' . $config["NAS"]["listing_file_dir"] . 'listing' . $search_param);
+					$command = 'grep -i "' . $path . $this->params["q"] . $filetype . '" ' . $config["NAS"]["listing_file_dir"] . 'listing -m ' . $this->params["nresults"];
+					break;
+				case "exactquery":
+					$command = 'grep -i -w "' . $path . $this->params["q"] . $filetype . '" ' . $config["NAS"]["listing_file_dir"] . 'listing -m ' . $this->params["nresults"];
+					break;
+				case "orquery":
+					$command = 'grep -i -w "' . $path . $this->params["q"] . $filetype . '" ' . $config["NAS"]["listing_file_dir"] . 'listing -m ' . $this->params["nresults"];
+					break;
+				case "likequery":
+					$command = 'grep -i ".' . $path . $this->params["q"] . $filetype . '." ' . $config["NAS"]["listing_file_dir"] . 'listing -m ' . $this->params["nresults"];
 					break;
 				break;
 			}
+			$scanned_files = shell_exec($command);
 			$scanned_files_lines = array_filter(explode("\n", $scanned_files));
 			$i = -1;
 			$tree = array();
 			foreach($scanned_files_lines as $line){
 				@ob_flush();
 				usleep(100);
-				$arrr["Ninuxoo/" . $line] = "Ninuxoo/" . $line;
+				if(is_file(str_replace("//", "/", $this->root_share_dir . $line))) {
+					$arrr["Ninuxoo/" . $line] = "Ninuxoo/" . $line;
+				}
 			}
 			if(is_array($arrr)){
 				krsort($arrr);
-				$response["nresults"] = count($arrr) - 1;
+				$response["nresults"] = count($arrr);
 				$response["nlabels"] = count(explode(" ", $this->params["q"]));
 				$response["results"] = array($this->iterate_array($arrr));
 			}

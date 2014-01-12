@@ -102,13 +102,20 @@ $.ultrie = function(resourcetrie, resuri, realuri, hash) {
 
 };
 
-
 $(document).ready(function() {
 	var s = "",
 	password = makeid();
 	
+	switch($("#result_type").text()) {
+		case "Search":
+			$("#breadcrumb").hide();
+			break;
+		default:
+			$("#breadcrumb").show();
+			break;
+	}
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt("q=" + $("#search_term").text() + "&op=" + $("#search_type").text() + "&nresults=" + $("#search_num_results").text() + "&ip=" + $("#search_ip").text() + "&filetype=" + $("#search_filetype").text(), password);
+		var encryptedString = $.jCryption.encrypt("q=" + $("#search_term").text() + "&op=" + $("#search_type").text() + "&nresults=" + $("#search_num_results").text() + "&path=" + $("#search_path").text() + "&filetype=" + $("#search_filetype").text(), password);
 		
 		$.ajax({
 			url: "common/include/funcs/_ajax/decrypt.php",
@@ -159,9 +166,14 @@ $(document).ready(function() {
 						dataType: "text",
 						type: "GET",
 						success: function(content) {
-							$("#breadcrumb").remove();
-							$("#content").html(content);
-							$("#resstats").addClass("text-danger").text('Nessun risultato trovato con la ricerca per \"' + $("#search_input").val() + '\"');
+							if($("#result_type").text() == "Search") {
+								var search_term = $("#search_term").text();
+								$("#breadcrumb").remove();
+								$("#content").html(content);
+								$("#top_menu_right > form").remove();
+								$("#search_input").val(search_term);
+								$("#resstats").addClass("text-danger").text('Nessun risultato trovato con la ricerca per \"' + search_term + '\"');
+							}
 						}
 					});
 				}

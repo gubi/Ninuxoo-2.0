@@ -13,113 +13,8 @@
 <script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/zoombox/zoombox.js"></script>
 <link rel="stylesheet" href="<?php print $NAS_absolute_uri; ?>/common/js/zoombox/zoombox.css" />
 <script type="text/javascript">
-$.ultrie = function(resourcetrie, resuri, realuri) {
-	var res = "",
-	path_link = "",
-	ip = "",
-	text = "",
-	link = "",
-	res1 = "",
-	newli = false,
-	fork = false,
-	nres = resourcetrie.resources.length;
-	$.each(resourcetrie.children, function(index, child) {
-		if(child.resources.length < nres) {
-			fork = true;
-		}
-	});
-	if(fork && (resourcetrie.label.indexOf('smb:') != 0 && resourcetrie.label.indexOf('ftp:') != 0)) {
-		res1 += "<span class='folder'><a href='";
-		res1 += "/Scheda/?url=" + decodeURI(realuri) + "/";
-		res1 += "'>";
-		res1 += decodeURI(resuri);
-		res1 += "/</a>";
-		res1 += "</span>";
-		newli = true;
-	}
-	if(resourcetrie.resources.length > 0) {
-		if(!fork) {
-			var splitted_path = decodeURI(resuri).split("/"),
-			splitted_uri = decodeURI(realuri).split("/");
-			
-			for (p = 0; p < splitted_path.length; p++){
-				if(splitted_path[p].length > 0){
-					ip = splitted_path[1];
-					if(p > 0){
-						link += splitted_path[p] + "/";
-						text = splitted_path[p];
-						
-						link = link.replace(ip + "/", "");
-					}
-					if(text == ip) {
-						if(navigator.platform.search("Linux") != -1) {
-							text = '<span>smb://</span>' + ip;
-						} else {
-							text = '<span style="margin-left: -26px;">file://</span>' + ip;
-						}
-					}
-					if(p == splitted_path.length - 1 || text == ip){
-						path_link += "" + text + "<span>/</span>";
-					} else {
-						path_link += '<a href="?op=browse&path=/' + link + '">' + text + '</a><span>/</span>';
-					}
-				}
-			}
-			res1 += '<span class="folder">' + path_link + '</span>';
-		}
-		res1 += '<ul style="display: none;">';
-		rescount = 0;
-		$.each(resourcetrie.resources, function(index, resource) {
-			var respath = resource.uri.replace(resource.filename, "");
-			if(resourcetrie.resources.length == 1 || index + 1 == resourcetrie.resources.length){
-				if(resource.filetype == "DIRECTORY"){
-					res1 += '<li class="result last" id="' + resource.uri + '"><span class="folder"><a href="?op=browse&path=';
-				} else {
-					res1 += '<li class="result last" id="' + resource.uri + '"><span class="file"><a href="?op=detail&url=';
-				}
-			} else {
-				if(resource.filetype == "DIRECTORY"){
-					res1 += '<li class="result" id="' + resource.uri + '"><span class="folder"><a href="?op=browse&path=';
-				} else {
-					res1 += '<li class="result" id="' + resource.uri + '"><span class="file"><a href="?op=detail&url=';
-				}
-			}
-			res1 += encodeURI(resource.uri);
-			res1 += '" class="zoombox">';
-			res1 += resource.filename;
-			res1 += '</a></span></li>';
-		});
-		res1 += "</ul>";
-		if(!fork) {
-			res1 += "";
-			newli = true;
-			resuri = "";
-		}
-	}
-	$.each(resourcetrie.children, function(index, child) {
-		if(child.label.indexOf('smb:') != 0 && child.label.indexOf('ftp:') != 0) {
-			if(child.resources.length < nres) {
-				res1 += $.ultrie(child, "/" + child.label, realuri + "/" + child.label);
-			} else {
-				res1 += $.ultrie(child, resuri + "/" + child.label, realuri + "/" + child.label);
-			}
-		} else {
-			res1 += $.ultrie(child, "/", child.label + "/");
-		}
-	});
-	if(fork && (resourcetrie.label.indexOf('smb:') != 0 && resourcetrie.label.indexOf('ftp:') != 0)) {
-		res1 += "</li>";
-	}
-	if(newli) {
-		res = '<li class="label folder">' + res1 + '</li>\n';
-	} else {
-		res = res1;
-	}
-	return res;
 
-};
 $.extend({getUrlVars: function(){ var vars = [], hash; var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&'); for(var i = 0; i < hashes.length; i++) { hash = hashes[i].split('='); vars.push(hash[0]); vars[hash[0]] = hash[1]; } return vars; }, _GET: function(name){ return $.getUrlVars()[name]; }});
-
 
 function get_stats(){
 	$.getJSON("API/index.php", {action: "local_search", op: "resourcestats"}, function(resource) {
@@ -536,6 +431,7 @@ $(document).ready(function() {
 			});
 		}
 	}
+	$("#logo a[title]").tooltip({placement: "left"});
 	if($._GET("s") != undefined && $._GET("s") == "advanced"){
 		$("select").chosen();
 	}

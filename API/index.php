@@ -22,6 +22,8 @@ if(isset($_GET["token"]) && trim($_GET["token"]) !== "") {
 } else {
 	require_once("../common/include/classes/link_nas.class.php");
 	$link_nas = new link_nas();
+	$GLOBALS["general_settings"] = parse_ini_file("../common/include/conf/general_settings.ini", true);
+	$GLOBALS["config"] = parse_ini_file("../common/include/conf/config.ini", 1);
 	
 	if(isset($_GET["action"]) && trim($_GET["action"]) !== "") {
 		switch($_GET["action"]) {
@@ -50,9 +52,10 @@ if(isset($_GET["token"]) && trim($_GET["token"]) !== "") {
 				
 				$conf = parse_ini_file("../common/include/conf/config.ini", true);
 				$local_search = new local_search();
+				$op = (isset($_GET["op"]) && trim($_GET["op"]) == "") ? $GLOBALS["general_settings"]["searches"]["research_type"] : str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["op"])));
 				$local_search->set_params(array(
 						/*"config_ini_file" => "config.ini",*/
-						"op" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["op"]))),
+						"op" => $op,
 						"path" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["path"]))),
 						"q" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["q"]))),
 						"filetype" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["filetype"]))),

@@ -10,8 +10,9 @@ if(isset($_GET["c"])) {
 	header("Location: ./Cerca:" . ucfirst($_GET["c"]));
 }
 if(strpos($_GET["s"], "Scarica:") !== false) {
-require_once("common/include/funcs/download.php");
+	require_once("common/include/funcs/download.php");
 }
+$search_types = array("query" => "Tutti i risultati possibili", "exactquery" => "Testo esatto", "orquery" =>"Singola parola", "likequery" => "Somiglianza nei termini", "whatsnew" => "Nuova scansione del crawler");
 // Generate RSA key
 if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 	shell_exec('openssl genrsa -out common/include/conf/rsa_2048_priv.pem 2048');
@@ -40,6 +41,19 @@ if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 	}
 	if(strlen($search_term) > 0 && $page_name_last !== "Ricerca avanzata") {
 		$page_title = "Risultati della ricerca per \"" . $search_term . "\"";
+		$GLOBALS["breadcrumb"] = "Ricerca di \"" . $search_term . "\"";
+	}
+	if(strpos($_GET["s"], "Scheda:") !== false) {
+		require_once("common/include/classes/rsa.class.php");
+		$rsa = new rsa();
+		$hash = rawurldecode(str_replace("/Scheda:?", "", $_SERVER["REQUEST_URI"]));
+		$file = trim($rsa->simple_decrypt($hash));
+		$info = pathinfo($file);
+		$filename = $info["basename"];
+		
+		$search_term = $filename;
+		$GLOBALS["breadcrumb"] = "Dettagli sul file \"" . $search_term . "\"";
+		$page_title = "Dettagli del file per \"" . $search_term . "\"";
 	}
 } else {
 	$page_title = "";
@@ -69,8 +83,8 @@ if(!$has_config) {
 	$GLOBALS["search_term"] = $search_term;
 	$GLOBALS["search_type"] = $GLOBALS["general_settings"]["searches"]["research_type"];
 	$GLOBALS["search_num_results"] = $GLOBALS["general_settings"]["searches"]["research_results"];
-	$GLOBALS["search_ip"] = "-";
-	$GLOBALS["search_filetype"] = "-";
+	$GLOBALS["search_path"] = "";
+	$GLOBALS["search_filetype"] = "";
 }
 if(isset($_COOKIE["n"])) {
 	$c = explode("~", PMA_blowfish_decrypt($_COOKIE["n"], "ninuxoo_cookie"));
