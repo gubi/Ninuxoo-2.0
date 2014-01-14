@@ -62,9 +62,9 @@ foreach($fileinfo as $k => $v) {
 //print_r($file_data["info"][$k][$id3v]["title"]);
 //print "<br ><br />";
 //print_r($file_data);
-switch($mime_type[$info["extension"]]["type"]){
+switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 	case "ebook":
-		switch($info["extension"]) {
+		switch(strtolower($info["extension"])) {
 			case "mobi":
 				require_once("common/include/lib/mobi_header.php");
 				
@@ -123,15 +123,16 @@ switch($mime_type[$info["extension"]]["type"]){
 	case "audio":
 		$file_data["file"]["audio"] = $fileinfo["audio"];
 		$file_data["file"]["tags"] = $fileinfo["tags"][$id3v];
-		
-		$audio_title = (strlen(array_search_key("title", $file_data["file"]["tags"])) > 0) ? array_search_key("title", $file_data["file"]["tags"]) : "";
-		$audio_artist = (strlen(array_search_key("artist", $file_data["file"]["tags"])) > 0) ? array_search_key("artist", $file_data["file"]["tags"]) : "";
-		$audio_album = (strlen(array_search_key("album", $file_data["file"]["tags"])) > 0) ? array_search_key("album", $file_data["file"]["tags"]) : "";
-		$audio_year = (strlen(array_search_key("year", $file_data["file"]["tags"])) > 0) ? array_search_key("year", $file_data["file"]["tags"]) : "";
+		if(is_array($file_data["file"]["tags"])) {
+			$audio_title = (strlen(array_search_key("title", $file_data["file"]["tags"])) > 0) ? array_search_key("title", $file_data["file"]["tags"]) : "";
+			$audio_artist = (strlen(array_search_key("artist", $file_data["file"]["tags"])) > 0) ? array_search_key("artist", $file_data["file"]["tags"]) : "";
+			$audio_album = (strlen(array_search_key("album", $file_data["file"]["tags"])) > 0) ? array_search_key("album", $file_data["file"]["tags"]) : "";
+			$audio_year = (strlen(array_search_key("year", $file_data["file"]["tags"])) > 0) ? array_search_key("year", $file_data["file"]["tags"]) : "";
+			$audio_track= (strlen(array_search_key("track_number", $file_data["file"]["tags"])) > 0) ? array_search_key("track_number", $file_data["file"]["tags"]) : "";
+			$audio_genre = (strlen(array_search_key("genre", $file_data["file"]["tags"])) > 0) ? array_search_key("genre", $file_data["file"]["tags"]) : "";
+			$audio_comments  = (strlen(array_search_key("comment", $file_data["file"]["tags"])) > 0) ? array_search_key("comment", $file_data["file"]["tags"]) : "";
+		}
 		$audio_length = htmlentities($file_data["length"]);
-		$audio_track= (strlen(array_search_key("track_number", $file_data["file"]["tags"])) > 0) ? array_search_key("track_number", $file_data["file"]["tags"]) : "";
-		$audio_genre = (strlen(array_search_key("genre", $file_data["file"]["tags"])) > 0) ? array_search_key("genre", $file_data["file"]["tags"]) : "";
-		$audio_comments  = (strlen(array_search_key("comment", $file_data["file"]["tags"])) > 0) ? array_search_key("comment", $file_data["file"]["tags"]) : "";
 		
 		$audio_format = (strlen(array_search_key("dataformat", $file_data["file"]["audio"])) > 0) ? $file_data["file"]["audio"]["dataformat"] : "";
 			$a_channelmode = (strlen(array_search_key("channelmode", $file_data["file"]["audio"])) > 0) ? " (" . array_search_key("channelmode", $file_data["file"]["audio"]) . ")" : ""; 
@@ -198,7 +199,7 @@ switch($mime_type[$info["extension"]]["type"]){
 				<a class="list-group-item active" style="text-decoration: none;" href="./Scarica:?<?php print $dhash; ?>">
 					<span class="right lead" style="font-weight: bold; opacity: 0.5;"><?php print $file_size; ?></span>
 					<h4 class="list-group-item-heading"><span class="fa fa-cloud-download"></span>&nbsp;&nbsp;Scarica</h4>
-					<p class="list-group-item-text"><strong><?php print $filename; ?></strong><br /><small>File <span id="file_ext"><?php print strtoupper($info["extension"]); ?></span> (<span id="file_mime"><?php print $mime_type[$info["extension"]]["mime"]; ?></span>)</small></p>
+					<p class="list-group-item-text"><strong><?php print $filename; ?></strong><br /><small>File <span id="file_ext"><?php print strtoupper($info["extension"]); ?></span> (<span id="file_mime"><?php print $mime_type[strtolower($info["extension"])]["mime"]; ?></span>)</small></p>
 				</a>
 			</div>
 			<div class="panel">
@@ -213,14 +214,16 @@ switch($mime_type[$info["extension"]]["type"]){
 					<dt>Peso:</dt><dd id="file_size"><?php print $file_size; ?></dd>
 				</dl>
 				<dl class="dl-horizontal">
-					<dt>Estensione:</dt><dd id="file_extension">.<?php print $info["extension"]; ?></dd>
-					<dt>MIME:</dt><dd id="file_mime"><?php print $mime_type[$info["extension"]]["mime"]; ?></dd>
-					<dt>Categoria:</dt><dd id="file_category"><?php print $mime_type[$info["extension"]]["text"]; ?></dd>
+					<dt>Estensione:</dt><dd id="file_extension">.<?php print strtolower($info["extension"]); ?></dd>
+					<dt>MIME:</dt><dd id="file_mime"><?php print $mime_type[strtolower($info["extension"])]["mime"]; ?></dd>
+					<dt>Categoria:</dt><dd id="file_category"><?php print $mime_type[strtolower($info["extension"])]["text"]; ?></dd>
 				</dl>
 				<br />
 				<?php
-				switch($mime_type[$info["extension"]]["type"]){
-					case "ebook" :
+				switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
+					case "text":
+						break;
+					case "ebook":
 						?>
 						<p class="lead media-heading text-muted"><span class="fa fa-book"></span>&nbsp;&nbsp;E-book</p>
 						<dl class="dl-horizontal">
@@ -323,7 +326,12 @@ switch($mime_type[$info["extension"]]["type"]){
 			</div>
 			<div class="panel" id="search_view">
 				<?php
-				switch($mime_type[$info["extension"]]["type"]){
+				switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
+					case "text":
+						?>
+							<iframe src="./Scarica:?view=true&<?php print $dhash; ?>" style="width: 100%; height: 50em; border: #ccc 1px solid; padding: 1em;"></iframe>
+						<?php
+						break;
 					case "image":
 						require_once("common/tpl/image_gallery.tpl");
 						?>
@@ -335,7 +343,7 @@ switch($mime_type[$info["extension"]]["type"]){
 						<?php
 						break;
 					case "ebook":
-						if($info["extension"] == "pdf") {
+						if(strtolower($info["extension"]) == "pdf") {
 							?>
 							<iframe src="./Scarica:?view=true&<?php print $dhash; ?>" style="width: 100%; height: 50em; border: 0px none;"></iframe>
 							<?php

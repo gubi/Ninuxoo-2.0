@@ -92,6 +92,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "download_data":
 			require_once("editor.download_data.php");
 			break;
+		case "get_dir_data":
+			require_once("get_dir_data.php");
+			break;
 		case "get_shares":
 			require_once("install.get_shares.php");
 			break;

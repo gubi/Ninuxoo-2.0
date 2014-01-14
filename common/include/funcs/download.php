@@ -11,6 +11,10 @@ if(strpos($url["query"], "view") === false) {
 	$view = true;
 	$hash = rawurldecode(str_replace(array("view=true&", "&view=true"), "", $url["query"]));
 }
+
+$locale = "it_IT.UTF-8";
+setlocale(LC_ALL, $locale);
+putenv("LC_ALL=" . $locale);
 $file = trim($rsa->simple_decrypt($hash));
 $file_size = trim(@shell_exec("stat -c %s " . str_replace(" ", "\ ", escapeshellcmd($file)) . " 2>&1"));
 $info = pathinfo($file);
@@ -19,10 +23,16 @@ $filename = $info["basename"];
 $config = parse_ini_file("common/include/conf/config.ini", 1);
 
 if(file_exists($file)) {
+	$locale = "it_IT.UTF-8";
+	setlocale(LC_ALL, $locale);
+	putenv("LC_ALL=" . $locale);
 	$file_last_edit = trim(shell_exec("stat -c %y " . str_replace(" ", "\ ", escapeshellcmd($file)) . " | cut -d'.' -f1"));
 	
 	if(!is_file($file)) {
 		chdir($file);
+		$locale = "it_IT.UTF-8";
+		setlocale(LC_ALL, $locale);
+		putenv("LC_ALL=" . $locale);
 		$content = array_map("trim", explode(",", shell_exec("ls -m")));
 		foreach($content as $k => $v) {
 			$content[$k] = str_replace(" ", "\ ", escapeshellcmd($file . "/" . $v));
@@ -34,6 +44,9 @@ if(file_exists($file)) {
 		header("Content-Transfer-Encoding: binary");
 		
 		// Zip creation on the fly
+		$locale = "it_IT.UTF-8";
+		setlocale(LC_ALL, $locale);
+		putenv("LC_ALL=" . $locale);
 		$fp = popen("zip -0 -j -q -r - " . $contents, "r");
 		while(!feof($fp)) {
 			print fread($fp, 8192);
@@ -44,6 +57,7 @@ if(file_exists($file)) {
 		require_once("common/include/lib/mime_types.php");
 		if($view) {
 			switch($mime_type[$info["extension"]]["type"]) {
+				case "text":
 				case "image":
 				case "ebook":
 					header("Content-type: " . $mime_type[$info["extension"]]["mime"]);

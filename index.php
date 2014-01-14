@@ -43,17 +43,23 @@ if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 		$page_title = "Risultati della ricerca per \"" . $search_term . "\"";
 		$GLOBALS["breadcrumb"] = "Ricerca di \"" . $search_term . "\"";
 	}
-	if(strpos($_GET["s"], "Scheda:") !== false) {
+	if(strpos($_GET["s"], "Scheda:") !== false || strpos($_GET["s"], "Esplora:") !== false) {
 		require_once("common/include/classes/rsa.class.php");
 		$rsa = new rsa();
-		$hash = rawurldecode(str_replace("/Scheda:?", "", $_SERVER["REQUEST_URI"]));
+		$hash = rawurldecode(str_replace(array("/Scheda:?", "/Esplora:?"), "", $_SERVER["REQUEST_URI"]));
 		$file = trim($rsa->simple_decrypt($hash));
 		$info = pathinfo($file);
 		$filename = $info["basename"];
 		
-		$search_term = $filename;
-		$GLOBALS["breadcrumb"] = "Dettagli sul file \"" . $search_term . "\"";
-		$page_title = "Dettagli del file per \"" . $search_term . "\"";
+		if(strpos($_GET["s"], "Scheda:") !== false) {
+			$search_term = $filename;
+			$GLOBALS["breadcrumb"] = "Dettagli sul file \"" . $search_term . "\"";
+			$page_title = "Dettagli del file per \"" . $search_term . "\"";
+		} else {
+			$search_term = $filename;
+			$GLOBALS["breadcrumb"] = "Directory \"" . $search_term . "\"";
+			$page_title = "Esplorazione della directory \"" . $search_term . "\"";
+		}
 	}
 } else {
 	$page_title = "";

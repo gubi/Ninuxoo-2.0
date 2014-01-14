@@ -54,19 +54,14 @@ if(isset($_GET["token"]) && trim($_GET["token"]) !== "") {
 				$local_search = new local_search();
 				$op = (isset($_GET["op"]) && trim($_GET["op"]) == "") ? $GLOBALS["general_settings"]["searches"]["research_type"] : str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["op"])));
 				$local_search->set_params(array(
-						/*"config_ini_file" => "config.ini",*/
 						"op" => $op,
 						"path" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["path"]))),
 						"q" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["q"]))),
+						"nresults" => trim($_GET["nresults"]),
 						"filetype" => str_replace(" ", "\ ", escapeshellcmd(urldecode($_GET["filetype"]))),
-						"uri" => urldecode($_GET["url"])
+						"debug" => $_GET["debug"]
 				));
-				if($_GET["debug"] == "true"){
-					print_r($local_search->get($_GET["op"], 1));
-					print "\n\n";
-					print str_replace(" ", "\ ", urldecode($_GET["path"]));
-				}
-				print $local_search->get($_GET["op"]);
+				print $local_search->get();
 				break;
 			/*
 			default:

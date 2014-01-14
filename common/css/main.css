@@ -911,7 +911,47 @@ td.trusted.selected:after, td.untrusted.selected:after {
 	font-family: Ubuntu;
 	line-height: normal;
 }
+.fa-folder-o.hover {
+	background-color: #ddd;
+	color: #333 !important;
+}
+
 
 #affix > .list-group {
 	margin: 10px 0;
+}
+#explore_content .thumbnail {
+	margin-bottom: 20px;
+	padding: 0px;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+}
+#explore_content .thumbnail a {
+	text-decoration: none;
+}
+#explore_content .item.list-group-item {
+	float: none;
+	width: 100%;
+	margin-bottom: 10px;
+	border: 0px none;
+}
+#explore_content .item.list-group-item .list-group-image {
+	margin-right: 10px;
+}
+#explore_content .item.list-group-item .thumbnail {
+	margin-bottom: 0px;
+}
+#explore_content .item.list-group-item .caption {
+	padding: 9px 9px 0px 9px;
+}
+#explore_content .item.list-group-item:before, .item.list-group-item:after {
+	display: table;
+	content: " ";
+}
+#explore_content .item.list-group-item img {
+	float: left;
+}
+#explore_content .item.list-group-item:after {
+	clear: both;
 }

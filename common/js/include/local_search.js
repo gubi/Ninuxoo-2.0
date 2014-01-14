@@ -2,104 +2,67 @@ function rawurlencode(str) {
 	str = (str+'').toString();        
 	return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A');
 }
-$.ultrie = function(resourcetrie, resuri, realuri, hash) {
-	var res = "",
-	path_link = "",
-	ip = "",
-	text = "",
-	link = "",
-	res1 = "",
-	newli = false,
-	fork = false,
-	nres = resourcetrie.resources.length;
+$.ultrie = function(resourcetrie) {
+	var a = {};
+	
 	$.each(resourcetrie.children, function(index, child) {
-		if(child.resources.length < nres) {
-			fork = true;
-		}
+		a[index] = {
+			rank: child.rank,
+			label: child.label,
+			hash: child.hash,
+			resources: child.resources,
+			child: $.ultrie(child),
+		};
 	});
-	if(fork) {
-		res1 += '<span class="fa fa-folder-o">&nbsp;&nbsp;<a href="';
-		res1 += "./Scheda:?" + hash;
-		res1 += '">';
-		res1 += decodeURI(resuri);
-		res1 += "/</a>";
-		res1 += "</span>";
-		newli = true;
-	}
-	if(resourcetrie.resources.length > 0) {
-		if(!fork) {
-			var splitted_path = decodeURI(resuri).split("/"),
-			splitted_uri = decodeURI(realuri).split("/");
-			
-			for (p = 0; p < splitted_path.length; p++){
-				if(splitted_path[p].length > 0){
-					ip = splitted_path[1];
-					if(p >= 0){
-						link += splitted_path[p] + "/";
-						text = splitted_path[p];
-					}
-					if(text == ip) {
-						text = '<span></span>' + ip;
-					}
-					if(p == splitted_path.length - 1 || text == ip){
-						path_link += "<span>" + text + "</span><tt> / </tt>";
-					} else {
-						path_link += '<a href="./Esplora:?' + hash + '">' + text + '</a><tt> / </tt>';
-					}
-				}
-			}
-			res1 += '<span class="fa fa-folder-o">&nbsp;&nbsp;' + path_link + '</span>';
-		}
-		res1 += '<ul style="display: none;">';
-		rescount = 0;
-		$.each(resourcetrie.resources, function(index, resource) {
-			var respath = resource.uri.replace(resource.filename, "");
-			if(resourcetrie.resources.length == 1 || index + 1 == resourcetrie.resources.length){
-				if(resource.filetype == "DIRECTORY"){
-					res1 += '<li class="result last" id="' + resource.uri + '"><span class="fa fa-folder-o">&nbsp;&nbsp;<a href="./Esplora:?';
-				} else {
-					res1 += '<li class="result last" id="' + resource.uri + '"><span class="fa fa-file-o">&nbsp;&nbsp;<a href="./Scheda:?';
-				}
-			} else {
-				if(resource.filetype == "DIRECTORY"){
-					res1 += '<li class="result" id="' + resource.uri + '"><span class="fa fa-folder-o">&nbsp;&nbsp;<a href="./Esplora:?';
-				} else {
-					res1 += '<li class="result" id="' + resource.uri + '"><span class="fa fa-file-o">&nbsp;&nbsp;<a href="./Scheda:?';
-				}
-			}
-			res1 += resource.hash;
-			res1 += '" class="zoombox">';
-			res1 += resource.filename;
-			res1 += '</a></span></li>';
-		});
-		res1 += "</ul>";
-		if(!fork) {
-			res1 += "";
-			newli = true;
-			resuri = "";
-		}
-	}
-	$.each(resourcetrie.children, function(index, child) {
-		if(child.label.indexOf('smb:') != 0 && child.label.indexOf('ftp:') != 0) {
-			if(child.resources.length < nres) {
-				res1 += $.ultrie(child, "/" + child.label, realuri + "/" + child.label, child.hash);
-			} else {
-				res1 += $.ultrie(child, resuri + "/" + child.label, realuri + "/" + child.label, child.hash);
-			}
+	return a;
+};
+$.explode_ultrie = function(resourcetrie) {
+	var li = "",
+	path_link = "";
+	$.each(resourcetrie, function(rank, obj) {
+		li += '<li><span class="fa fa-folder-o">&nbsp;&nbsp;' + $.explode_a_ultrie(obj);
+	});
+	return li;
+};
+$.explode_a_ultrie = function(resourcetrie) {
+	var path_link = "",
+	icon = "";
+	if(resourcetrie.resources.length == 0) {
+		if(Object.keys(resourcetrie.child).length > 1) {
+			path_link += '<a href="./Esplora:?' + resourcetrie.hash + '">' + resourcetrie.label + '</a><tt> / </tt></span><ul>';
+			$.each(resourcetrie.resources, function(r, res) {
+				path_link += '<li><span class="fa ' + res.icon + '">&nbsp;&nbsp;<a href="./Scheda:?' + res.hash + '">' + res.filename + '</a></span></li>';
+			});
+			$.each(resourcetrie.child, function(rank, obj) {
+				path_link += '<li><span class="fa fa-folder-o">&nbsp;&nbsp;' + $.explode_a_ultrie(obj);
+			});
+			path_link += '</ul></li>';
 		} else {
-			res1 += $.ultrie(child, "/", child.label + "/", child.hash);
+			path_link += '<a href="./Esplora:?' + resourcetrie.hash + '"> ' + resourcetrie.label + '</a><tt> / </tt>';
+			$.each(resourcetrie.child, function(rank, obj) {
+				path_link += $.explode_a_ultrie(obj);
+			});
 		}
-	});
-	if(fork) {
-		res1 += "</li>";
-	}
-	if(newli) {
-		res = '<li>' + res1 + '</li>\n';
 	} else {
-		res = res1;
+		if(Object.keys(resourcetrie.child).length > 1) {
+			path_link += '<a href="./Esplora:?' + resourcetrie.hash + '">' + resourcetrie.label + '</a><tt> / </tt></span><ul>';
+			$.each(resourcetrie.resources, function(r, res) {
+				path_link += '<li><span class="fa ' + res.icon + '">&nbsp;&nbsp;<a href="./Scheda:?' + res.hash + '">' + res.filename + '</a></span></li>';
+			});
+			$.each(resourcetrie.child, function(rank, obj) {
+				path_link += '<li><span class="fa fa-folder-o">&nbsp;&nbsp;' + $.explode_a_ultrie(obj);
+			});
+			path_link += '</ul></li>';
+		} else {
+			path_link += '<a href="./Esplora:?' + resourcetrie.hash + '">' + resourcetrie.label + '</a><tt> / </tt></span>';
+			path_link += '<ul>';
+			$.each(resourcetrie.resources, function(r, res) {
+				path_link += '<li><span class="fa ' + res.icon + '">&nbsp;&nbsp;<a href="./Scheda:?' + res.hash + '">' + res.filename + '</a></span></li>';
+			});
+			path_link += "</ul></li>";
+		}
 	}
-	return res;
-
+	return path_link;
 };
 
 $(document).ready(function() {
@@ -112,6 +75,8 @@ $(document).ready(function() {
 			break;
 		default:
 			$("#breadcrumb").show();
+			
+			$("html, body").animate({ scrollTop: $("#container").offset().top }, 300);
 			break;
 	}
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
@@ -145,8 +110,11 @@ $(document).ready(function() {
 							$("#otherresults").append('<ul id="treeview_' + index + '" class="otherresults filetree treeview"></ul>')
 							var start_collapsed = true;
 						}
-						s = $.ultrie(value.resourcetrie, "", "");
-						$(".filetree").append(s);
+						s = $.ultrie(value.resourcetrie);
+						var li = "";
+						li += $.explode_ultrie(s);
+						var ul = '<ul>' + li + '</ul>';
+						$(".filetree").append(ul);
 						
 						$(".filetree").treeview({
 							control: "",
