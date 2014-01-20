@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<settings width = "281" height = "78">
+	
+	<autoplay>false</autoplay>
+	
+	<margin>5</margin>
+	
+	<strokeColor>0xff9f2f</strokeColor>
+	<fillColor>0x414042</fillColor>
+	
+	<playPauseButton>
+		<backColor>0xFFFFFF</backColor>
+		<backOverColor>0xf0f0f0</backOverColor>
+		
+		<signStrokeColor>0x666666</signStrokeColor>
+		<signFillColor>0x666666</signFillColor>
+	</playPauseButton>
+	
+	<volumeControl initLevel="50">
+		<backStrokeColor>0x4B4B4B</backStrokeColor>
+		<backFillColor>0xff9f2f</backFillColor>
+		
+		<signColor>0xE7E8E9</signColor>
+		<signOverColor>0x4B4B4B</signOverColor>
+		
+		<percentText color="0xE7E8E9" marginX="5" positionY="center" />  <!-- positionY can be: top, bottom, center or a number -->
+	</volumeControl>
+	
+	<visualizer backColor="0x333333" wavesColor="0xFFF7EF" />
+	
+	<songText>
+		<artistColor>0xE7E8E9</artistColor>
+		<artistFontSize>14</artistFontSize>
+		
+		<songColor>0xE7E8E9</songColor>
+		<songFontSize>12</songFontSize>
+	</songText>	
+	
+</settings>

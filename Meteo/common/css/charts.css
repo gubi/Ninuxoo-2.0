@@ -1,0 +1,20 @@
+.row {
+    margin-left: -30px;
+}
+.row:before, .row:after {
+    content: "";
+    display: table;
+}
+.row:after {
+    clear: both;
+}
+[class*="span"] {
+    float: left;
+    margin-left: 30px;
+}
+.span6 {
+	width: 570px;
+}
+.span12 {
+    width: 100%;
+}
