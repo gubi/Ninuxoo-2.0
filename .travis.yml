@@ -4,8 +4,7 @@ php:
   - "5.4"
   - "5.5"
 
-before_script: wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar
-script: php mageekguy.atoum.phar
+script: php index.php
 
 install:
   - sudo apt-get install id3v2
