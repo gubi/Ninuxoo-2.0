@@ -1,7 +1,6 @@
-# Semantic Decentralized Ninuxoo
-[![Build Status](https://travis-ci.org/gubi/Ninuxoo-2.0.png?branch=master)](https://travis-ci.org/gubi/Ninuxoo-2.0)
+# Semantic Decentralized Ninuxoo <sup>[![Build Status](https://travis-ci.org/gubi/Ninuxoo-2.0.png?branch=master)](https://travis-ci.org/gubi/Ninuxoo-2.0)</sup>
 
-<center>![Ninuxoo claim](https://raw.github.com/gubi/Ninuxoo-Semantic-Decentralized/master/common/media/img/ninuxoo_claim.png)</center>
+<p align="center"><img src="https://raw.github.com/gubi/Ninuxoo-Semantic-Decentralized/master/common/media/img/ninuxoo_claim.png" alt="Ninuxoo claim" /></p>
 
 
 This is a beta version of the new Ninuxoo Search Engine.<br />
