@@ -125,6 +125,7 @@ $logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (
 	<link rel="shortcut icon" href="common/media/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="common/css/bootstrap.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/js/font-awesome/css/font-awesome.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="common/css/picol-font-awesome.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/css/main.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/css/device.css" type="text/css" media="screen" />
 	<link rel="search" type="application/opensearchdescription+xml" title="Ninuxoo" href="osd.xml" />

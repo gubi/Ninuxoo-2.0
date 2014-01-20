@@ -190,7 +190,7 @@
 	</div>
 	<hr />
 	<span id="alert_no_internet" class="error"></span>
-	<button id="show_form" class="save" <?php print $btn_next_disabled; ?>>Prosegui</button>
+	<button class="btn btn-primary right" id="show_form" <?php print $btn_next_disabled; ?> tabindex="34">Prosegui&nbsp;&nbsp;&nbsp;<span class="fa fa-angle-right"></button>
 	
 	<form method="post" action="" class="frm" id="install_frm" style="display: none;" onsubmit="install()">
 		<fieldset>
@@ -267,7 +267,7 @@
 			<label for="shared_paths" class="required">Directories che si desidera siano scansionate e condivise:</label>
 			<textarea name="shared_paths" id="shared_paths" rows="5" style="width: 50%;" disabled tabindex="13"></textarea>
 			<hr />
-			<button id="show_nas_advanced_options" class="save grey">Avanzate...</button>
+			<button class="btn btn-default right" id="show_nas_advanced_options">Avanzate&nbsp;&nbsp;&nbsp;<span class="fa fa-caret-down"></button>
 			<div class="advanced" id="nas_advanced_options" style="display: none;">
 				<h3>Impostazioni <acronym title="Network Attached Storage">NAS</acronym> avanzate</h3>
 				<label for="uri_address">Indirizzo <acronym title="Uniform Resource Identifier">URI</acronym>:</label>
@@ -299,7 +299,7 @@
 			<label for="meteo_name" class="required">Nome della Stazione:</label>
 			<input type="text" name="meteo_name" id="meteo_name" style="width: 50%;" value="" tabindex="17" />
 			<hr />
-			<button id="show_meteo_advanced_options" class="save grey">Avanzate...</button>
+			<button class="btn btn-default right" id="show_meteo_advanced_options">Avanzate...&nbsp;&nbsp;&nbsp;<span class="fa fa-caret-down"></button>
 			<div class="advanced" id="meteo_advanced_options" style="display: none;">
 				<h3>Impostazioni Meteo avanzate</h3>
 				<p>
@@ -397,6 +397,6 @@
 			</div>
 		</fieldset>
 		<hr />
-		<button id="install" <?php print $btn_next_disabled; ?> tabindex="34">Installa</button>
+		<button class="btn btn-primary right" id="install" <?php print $btn_next_disabled; ?> tabindex="34">Installa&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></button>
 	</form>
 </div>

@@ -3,15 +3,37 @@ require_once("common/include/lib/getID3-1.9.7/getid3/getid3.php");
 require_once("common/include/lib/mime_types.php");
 
 function array_search_key($needle, array $array) {
-	$iterator  = new RecursiveArrayIterator($array);
+	$iterator = new RecursiveArrayIterator($array);
 	$recursive = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
 	foreach ($recursive as $key => $value) {
-		if ($key === $needle) {
-			if(is_array($value)) {
-				return implode(", ", $value);
-			} else {
-				return $value;
+		$res[$key][] = $value;
+	}
+	if((count($res[$needle])-1) > 1){
+		for ($i = 1; $i < count($res[$needle]); $i++) {
+			switch($needle) {
+				case "sample_rate":	$unity = $res[$needle][$i] . '<small>Hz</small>';	break;
+				case "frame_rate":	$unity = $res[$needle][$i] . '<small>fps</small>';	break;
+				case "channels":	$unity = $res[$needle][$i] . ((strlen($res["channelmode"][$i]) > 0) ? " (" . $res["channelmode"][$i] . ")" : "");	break;
+				case "bitrate":		$unity = abs(round($res[$needle][$i]/1000)) . '<small>Kbps</small>' . ((strlen($res["bitrate_mode"][$i]) > 0) ? " (" . $res["bitrate_mode"][$i] . ")" : "");	break;
+				case "resolution_x":	$unity = $res[$needle][$i] . "x" . $res["resolution_y"][$i]; break;
+				default:			$unity = $res[$needle][$i]; break;
 			}
+			$ress[] = "<li>" . $unity . "</li>";
+			
+		}
+		return "<ol>" . @implode("", $ress) . "</ol>";
+	} else {
+		switch($needle) {
+			case "sample_rate":	return $res[$needle][0] . '<small>Hz</small>';	break;
+			case "frame_rate":	return $res[$needle][0] . '<small>fps</small>';	break;
+			case "channels":	return $res[$needle][0] . ((strlen($res["channelmode"][0]) > 0) ? " (" . $res["channelmode"][0] . ")" : "");	break;
+			case "bitrate":
+				return abs(round($res[$needle][0]/1000)) . '<small>Kbps</small>';
+				break;
+			case "resolution_x":	return $res[$needle][0] . "x" . $res["resolution_y"][0]; break;
+			default:
+				return $res[$needle][0];
+				break;
 		}
 	}
 }
@@ -34,7 +56,9 @@ function convert_file_size($bytes) {
 	}
 	return $result;
 }
-
+function download_notify($target){
+	print '<div class="well text-muted" style="display: none;"><span class="fa fa-caret-down fa-bounce"></span>&nbsp;&nbsp;' . $target . '...&nbsp;&nbsp;<span class="fa fa-spinner fa-spin"></span></div>';
+}
 $h = parse_url($_SERVER["REQUEST_URI"]);
 $dhash = $h["query"];
 $dact = str_replace(array("/", ":"), "", $h["path"]);
@@ -53,13 +77,25 @@ $getID3 = new getID3;
 $fileinfo = $getID3->analyze($file);
 
 $file_data["length"] = $fileinfo["playtime_string"];
-$file_data["info"][$k] = $fileinfo["tags_html"];
+$file_data["info"] = $fileinfo["tags_html"];
 //print "<br />";
-$id3v = (in_array("id3v1", $fileinfo) ? "id3v1" : (in_array("id3v2", $fileinfo) ? "id3v2" : ""));
+if(array_key_exists("id3v1", $fileinfo)) {
+	if(array_key_exists("id3v2", $fileinfo)) {
+		if(count($fileinfo["id3v1"]) - count($fileinfo["id3v2"]) > 0) {
+			$id3v = "id3v1";
+		} else {
+			$id3v = "id3v2";
+		}
+	} else {
+		$id3v = "id3v1";
+	}
+} else if(in_array("id3v2", $fileinfo)) {
+	$id3v = "id3v2";
+}
 foreach($fileinfo as $k => $v) {
 	//print $k . "<br />";
 }
-//print_r($file_data["info"][$k][$id3v]["title"]);
+//print_r($fileinfo);
 //print "<br ><br />";
 //print_r($file_data);
 switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
@@ -86,7 +122,7 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 			case "epub":
 				$einfo = trim(shell_exec("einfo " . str_replace(" ", "\ ", escapeshellcmd($file)) . " 2>&1"));
 				preg_match_all("/(.*?)(\(s\)|)\:\s([\saut\:]\s.*?\s|.*)\s/i", $einfo, $matched);
-				foreach($matched[1] as  $mk => $mv) {
+				foreach($matched[1] as $mk => $mv) {
 					$m[strtolower($mv)] = $matched[3][$mk];
 				}
 				
@@ -97,13 +133,13 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 			case "pdf":
 				$einfo = trim(shell_exec("pdfinfo " . str_replace(" ", "\ ", escapeshellcmd($file)) . " 2>&1"));
 				preg_match_all("/(.*?)\:(.*?)\n/i", $einfo, $matched);
-				foreach($matched[1] as  $mk => $mv) {
+				foreach($matched[1] as $mk => $mv) {
 					$m[strtolower($mv)] = trim($matched[2][$mk]);
 				}
 				$ebook_title = $m["title"];
 				$ebook_author = $m["author"];
 				$ebook_creation_date = (strlen($m["creationdate"]) > 0) ? date("d/m/Y H:i:s", strtotime($m["creationdate"])) : "";
-				$ebook_modification_date = (strlen($m["moddate"]) > 0) ? date("d/m/Y H:i:s", strtotime($m["moddate"])) : "";
+				$ebook_edit_date = (strlen($m["moddate"]) > 0) ? date("d/m/Y H:i:s", strtotime($m["moddate"])) : "";
 				$ebook_program = $m["producer"];
 				$ebook_tags = ($m["tagged"] == "yes") ? ((strlen($m["keywords"]) > 0) ? '<span class="label label-warning">' . implode('</span> <span class="label label-warning">', array_map("trim", explode(",", $m["keywords"]))) . '</span>' : "") : "";
 				$ebook_pages = ($m["pages"] == "0") ? "1" : $m["pages"];
@@ -118,33 +154,32 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 		$file_data["file"]["image"] = $fileinfo["video"];
 		
 		$image_format = (strlen(array_search_key("dataformat", $file_data["file"]["image"])) > 0) ? array_search_key("dataformat", $file_data["file"]["image"]) : "";
-		$image_resolution = (strlen(array_search_key("resolution_x", $file_data["file"]["image"])) > 0 && strlen(array_search_key("resolution_y", $file_data["file"]["image"])) > 0) ? array_search_key("resolution_x", $file_data["file"]["image"]) . 'x' . array_search_key("resolution_y", $file_data["file"]["image"]) : "";
+		$image_resolution = (strlen(array_search_key("resolution_x", $file_data["file"]["image"])) > 0 && strlen(array_search_key("resolution_y", $file_data["file"]["image"])) > 0) ? array_search_key("resolution_x", $file_data["file"]["image"]) : "";
 		break;
 	case "audio":
 		$file_data["file"]["audio"] = $fileinfo["audio"];
-		$file_data["file"]["tags"] = $fileinfo["tags"][$id3v];
+		$file_data["file"]["tags"] = $file_data["info"][$id3v];
+		
 		if(is_array($file_data["file"]["tags"])) {
-			$audio_title = (strlen(array_search_key("title", $file_data["file"]["tags"])) > 0) ? array_search_key("title", $file_data["file"]["tags"]) : "";
-			$audio_artist = (strlen(array_search_key("artist", $file_data["file"]["tags"])) > 0) ? array_search_key("artist", $file_data["file"]["tags"]) : "";
-			$audio_album = (strlen(array_search_key("album", $file_data["file"]["tags"])) > 0) ? array_search_key("album", $file_data["file"]["tags"]) : "";
-			$audio_year = (strlen(array_search_key("year", $file_data["file"]["tags"])) > 0) ? array_search_key("year", $file_data["file"]["tags"]) : "";
-			$audio_track= (strlen(array_search_key("track_number", $file_data["file"]["tags"])) > 0) ? array_search_key("track_number", $file_data["file"]["tags"]) : "";
-			$audio_genre = (strlen(array_search_key("genre", $file_data["file"]["tags"])) > 0) ? array_search_key("genre", $file_data["file"]["tags"]) : "";
-			$audio_comments  = (strlen(array_search_key("comment", $file_data["file"]["tags"])) > 0) ? array_search_key("comment", $file_data["file"]["tags"]) : "";
+			$audio_title = (strlen($file_data["file"]["tags"]["title"][0]) > 0) ? $file_data["file"]["tags"]["title"][0] : "";
+			$audio_artist = (strlen($file_data["file"]["tags"]["artist"][0]) > 0) ? $file_data["file"]["tags"]["artist"][0] : "";
+			$audio_album = (strlen($file_data["file"]["tags"]["album"][0]) > 0) ? $file_data["file"]["tags"]["album"][0] : "";
+			$audio_year = ((strlen($file_data["file"]["tags"]["year"][0]) > 0) ? $file_data["file"]["tags"]["year"][0] : $file_data["file"]["tags"]["recording_time"]);
+			$audio_track = $file_data["file"]["tags"]["track_number"][0];
+			$audio_genre = (is_array($file_data["file"]["tags"]["genre"]) ? implode(", ", $file_data["file"]["tags"]["genre"]) : "");
+			$audio_comments = (is_array($file_data["file"]["tags"]["comment"]) ? implode(", ", $file_data["file"]["tags"]["comment"]) : "");
 		}
 		$audio_length = htmlentities($file_data["length"]);
 		
 		$audio_format = (strlen(array_search_key("dataformat", $file_data["file"]["audio"])) > 0) ? $file_data["file"]["audio"]["dataformat"] : "";
-			$a_channelmode = (strlen(array_search_key("channelmode", $file_data["file"]["audio"])) > 0) ? " (" . array_search_key("channelmode", $file_data["file"]["audio"]) . ")" : ""; 
-		$audio_channel = (strlen(array_search_key("channels", $file_data["file"]["audio"])) > 0) ? array_search_key("channels", $file_data["file"]["audio"]) . $a_channelmode : "";
-		$audio_frequency = (strlen(array_search_key("sample_rate", $file_data["file"]["audio"])) > 0) ? array_search_key("sample_rate", $file_data["file"]["audio"]) . '<small>Hz</small>' : "";
-			$a_bitrate_mode = (strlen(array_search_key("bitrate_mode", $file_data["file"]["audio"])) > 0) ? " (" . array_search_key("bitrate_mode", $file_data["file"]["audio"]) . ")" : "";
-		$audio_bitrate = ((strlen(array_search_key("bitrate", $file_data["file"]["audio"])) > 0) ? htmlentities(round(array_search_key("bitrate", $file_data["file"]["audio"])/1000)) . '<small>Kbps</small>' . $a_bitrate_mode : "");
+		$audio_channel = (strlen(array_search_key("channels", $file_data["file"]["audio"])) > 0) ? array_search_key("channels", $file_data["file"]["audio"]) : "";
+		$audio_frequency = (strlen(array_search_key("sample_rate", $file_data["file"]["audio"])) > 0) ? array_search_key("sample_rate", $file_data["file"]["audio"]) : "";
+		$audio_bitrate = ((strlen(array_search_key("bitrate", $file_data["file"]["audio"])) > 0) ? array_search_key("bitrate", $file_data["file"]["audio"]) : "");
 		break;
 	case "video":
 		$file_data["file"]["audio"] = $fileinfo["audio"];
 		$file_data["file"]["video"] = $fileinfo["video"];
-		
+		//print_r($fileinfo["audio"]);
 		foreach($file_data["file"] as $k => $v) {
 			if($k == "audio") {
 				$audio_title = $file_data["info"][$k][$id3v]["title"][0];
@@ -157,24 +192,20 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 				
 				$audio_language = (strlen(array_search_key("language", $file_data["file"]["audio"])) > 0) ? array_search_key("language", $file_data["file"]["audio"]) : "";
 				$audio_format = (strlen(array_search_key("dataformat", $file_data["file"]["audio"])) > 0) ? array_search_key("dataformat", $file_data["file"]["audio"]) : "";
-					$a_channelmode = (strlen(array_search_key("channelmode", $file_data["file"]["audio"])) > 0) ? " (" . array_search_key("channelmode", $file_data["file"]["audio"]) . ")" : ""; 
-				$audio_channel = (strlen(array_search_key("channels", $file_data["file"]["audio"])) > 0) ? array_search_key("channels", $file_data["file"]["audio"]) . $a_channelmode : "";
-				$audio_frequency = (strlen(array_search_key("sample_rate", $file_data["file"]["audio"])) > 0) ? array_search_key("sample_rate", $file_data["file"]["audio"]) . '<small>Hz</small>' : "";
-					$a_bitrate_mode = (strlen(array_search_key("bitrate_mode", $file_data["file"]["audio"])) > 0) ? " (" . array_search_key("bitrate_mode", $file_data["file"]["audio"]) . ")" : "";
-				$audio_bitrate = ((strlen(array_search_key("bitrate", $file_data["file"]["audio"])) > 0) ? htmlentities(round(array_search_key("bitrate", $file_data["file"]["audio"])/1000)) . '<small>Kbps</small>' . $a_bitrate_mode : "");
+				$audio_channel = (strlen(array_search_key("channels", $file_data["file"]["audio"])) > 0) ? array_search_key("channels", $file_data["file"]["audio"]) : "";
+				$audio_frequency = (strlen(array_search_key("sample_rate", $file_data["file"]["audio"])) > 0) ? array_search_key("sample_rate", $file_data["file"]["audio"]) : "";
+				$audio_bitrate = ((strlen(array_search_key("bitrate", $file_data["file"]["audio"])) > 0) ? array_search_key("bitrate", $file_data["file"]["audio"]) : "");
 			}
 			if($k == "video") {
 				$video_length = htmlentities($file_data["length"]);
 				$video_title = (strlen(array_search_key("title", $file_data["file"]["video"])) > 0) ? array_search_key("title", $file_data["file"]["video"]) : array_search_key("name", $file_data["file"]["video"]);
 				$video_format = (strlen(array_search_key("dataformat", $file_data["file"]["video"])) > 0) ? array_search_key("dataformat", $file_data["file"]["video"]) : "";
-					$v_channelmode = (strlen(array_search_key("channelmode", $file_data["file"]["video"])) > 0) ? " (" . array_search_key("channelmode", $file_data["file"]["video"]) . ")" : ""; 
-				$video_channel = (strlen(array_search_key("channels", $file_data["file"]["video"])) > 0) ? array_search_key("channels", $file_data["file"]["video"]) . $v_channelmode : "";
+				$video_channel = (strlen(array_search_key("channels", $file_data["file"]["video"])) > 0) ? array_search_key("channels", $file_data["file"]["video"]) : "";
 				$video_codec = (strlen(array_search_key("codec", $file_data["file"]["video"])) > 0) ? array_search_key("codec", $file_data["file"]["video"]) : "";
-				$video_frames = (strlen(array_search_key("frame_rate", $file_data["file"]["video"])) > 0) ? array_search_key("frame_rate", $file_data["file"]["video"]) . '<small> fps</small>' : "";
+				$video_frames = (strlen(array_search_key("frame_rate", $file_data["file"]["video"])) > 0) ? array_search_key("frame_rate", $file_data["file"]["video"]) : "";
 				$video_tot_frames = (strlen(array_search_key("total_frames", $file_data["file"]["video"])) > 0) ? array_search_key("total_frames", $file_data["file"]["video"]) : "";
-				$video_resolution = (strlen(array_search_key("resolution_x", $file_data["file"]["video"])) > 0 && strlen(array_search_key("resolution_y", $file_data["file"]["video"])) > 0) ? array_search_key("resolution_x", $file_data["file"]["video"]) . 'x' . array_search_key("resolution_y", $file_data["file"]["video"]) : "";
-					$v_bitrate_mode = (strlen(array_search_key("bitrate_mode", $file_data["file"]["video"])) > 0) ? " (" . array_search_key("bitrate_mode", $file_data["file"]["video"]) . ")" : "";
-				$video_bitrate = (strlen(array_search_key("bitrate", $file_data["file"]["video"])) > 0) ? abs(round(array_search_key("bitrate", $file_data["file"]["video"])/1000)) . '<small>Kbps</small>' . $v_bitrate_mode : "";
+				$video_resolution = (strlen(array_search_key("resolution_x", $file_data["file"]["video"])) > 0 && strlen(array_search_key("resolution_y", $file_data["file"]["video"])) > 0) ? array_search_key("resolution_x", $file_data["file"]["video"]) : "";
+				$video_bitrate = (strlen(array_search_key("bitrate", $file_data["file"]["video"])) > 0) ? array_search_key("bitrate", $file_data["file"]["video"]) : "";
 			}
 		}
 		break;
@@ -188,10 +219,14 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 <script type="text/javascript" src="common/js/include/local_search.js"></script>
 
 <span style="display: none;" id="result_type">View</span>
+<span style="display: none;" id="result_filetype"><?php print strtolower($mime_type[strtolower($info["extension"])]["type"]); ?></span>
+<span style="display: none;" id="result_owl"><?php print $mime_type[strtolower($info["extension"])]["owl"]; ?></span>
+<span style="display: none;" id="result_semantic"><?php print $mime_type[strtolower($info["extension"])]["semantic"]; ?></span>
 <span style="display: none;" id="search_type"><?php print $GLOBALS["search_type"]; ?></span>
 <span style="display: none;" id="search_num_results"><?php print $GLOBALS["search_num_results"]; ?></span>
 <span style="display: none;" id="search_ip"><?php print $GLOBALS["search_ip"]; ?></span>
 <span style="display: none;" id="search_filetype"><?php print $GLOBALS["search_filetype"]; ?></span>
+<span style="display: none;" id="hash"><?php print $dhash; ?></span>
 <div id="result_content">
 	<div class="row">
 		<div class="panel right col-lg-4" id="affix">
@@ -233,7 +268,7 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 							<?php (strlen($ebook_tags) > 0) ? print '<dt>Tags:</dt><dd id="ebook_subject">' . $ebook_tags . '</dd>' : ""; ?>
 							<?php (strlen($ebook_publisher) > 0) ? print '<dt>Editore:</dt><dd id="ebook_publisher">' . $ebook_publisher . '</dd>' : ""; ?>
 							<?php (strlen($ebook_creation_date) > 0) ? print '<dt>Creato il:</dt><dd id="ebook_creation_date">' . $ebook_creation_date . '</dd>' : ""; ?>
-							<?php (strlen($ebook_modification_date) > 0) ? print '<dt>Modificato il:</dt><dd id="ebook_modification_date">' . $ebook_modification_date . '</dd>' : ""; ?>
+							<?php (strlen($ebook_edit_date) > 0) ? print '<dt>Modificato il:</dt><dd id="ebook_edit_date">' . $ebook_edit_date . '</dd>' : ""; ?>
 						</dl>
 						<dl class="dl-horizontal">
 							<?php (strlen($ebook_pages) > 0) ? print '<dt>Pagine:</dt><dd id="ebook_pages">' . $ebook_pages . '</dd>' : ""; ?>
@@ -296,26 +331,27 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 						</dl>
 						<p class="lead media-heading text-muted"><span class="fa fa-film"></span>&nbsp;&nbsp;Video</p>
 						<dl class="dl-horizontal">
-							<?php (strlen($video_format) > 0) ? print '<dt>Formato:</dt><dd id="media_format">' . $video_format . '</dd>' : ""; ?>
-							<?php (strlen($video_channel) > 0) ? print '<dt>Canali:</dt><dd id="media_channel">' . $video_channel . '</dd>' : ""; ?>
-							<?php (strlen($video_codec) > 0) ? print '<dt>Codifica:</dt><dd id="media_codec">' . $video_codec . '</dd>' : ""; ?>
-							<?php (strlen($video_resolution) > 0) ? print '<dt>Dimensione:</dt><dd id="media_resolution">' . $video_resolution . '</dd>' : ""; ?>
-							<?php (strlen($video_frequency) > 0) ? print '<dt>Frequenza:</dt><dd id="media_frequency">' . $video_frequency . '</dd>' : ""; ?>
-							<?php (strlen($video_frames) > 0) ? print '<dt>Framerate:</dt><dd id="media_frames">' . $video_frames . '</dd>' : ""; ?>
-							<?php (strlen($video_tot_frames) > 0) ? print '<dt>Fotogrammi totali:</dt><dd id="media_tot_frames">' . $video_tot_frames . '</dd>' : ""; ?>
-							<?php (strlen($video_bitrate) > 0) ? print '<dt>Bitrate:</dt><dd id="media_bitrate">' . $video_bitrate . '</dd>' : ""; ?>			
+							<?php (strlen($video_format) > 0) ? print '<dt>Formato:</dt><dd id="video_format">' . $video_format . '</dd>' : ""; ?>
+							<?php (strlen($video_channel) > 0) ? print '<dt>Canali:</dt><dd id="video_channel">' . $video_channel . '</dd>' : ""; ?>
+							<?php (strlen($video_codec) > 0) ? print '<dt>Codifica:</dt><dd id="video_codec">' . $video_codec . '</dd>' : ""; ?>
+							<?php (strlen($video_resolution) > 0) ? print '<dt>Dimensione:</dt><dd id="video_resolution">' . $video_resolution . '</dd>' : ""; ?>
+							<?php (strlen($video_frequency) > 0) ? print '<dt>Frequenza:</dt><dd id="video_frequency">' . $video_frequency . '</dd>' : ""; ?>
+							<?php (strlen($video_frames) > 0) ? print '<dt>Framerate:</dt><dd id="video_frames">' . $video_frames . '</dd>' : ""; ?>
+							<?php (strlen($video_tot_frames) > 0) ? print '<dt>Fotogrammi totali:</dt><dd id="video_tot_frames">' . $video_tot_frames . '</dd>' : ""; ?>
+							<?php (strlen($video_bitrate) > 0) ? print '<dt>Bitrate:</dt><dd id="video_bitrate">' . $video_bitrate . '</dd>' : ""; ?>			
 						</dl>
 						<?php
 						break;
 				}
 				?>
 				<hr />
-				<p class="lead media-heading text-muted">Files con lo stesso nome</p>
+				<p class="lead media-heading text-muted"><span class="picol picol_combine"></span>&nbsp;&nbsp;Files con lo stesso nome</p>
 				<dl class="dl-horizontal">
 					<dt>Termini ricercati:</dt><dd id="nlabels"><span class="fa fa-refresh fa-spin text-muted"></span></dd>
 					<dt>Numero di risultati:</dt><dd id="nresults"><span class="fa fa-refresh fa-spin text-muted"></span></dd>
 					<dt>Durata della ricerca:</dt><dd id="searchtime"><span class="fa fa-refresh fa-spin text-muted"></span></dd>
 				</dl>
+				<hr />
 			</div>
 		</div>
 		<div class="panel col-lg-8">
@@ -329,7 +365,7 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 				switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 					case "text":
 						?>
-							<iframe src="./Scarica:?view=true&<?php print $dhash; ?>" style="width: 100%; height: 50em; border: #ccc 1px solid; padding: 1em;"></iframe>
+						<iframe src="./Scarica:?view=true&<?php print $dhash; ?>" style="width: 100%; height: 50em; border: #ccc 1px solid; padding: 1em;"></iframe>
 						<?php
 						break;
 					case "image":
@@ -340,6 +376,12 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 								<img src="./Scarica:?view=true&<?php print $dhash; ?>" class="img-responsive" style="margin: 0 auto;" alt="Immagine: <?php print $filename; ?>">
 							</a>
 						</div>
+						<?php
+						break;
+					case "audio":
+						?>
+						<div class="well text-muted" style="display: none;"><span class="fa fa-caret-right"></span>&nbsp;&nbsp;Analizzo lo spettro del campione audio...&nbsp;&nbsp;<span class="fa fa-magic fa-bounce"></span></div>
+						<div id="audio_spectrum"></div>
 						<?php
 						break;
 					case "ebook":
@@ -353,10 +395,46 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 				?>
 			</div>
 		</div>
+		<?php download_notify("Acquisisco dati semantici sull'album"); ?>
+		<div class="panel col-lg-8" id="semantic_album" style="display: none;">
+			<div class="panel">
+				<span class="lead text-primary">
+					<span class="fa fa-list-alt"></span>&nbsp;&nbsp;<span id="album_name">Album</span><small class="help-block">Risultati semantici relativi all'album</small>
+				</span>
+			</div>
+		</div>
+		<?php download_notify("Acquisisco dati semantici sull'artista"); ?>
+		<div class="panel col-lg-8" id="semantic_artist" style="display: none;">
+			<div class="panel">
+				<span class="lead text-primary">
+					<span class="fa fa-microphone"></span>&nbsp;&nbsp;<span id="artist_name">Artista</span><small class="help-block">Risultati semantici relativi all'artista o il complesso</small>
+				</span>
+			</div>
+		</div>
+	</div>
+	<?php download_notify("Acquisisco dati semantici sul file"); ?>
+	<div class="row" id="semantic_info" style="display: none;" class="panel">
+		<div class="panel col-lg-4 right">
+			<div class="panel">
+				<p class="lead text-muted"><span class="picol picol_semantic_web"></span>&nbsp;&nbsp;Contesto semantico</p>
+				<dl class="dl-horizontal">
+					<dt><span class="picol picol_owl_lite"></span>&nbsp;&nbsp;OWL:</dt><dd id="nlabels"><a target="_blank" href="http://dbpedia.org/ontology/<?php print $mime_type[strtolower($info["extension"])]["owl"]; ?>"><?php print $mime_type[strtolower($info["extension"])]["owl"]; ?></a></dd>
+				</dl>
+				<div id="file_info"></div>
+			</div>
+		</div>
+		<div class="panel panel-default col-lg-8">
+			<div class="panel media-heading">
+				<span class="lead text-primary">
+					<span class="picol picol_rdf"></span>&nbsp;&nbsp;<span id="s_label"><?php print $mime_type[strtolower($info["extension"])]["semantic"]; ?></span> <small class="help-block">Risultati semantici relativi al tipo di file</small>
+				</span>
+			</div>
+			<div id="semantic_results" class="panel-body"></div>
+		</div>
 	</div>
 	<hr />
 	<div class="row">
-		<div class="panel col-lg-8">
+		<div class="panel col-lg-12">
 			<div class="panel">
 				<span class="lead text-primary">
 					<span class="fa fa-search"></span>&nbsp;&nbsp;Duplicati: <small class="help-block">Percorsi in cui vi &egrave; un file con lo stesso nome</small>

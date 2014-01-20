@@ -50,7 +50,7 @@ function taglia_stringa($stringa, $max_char, $ellipses = "..."){
 	<?php
 	if(!is_dir($file . "/" . $dir)) {
 		?>
-		<div class="alert alert-warning"><span class="fa fa-times"></span>&nbsp;&nbsp;Attenzione: La risorsa non risulta leggibile!</div>
+		<div class="alert alert-danger" id="unreadable"><span class="fa fa-times"></span>&nbsp;&nbsp;Attenzione: La risorsa non risulta leggibile!</div>
 		<?php
 	} else {
 		$locale = "it_IT.UTF-8";
@@ -59,7 +59,7 @@ function taglia_stringa($stringa, $max_char, $ellipses = "..."){
 		$ls = explode("\n", trim(shell_exec("ls -B -N " . str_replace(" ", "\ ", escapeshellcmd($file)))));
 		foreach($ls as $dir) {
 			if(is_dir($file . "/" . $dir)) {
-				$thumbs = glob($file . "/" . $dir . "/*.{jpg,png,gif}", GLOB_BRACE);
+				$thumbs = glob($file . "/" . $dir . "/*.{jpg,jpeg,png,gif}", GLOB_BRACE);
 				$preview = '<i class="fa fa-folder-o btn" style="font-size: 128px;"></i>';
 			} else {
 				$i = pathinfo($file . "/" . $dir);

@@ -13,15 +13,20 @@ $ls = explode("\n", trim(shell_exec("ls -B -N " . str_replace(" ", "\ ", escapes
 
 foreach($ls as $dir) {
 	if(is_dir($file . "/" . $dir)) {
-		$thumbs = glob($file . "/" . $dir . "/*.{jpg,png,gif}", GLOB_BRACE);
+		$thumbs = glob($file . "/" . $dir . "/*.{jpg,jpeg,png,gif}", GLOB_BRACE);
 		if(count($thumbs) > 0) {
 			foreach($thumbs as $img) {
+				$imgs[$dir][] = $img;
+				/*
 				if(strpos(strtolower($img), "cover") !== false || strpos(strtolower($img), "front") !== false || strpos(strtolower($img), "folder") !== false) {
+					$imgs[$dir][0] = $img;
+				} else {
 					$imgs[$dir][] = $img;
 				}
 				if(count($imgs) == 0) {
 					$imgs[$dir][] = $img;
 				}
+				*/
 			}
 			$max_rand = count($imgs[$dir]);
 			if($max_rand == 1) {
