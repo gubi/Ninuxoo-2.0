@@ -3,3 +3,15 @@ php:
   - "5.5"
   - "5.4"
   - "5.3"
+
+before_script: wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar
+script: php mageekguy.atoum.phar
+
+install:
+  - openssl
+  - avahi-daemon
+  - avahi-utils
+  - id3v2
+  - epub-utils
+  - graphicsmagick-imagemagick-compat
+  - lame
