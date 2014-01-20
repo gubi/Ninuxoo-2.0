@@ -8,7 +8,6 @@ before_script: wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar
 script: php mageekguy.atoum.phar
 
 install:
-  - openssl
   - avahi-daemon
   - avahi-utils
   - id3v2
