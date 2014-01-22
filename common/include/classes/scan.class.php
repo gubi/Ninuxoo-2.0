@@ -97,8 +97,8 @@ class scan {
 		foreach($get_config["NAS"]["nas_shares"] as $scan_dir){
 			$share_ = array();
 			
-			$splitted_dir = array_values(array_filter(explode("/", trim(str_replace("./", "", str_replace("//", "/", $get_config["NAS"]["root_share_dir"] . "/") . $scan_dir)))));
-			$this->listing .= shell_exec("find " . str_replace(" ", "\ ", escapeshellcmd(str_replace("//", "/", $get_config["NAS"]["root_share_dir"] . "/") . $scan_dir)) . " -mindepth 1 | sort");
+			$splitted_dir = array_values(array_filter(explode("/", trim(str_replace("./", "", str_replace("//", "/", $get_config["NAS"]["root_share_dir"] . "/" . $scan_dir))))));
+			$this->listing .= shell_exec("find " . str_replace(" ", "\ ", escapeshellcmd(str_replace("//", "/", $get_config["NAS"]["root_share_dir"] . "/" . $scan_dir))) . " -mindepth 1 | sort");
 		}
 		return $this->listing;
 	}
@@ -106,6 +106,7 @@ class scan {
 		if (!class_exists("rsa", false)) {
 			require($this->class_dir . "/rsa.class.php");
 		}
+		$rsa = new rsa();
 		
 		$startime = $this->start_time();
 		$get_config = $this->get_config();
@@ -115,14 +116,34 @@ class scan {
 		foreach($get_config["NAS"]["nas_shares"] as $f) {
 			$info = pathinfo($f);
 			$shares[] = $info["basename"];
-			$scans = str_replace("//", "/", str_replace($get_config["NAS"]["root_share_dir"], "", $scan));
+			$scans = str_replace(array("///", "//"), "/", str_replace($get_config["NAS"]["root_share_dir"], "", $scan));
 		}
 		/*
 		SAVE LISTING
 		*/
-		$listing_file = fopen($get_config["NAS"]["listing_file_dir"] . "/listing", "w+");
-		fwrite($listing_file, $scans);
-		fclose($listing_file);
+		ob_start();
+		$scanz = explode("\n", $scans);
+		foreach($scanz as $kl => $line) {
+			if($kl == 0) {
+				$listing_file = fopen($get_config["NAS"]["listing_file_dir"] . "/listing", "w+");
+			} else {
+				$listing_file = fopen($get_config["NAS"]["listing_file_dir"] . "/listing", "a+");
+			}
+			if(strlen($line) > 0) {
+				$scanned_lines = "[{\"id\":\"" . $kl . "\",";
+				$scanned_lines .= "\"path\":\"" . addslashes($line) . "\"}]\n";
+				
+				if(strlen(pathinfo(str_replace("//", "/", $get_config["NAS"]["root_share_dir"] . "/" . $line), PATHINFO_EXTENSION)) == 0) {
+					//$scanned_lines .= "\"hash\":\"\"}]\n";
+				} else {
+					//$scanned_lines .= "\"hash\":\"" . str_replace("\n", "", $rsa->simple_private_encrypt(str_replace(array("///", "//"), "/", $get_config["NAS"]["root_share_dir"] . "/" . $line))) . "\"}]\n";
+				}
+			}
+			fwrite($listing_file, $scanned_lines);
+			ob_flush();
+			flush();
+		}
+		$scanned_lines .= "]";
 		@chmod($get_config["NAS"]["listing_file_dir"] . "/listing", 0777);
 		
 		$end_time = $this->update_config($startime);

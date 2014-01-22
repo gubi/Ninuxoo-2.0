@@ -4,6 +4,7 @@ require_once("common/include/classes/rsa.class.php");
 
 $rsa = new rsa();
 $url = parse_url($_SERVER["REQUEST_URI"]);
+$config = parse_ini_file("common/include/conf/config.ini", 1);
 if(strpos($url["query"], "view") === false) {
 	$view = false;
 	$hash = rawurldecode($url["query"]);
@@ -15,12 +16,19 @@ if(strpos($url["query"], "view") === false) {
 $locale = "it_IT.UTF-8";
 setlocale(LC_ALL, $locale);
 putenv("LC_ALL=" . $locale);
-$file = trim($rsa->simple_decrypt($hash));
+$filepath = trim(base64_decode($hash));
+$tk = explode("://", $filepath);
+$dest_token = $tk[0];
+if($dest_token == $rsa->my_token()) {
+	$file = str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/" . $tk[1]);
+} else {
+	// Non è un file interno
+	// Chiedo in mdns
+}
 $file_size = trim(@shell_exec("stat -c %s " . str_replace(" ", "\ ", escapeshellcmd($file)) . " 2>&1"));
 $info = pathinfo($file);
 $filename = $info["basename"];
 
-$config = parse_ini_file("common/include/conf/config.ini", 1);
 
 if(file_exists($file)) {
 	$locale = "it_IT.UTF-8";

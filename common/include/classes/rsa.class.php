@@ -47,11 +47,16 @@ class rsa {
 		*/
 		return md5(strstr(str_replace(array("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA", "\n"), "", str_replace(array("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----"), "", $key)), "ID", true));
 	}
+	public function my_token() {
+		$config = parse_ini_file(str_replace("classes", "conf", __DIR__) . "/config.ini", 1);
+		return $this->get_token($config["NAS"]["root_dir"]);
+	}
 	/**
 	// Simple encrypt and decrypt string.
 	// Thanks to http://stackoverflow.com/a/1289114 :)
 	*/
 	public function simple_encrypt($text) {
+		ini_set("max_execution_time", 3000);
 		return trim(shell_exec('echo "' . $text . '" | openssl enc -base64'));
 		//return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, SALT, $text, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
 	}
@@ -60,6 +65,7 @@ class rsa {
 		//return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, SALT, base64_decode($text), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
 	}
 	public function simple_private_encrypt($string) {
+		ini_set("max_execution_time", 3000);
 		shell_exec("echo '" . $string . "' | openssl rsautl -encrypt -inkey " . str_replace("classes", "conf", __DIR__) . "/rsa_2048_priv.pem > " . str_replace("classes", "conf", __DIR__) . "/message.encrypted");
 		$encrypted = shell_exec('cat ' . str_replace("classes", "conf", __DIR__) . '/message.encrypted | base64 - && rm ' . str_replace("classes", "conf", __DIR__) . '/message.encrypted');
 		return $encrypted;

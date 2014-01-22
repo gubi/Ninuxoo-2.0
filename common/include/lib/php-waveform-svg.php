@@ -22,8 +22,18 @@ function findValues($byte1, $byte2){
  
 if (isset($_GET["file"]) && trim($_GET["file"]) !== "") {
 	require_once("../classes/rsa.class.php");
+	
 	$rsa = new rsa();
-	$file = $rsa->simple_decrypt(rawurldecode($_GET["file"]));
+	$config = parse_ini_file(str_replace("/lib", "/conf", __DIR__) . "/config.ini", 1);
+	$filepath = trim(base64_decode(rawurldecode($_GET["file"])));
+	$tk = explode("://", $filepath);
+	$dest_token = $tk[0];
+	if($dest_token == $rsa->my_token()) {
+		$file = str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/" . $tk[1]);
+	} else {
+		// Non è un file interno
+		// Chiedo in mdns
+	}
 	//header("Content-Type: text/plain");
 	
 	/**
@@ -34,7 +44,7 @@ if (isset($_GET["file"]) && trim($_GET["file"]) !== "") {
 	$tmpname = substr(md5(time()), 0, 10);
 
 	// copy from temp upload directory to current
-	copy($file, "{$tmpname}_o.mp3");
+	@copy($file, "{$tmpname}_o.mp3");
 
 		// support for stereo waveform?
 	$stereo = false;
@@ -62,8 +72,8 @@ if (isset($_GET["file"]) && trim($_GET["file"]) !== "") {
 	}
 
 	// delete temporary files
-	unlink("{$tmpname}_o.mp3");
-	unlink("{$tmpname}.mp3");
+	@unlink("{$tmpname}_o.mp3");
+	@unlink("{$tmpname}.mp3");
 
 	// Could just print to the output buffer, but saving to a variable
 	// makes it easier to display the SVG and dump it to a file without
@@ -89,21 +99,21 @@ if (isset($_GET["file"]) && trim($_GET["file"]) !== "") {
 		* as findValues() defined above
 		* Translated from Croation to English - July 11, 2011
 		*/
-		$handle = fopen($filename, "r");
+		$handle = @fopen($filename, "r");
 		// wav file header retrieval
-		$heading[] = fread($handle, 4);
-		$heading[] = bin2hex(fread($handle, 4));
-		$heading[] = fread($handle, 4);
-		$heading[] = fread($handle, 4);
-		$heading[] = bin2hex(fread($handle, 4));
-		$heading[] = bin2hex(fread($handle, 2));
-		$heading[] = bin2hex(fread($handle, 2));
-		$heading[] = bin2hex(fread($handle, 4));
-		$heading[] = bin2hex(fread($handle, 4));
-		$heading[] = bin2hex(fread($handle, 2));
-		$heading[] = bin2hex(fread($handle, 2));
-		$heading[] = fread($handle, 4);
-		$heading[] = bin2hex(fread($handle, 4));
+		$heading[] = @fread($handle, 4);
+		$heading[] = @bin2hex(fread($handle, 4));
+		$heading[] = @fread($handle, 4);
+		$heading[] = @fread($handle, 4);
+		$heading[] = @bin2hex(fread($handle, 4));
+		$heading[] = @bin2hex(fread($handle, 2));
+		$heading[] = @bin2hex(fread($handle, 2));
+		$heading[] = @bin2hex(fread($handle, 4));
+		$heading[] = @bin2hex(fread($handle, 4));
+		$heading[] = @bin2hex(fread($handle, 2));
+		$heading[] = @bin2hex(fread($handle, 2));
+		$heading[] = @fread($handle, 4);
+		$heading[] = @bin2hex(fread($handle, 4));
 
 		// wav bitrate 
 		$peek = hexdec(substr($heading[10], 0, 2));
@@ -116,10 +126,10 @@ if (isset($_GET["file"]) && trim($_GET["file"]) !== "") {
 
 		// start putting together the initial canvas
 		// $data_size = (size_of_file - header_bytes_read) / skipped_bytes + 1
-		$data_size = floor((filesize($filename) - 44) / ($ratio + $byte) + 1);
+		$data_size = floor((@filesize($filename) - 44) / ($ratio + $byte) + 1);
 		$data_point = 0;
 
-		while(!feof($handle) && $data_point < $data_size){
+		while(!@feof($handle) && $data_point < $data_size){
 			if ($data_point++ % DETAIL == 0) {
 				$bytes = array();
 				
@@ -164,9 +174,9 @@ if (isset($_GET["file"]) && trim($_GET["file"]) !== "") {
 		$svg .= "</svg>\n";
 		
 		// close and cleanup
-		fclose($handle);
+		@fclose($handle);
 		// delete the processed wav file
-		unlink($filename);
+		@unlink($filename);
 	}
 	$svg .= "\n</svg>";
 	

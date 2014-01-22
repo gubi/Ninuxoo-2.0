@@ -20,6 +20,8 @@ if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 		shell_exec('openssl rsa -pubout -in common/include/conf/rsa_2048_priv.pem -out common/include/conf/rsa_2048_pub.pem');
 	}
 }
+$GLOBALS["general_settings"] = parse_ini_file("common/include/conf/general_settings.ini", true);
+$GLOBALS["config"] = parse_ini_file("common/include/conf/config.ini", 1);
 if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 	$page_title = ucfirst(str_replace("_", " ", $_GET["s"]));
 	$page_name = ucfirst(str_replace("_", " ", $_GET["s"]));
@@ -45,10 +47,21 @@ if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 	}
 	if(strpos($_GET["s"], "Scheda:") !== false || strpos($_GET["s"], "Esplora:") !== false) {
 		require_once("common/include/classes/rsa.class.php");
+		
 		$rsa = new rsa();
 		$hash = rawurldecode(str_replace(array("/Scheda:?", "/Esplora:?"), "", $_SERVER["REQUEST_URI"]));
-		$file = trim($rsa->simple_decrypt($hash));
-		$info = pathinfo($file);
+		$filepath = trim(base64_decode($hash));
+		$tk = explode("://", $filepath);
+		$GLOBALS["dest_token"] = $tk[0];
+		if($GLOBALS["dest_token"] == $rsa->my_token()) {
+			$file = str_replace("//", "/", $GLOBALS["config"]["NAS"]["root_share_dir"] . "/" . $tk[1]);
+			$GLOBALS["root_dir"] = $GLOBALS["config"]["NAS"]["root_share_dir"];
+			$info = pathinfo($file);
+		} else {
+			$GLOBALS["root_dir"] = "";
+			// Non è un file interno
+			// Chiedo in mdns
+		}
 		$filename = $info["basename"];
 		
 		if(strpos($_GET["s"], "Scheda:") !== false) {
@@ -80,9 +93,6 @@ if(!$has_config) {
 	if(isset($_GET["setup"]) || isset($_GET["s"]) && trim($_GET["s"]) == "login" && isset($_COOKIE["n"])) {
 		header("Location: ./");
 	}
-	
-	$GLOBALS["general_settings"] = parse_ini_file("common/include/conf/general_settings.ini", true);
-	$GLOBALS["config"] = parse_ini_file("common/include/conf/config.ini", 1);
 	$NAS_absolute_uri = preg_replace("{/$}", "", $GLOBALS["config"]["NAS"]["http_root"]);
 	$NAS_IP = $GLOBALS["config"]["NAS"]["ipv4"];
 	

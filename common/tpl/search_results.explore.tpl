@@ -12,6 +12,7 @@ function taglia_stringa($stringa, $max_char, $ellipses = "..."){
 		return $stringa;
 	}
 }
+
 ?>
 <link rel="stylesheet" href="common/js/jquery.treeview/jquery.treeview.css" type="text/css" media="screen" />
 <script type="text/javascript" src="common/js/jquery.treeview/jquery.treeview.js"></script>
@@ -27,11 +28,11 @@ function taglia_stringa($stringa, $max_char, $ellipses = "..."){
 	$path = explode("/", str_replace($GLOBALS["config"]["NAS"]["root_share_dir"], "", $file));
 	$b_path = $GLOBALS["config"]["NAS"]["root_share_dir"];
 	if($file !== $b_path) {
-		$c_path[] = '<a href="./Esplora:?' . rawurlencode($rsa->simple_encrypt($b_path)) . '" title="Vedi al contenuto di questa directory"><span class="fa fa-folder-o"></span></a> ';
+		$c_path[] = '<a href="./Esplora:?' . rawurlencode(base64_encode($GLOBALS["dest_token"] . "://")) . '" title="Vedi al contenuto di questa directory"><span class="fa fa-folder-o"></span></a> ';
 		foreach($path as $directory) {
 			if($directory !== $filename && strlen($directory) > 0) {
 				$b_path .= "/" . $directory;
-				$c_path[] = '<a href="./Esplora:?' . rawurlencode($rsa->simple_encrypt(str_replace("//", "/", $b_path))) . '" title="Vedi al contenuto di questa directory">' . $directory . '</a>';
+				$c_path[] = '<a href="./Esplora:?' . rawurlencode(base64_encode(str_replace("//", "/", $GLOBALS["dest_token"] . "://" . $directory))) . '" title="Vedi al contenuto di questa directory">' . $directory . '</a>';
 			}
 		}
 		$c_path[] = $filename;
@@ -64,7 +65,7 @@ function taglia_stringa($stringa, $max_char, $ellipses = "..."){
 			} else {
 				$i = pathinfo($file . "/" . $dir);
 				if($mime_type[$i["extension"]]["type"] == "image") {
-					$preview = '<img src="./Scarica:?view=true&' . rawurlencode($rsa->simple_encrypt($file . "/" . $dir)) . '" alt="folder" style="width: 128px; height: auto;" />';
+					$preview = '<img src="./Scarica:?view=true&' . rawurlencode(base64_encode($GLOBALS["dest_token"] . "://" . implode("/", $path) . "/" . $dir)) . '" alt="folder" style="width: 128px; height: auto;" />';
 				} else {
 					$preview = '<i class="fa ' . $mime_type[$i["extension"]]["icon"] . ' btn" style="font-size: 128px;"></i>';
 				}
@@ -73,12 +74,12 @@ function taglia_stringa($stringa, $max_char, $ellipses = "..."){
 			<div id="<?php print md5($dir); ?>" class="item  col-xs-4 col-lg-4 grid-group-item">
 				<div class="panel panel-default text-center">
 					<div class="panel-heading">
-						<a href="<?php print ((is_dir($file . "/" . $dir)) ? "./Esplora:?" : "./Scheda:?") . rawurlencode($rsa->simple_encrypt($file . "/" . $dir)); ?>">
+						<a href="<?php print ((is_dir($file . "/" . $dir)) ? "./Esplora:?" : "./Scheda:?") . rawurlencode(base64_encode($GLOBALS["dest_token"] . "://" . implode("/", $path) . "/" . $dir)); ?>">
 							<div class="img"><?php print $preview; ?></div>
 						</a>
 					</div>
 					<div class="panel-heading">
-						<a class="btn btn-link list-group-item-heading" href="<?php print ((is_dir($file . "/" . $dir)) ? "./Esplora:?" : "./Scheda:?") . rawurlencode($rsa->simple_encrypt($file . "/" . $dir)); ?>">
+						<a class="btn btn-link list-group-item-heading" href="<?php print ((is_dir($file . "/" . $dir)) ? "./Esplora:?" : "./Scheda:?") . rawurlencode(base64_encode($GLOBALS["dest_token"] . "://" . implode("/", $path) . "/" . $dir)); ?>">
 							<?php print taglia_stringa($dir, 50); ?>
 						</a>
 					</div>
@@ -86,8 +87,8 @@ function taglia_stringa($stringa, $max_char, $ellipses = "..."){
 						<p class="text-muted"></p>
 					</div>
 					<div class="panel-footer clearfix text-left">
-						<a class="btn btn-default" href="./Scheda:?<?php print rawurlencode($rsa->simple_encrypt($file . "/" . $dir)); ?>"><span class="fa fa-tasks"></span>&nbsp;&nbsp;Scheda</a>
-						<a class="btn btn-primary right" href="./Scarica:?<?php print rawurlencode($rsa->simple_encrypt($file . "/" . $dir)); ?>">Scarica&nbsp;&nbsp;<span class="fa fa-cloud-download"></span></a>
+						<a class="btn btn-default" href="./Scheda:?<?php print rawurlencode(base64_encode($GLOBALS["dest_token"] . "://" . implode("/", $path) . "/" . $dir)); ?>"><span class="fa fa-tasks"></span>&nbsp;&nbsp;Scheda</a>
+						<a class="btn btn-primary right" href="./Scarica:?<?php print rawurlencode(base64_encode($GLOBALS["dest_token"] . "://" . implode("/", $path) . "/" . $dir)); ?>">Scarica&nbsp;&nbsp;<span class="fa fa-cloud-download"></span></a>
 					</div>
 				</div>
 			</div>

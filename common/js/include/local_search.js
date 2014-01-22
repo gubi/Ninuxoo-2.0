@@ -1,19 +1,16 @@
-function rawurlencode(str) {
-	str = (str+'').toString();        
-	return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A');
-}
-function ucfirst(str) {
-	var firstLetter = str.substr(0, 1);
-	return firstLetter.toUpperCase() + str.substr(1);
-}
+$.rawurlencode = function(str) { str = (str+'').toString(); return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A'); };
+$.rawurldecode = function(str) { return decodeURIComponent((str + '').replace(/%(?![\da-f]{2})/gi, function () { return '%25'; })); };
+$.utf8_to_b64 = function(str) { return window.btoa(unescape(encodeURIComponent(str))); };
+$.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str))); };
+$.ucfirst = function(str) { var firstLetter = str.substr(0, 1); return firstLetter.toUpperCase() + str.substr(1); };
+
 $.ultrie = function(resourcetrie) {
 	var a = {};
-	
 	$.each(resourcetrie.children, function(index, child) {
 		a[index] = {
 			rank: child.rank,
 			label: child.label,
-			hash: child.hash,
+			uri: child.uri,
 			resources: child.resources,
 			child: $.ultrie(child),
 		};
@@ -33,35 +30,35 @@ $.explode_a_ultrie = function(resourcetrie) {
 	icon = "";
 	if(resourcetrie.resources.length == 0) {
 		if(Object.keys(resourcetrie.child).length > 1) {
-			path_link += '<a href="./Esplora:?' + resourcetrie.hash + '">' + resourcetrie.label + '</a><tt> / </tt></span><ul>';
+			path_link += '<a href="./Esplora:?' + resourcetrie.uri + '">' + resourcetrie.label + '</a><tt> / </tt></span><ul>';
 			$.each(resourcetrie.resources, function(r, res) {
-				path_link += '<li><span class="' + res.icon + '">&nbsp;<a href="./Scheda:?' + res.hash + '">' + res.filename + '</a></span></li>';
+				path_link += '<li><span class="' + res.icon + '">&nbsp;<a href="./Scheda:?' + res.uri + '">' + res.filename + '</a></span></li>';
 			});
 			$.each(resourcetrie.child, function(rank, obj) {
 				path_link += '<li><span class="fa fa-folder-o">&nbsp;&nbsp;' + $.explode_a_ultrie(obj);
 			});
 			path_link += '</ul></li>';
 		} else {
-			path_link += '<a href="./Esplora:?' + resourcetrie.hash + '"> ' + resourcetrie.label + '</a><tt> / </tt>';
+			path_link += '<a href="./Esplora:?' + resourcetrie.uri + '"> ' + resourcetrie.label + '</a><tt> / </tt>';
 			$.each(resourcetrie.child, function(rank, obj) {
 				path_link += $.explode_a_ultrie(obj);
 			});
 		}
 	} else {
 		if(Object.keys(resourcetrie.child).length > 1) {
-			path_link += '<a href="./Esplora:?' + resourcetrie.hash + '">' + resourcetrie.label + '</a><tt> / </tt></span><ul>';
+			path_link += '<a href="./Esplora:?' + resourcetrie.uri + '">' + resourcetrie.label + '</a><tt> / </tt></span><ul>';
 			$.each(resourcetrie.resources, function(r, res) {
-				path_link += '<li><span class="' + res.icon + '">&nbsp;<a href="./Scheda:?' + res.hash + '">' + res.filename + '</a></span></li>';
+				path_link += '<li><span class="' + res.icon + '">&nbsp;<a href="./Scheda:?' + res.uri + '">' + res.filename + '</a></span></li>';
 			});
 			$.each(resourcetrie.child, function(rank, obj) {
 				path_link += '<li><span class="fa fa-folder-o">&nbsp;&nbsp;' + $.explode_a_ultrie(obj);
 			});
 			path_link += '</ul></li>';
 		} else {
-			path_link += '<a href="./Esplora:?' + resourcetrie.hash + '">' + resourcetrie.label + '</a><tt> / </tt></span>';
+			path_link += '<a href="./Esplora:?' + resourcetrie.uri + '">' + resourcetrie.label + '</a><tt> / </tt></span>';
 			path_link += '<ul>';
 			$.each(resourcetrie.resources, function(r, res) {
-				path_link += '<li><span class="' + res.icon + '">&nbsp;<a href="./Scheda:?' + res.hash + '">' + res.filename + '</a></span></li>';
+				path_link += '<li><span class="' + res.icon + '">&nbsp;<a href="./Scheda:?' + res.uri + '">' + res.filename + '</a></span></li>';
 			});
 			path_link += "</ul></li>";
 		}
@@ -147,7 +144,7 @@ $(document).ready(function() {
 										if(i == Math.round((obj_size-3)/2)) {
 											album_data += '</dl></div><div class="col-lg-6"><dl class="dl-horizontal">';
 										}
-										album_data += "<dt>" + ucfirst(key.replace(/_/g, " ")) + "</dt><dd>" + val + "</dd>";
+										album_data += "<dt>" + $.ucfirst(key.replace(/_/g, " ")) + "</dt><dd>" + val + "</dd>";
 									}
 								});
 								$("#semantic_album").append('<div class="panel panel-body">' + ((semantic_data.commento != undefined) ? semantic_data.commento : semantic_data.abstract) + '</div>');
@@ -178,7 +175,7 @@ $(document).ready(function() {
 										if(i == Math.round((obj_size-3)/2)) {
 											artist_data += '</dl></div><div class="col-lg-6"><dl class="dl-horizontal">';
 										}
-										artist_data += "<dt>" + ucfirst(key.replace(/_/g, " ")) + "</dt><dd>" + val + "</dd>";
+										artist_data += "<dt>" + $.ucfirst(key.replace(/_/g, " ")) + "</dt><dd>" + val + "</dd>";
 									}
 								});
 								$("#semantic_artist").append('<div class="panel panel-body">' + ((semantic_data.commento != undefined && semantic_data.commento.length > 0) ? semantic_data.commento : (semantic_data.abstract.length > 1) ? semantic_data.abstract : '<span class="text-muted">Non sono presenti cenni riguardo all\'autore</span>') + '</div>');
@@ -221,7 +218,7 @@ $(document).ready(function() {
 				$("#file_info").html('<dl class="dl-horizontal"></dl>');
 				$.each(semantic_data, function(item, value) {
 					if(item != "label" && item != "abstract"  && item != "commento" && item != "immagine") {
-						$("#file_info dl").append('<dt>' + ucfirst(item.replace(/_/g, " ")) + ':</dt><dd>' + value + '</dd>');
+						$("#file_info dl").append('<dt>' + $.ucfirst(item.replace(/_/g, " ")) + ':</dt><dd>' + value + '</dd>');
 					}
 				});
 				$("#s_label").text(semantic_data.label);
