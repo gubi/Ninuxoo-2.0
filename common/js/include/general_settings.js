@@ -60,4 +60,9 @@ $(document).ready(function() {
 		disable_search_threshold: 5,
 		allow_single_deselect: true
 	});
+	$("#data_scan_ebook_personalized, #data_scan_audio_personalized, #data_scan_video_personalized").focusin(function() {
+		if($(this).closest(".input-group").find(".personalized").is(":checked") === false) {
+			$(this).closest(".input-group").find(".personalized").attr("checked", true);
+		}
+	});
 });

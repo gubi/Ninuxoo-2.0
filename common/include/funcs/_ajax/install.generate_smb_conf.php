@@ -39,7 +39,15 @@ $general_settings .= '[searches]' . "\n";
 $general_settings .= 'show_ip = "false"' . "\n";
 $general_settings .= 'allow_advanced_research = "true"' . "\n";
 $general_settings .= 'research_type = "query"' . "\n";
-$general_settings .= 'research_results = 200' . "\n";
+$general_settings .= 'research_results = 200' . "\n\n";
+$general_settings .= '[file data]' . "\n";
+$general_settings .= 'scan_ebook_name_order = "title_author_editor"' . "\n";
+$general_settings .= 'scan_ebook_name_regex = ""' . "\n\n";
+$general_settings .= 'scan_audio_name_order = "no_track_artist_album"' . "\n";
+$general_settings .= 'scan_audio_name_regex = ""' . "\n\n";
+$general_settings .= 'scan_video_name_order = "title_year_director"' . "\n";
+$general_settings .= 'scan_video_name_regex = ""' . "\n";
+
 
 $config_ini = '; NINUXOO CONFIGURATION FILE' . "\n\n";
 $config_ini .= '[Ninux node]' . "\n";
