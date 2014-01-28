@@ -72,7 +72,37 @@ $.get_semantic_data = function(params, callback) {
 		}
 	}, "json");
 }
-
+$.decount = function(time, callback) {
+	time = parseInt(time);
+	
+	var minutes_txt = "minuti";
+	if(time == 1) {
+		minutes_txt = "minuto";
+	}
+	$(".counter").html(time + ":00 " + minutes_txt);
+	var countdown = time * 60 * 1000,
+	timerId = setInterval(function(){
+		countdown -= 1000;
+		var min = Math.floor(countdown / (60 * 1000)),
+		sec = Math.floor((countdown - (min * 60 * 1000)) / 1000),
+		timer = min + ":" + sec;
+		
+		if (countdown <= 0) {
+			clearInterval(timerId);
+			setTimeout(function() {
+				$.decount(time);
+			}, 1000);
+		}
+		if(timer == "0:0") {
+			timer = "0";
+			if (callback) {
+				callback();
+			}
+		}
+		$(".counter").html(timer + " secondi");
+		
+	}, 1000);
+}
 $(document).ready(function() {
 	var s = "",
 	password = makeid();
@@ -292,22 +322,32 @@ $(document).ready(function() {
 					$("#search_content").fadeIn(600);
 					$("#search_results").removeHighlight().highlight($("#search_term").text()).find("#right_menu").removeHighlight();
 				} else {
+					if(data.responsen == 503) {
+						$("#breadcrumb").remove();
+						$("#search_loader .progress-bar-warning").switchClass("progress-bar-warning", "progress-bar-danger");
+						$("#search_loader .help-block").switchClass("help-block", "help-block text-danger").html('<p><span class="fa fa-times"></span>&nbsp;&nbsp;Non &egrave; stato possibile proseguire con la ricerca perch&eacute; alcune risorse locali non risultano montate.<br />Questo pu&ograve; essere dovuto a un riavvio del server.</p><br /><p><span class="fa fa-clock-o"></span>&nbsp;&nbsp;Prossimo tentativo tra <b class="counter">1 minuto</b>...</p>');
+						$("#top_menu_right > form").remove();
+						$.decount(1, function() {
+							location.reload();
+						});
+					} else {
 					// No results
-					$.ajax({
-						url: "common/tpl/content.tpl",
-						dataType: "text",
-						type: "GET",
-						success: function(content) {
-							if($("#result_type").text() == "Search") {
-								var search_term = $("#search_term").text();
-								$("#breadcrumb").remove();
-								$("#content").html(content);
-								$("#top_menu_right > form").remove();
-								$("#search_input").val(search_term);
-								$("#resstats").addClass("text-danger").text('Nessun risultato trovato con la ricerca per \"' + search_term + '\"');
+						$.ajax({
+							url: "common/tpl/content.tpl",
+							dataType: "text",
+							type: "GET",
+							success: function(content) {
+								if($("#result_type").text() == "Search") {
+									var search_term = $("#search_term").text();
+									$("#breadcrumb").remove();
+									$("#content").html(content);
+									$("#top_menu_right > form").remove();
+									$("#search_input").val(search_term);
+									$("#resstats").addClass("text-danger").text('Nessun risultato trovato con la ricerca per \"' + search_term + '\"');
+								}
 							}
-						}
-					});
+						});
+					}
 				}
 			}
 		});

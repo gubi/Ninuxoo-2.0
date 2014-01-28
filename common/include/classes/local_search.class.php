@@ -87,7 +87,7 @@ class local_search {
 				break;
 			}
 			$protocol = (isset($_SERVER["SERVER_PROTOCOL"]) ? $_SERVER["SERVER_PROTOCOL"] : "HTTP/1.0");
-			header($protocol . " " . $code . " " . $text);
+			//header($protocol . " " . $code . " " . $text);
 			return $text;
 		} else {
 			$code = (isset($code) ? $code : 200);
@@ -439,6 +439,16 @@ class local_search {
 		ob_end_flush();
 		$this->start_time();
 		$config = $this->conf;
+		if(!is_dir($config["NAS"]["root_share_dir"])){
+			$response["responsen"] = 503;
+			$response["response"] = $this->http_resp(503);
+			$response["q"] = $this->params["q"];
+			$response["nresults"] = 0;
+			$response["nlabels"] = count(explode(" ", $this->params["q"]));
+			$response["results"] = "";
+			return $response;
+			exit();
+		}
 		if(isset($this->params["q"]) && trim($this->params["q"]) !== "" && preg_match("/([\w+\d+]{3,})/is", $this->params["q"])) {
 			$filetype = (strlen($this->params["filetype"]) > 0) ? ".*\." . str_replace(".", "", $this->params["filetype"]) : "";
 			$path = (strlen($this->params["path"]) > 0) ? "^/" . trim($this->params["path"]) . "/.*" : "";
