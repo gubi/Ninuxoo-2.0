@@ -15,16 +15,23 @@ function is_remote_file($url) {
 	}
 }
 function clean_text($text) {
-	$text = trim(preg_replace("/(disc)(\s+|)(\d+)|(cd)(\s+|)(\d+)/i", "", preg_replace("/[^a-zA-Z0-9 .]/", "", preg_replace("/(\[.*?\])|(\(.*?\))|[0-9]{3,}/i", "", str_replace("_", " ", $text)))));
+	$text = trim(preg_replace("/(disc)(\s+|)(\d+)|(cd)(\s+|)(\d+)/i", "", preg_replace("/\w+[^a-zA-Z0-9 .]/", "", preg_replace("/(\[.*?\])|(\(.*?\))|[0-9]{3,}/i", "", str_replace("_", " ", $text)))));
 	if(strpos($text, " ") === false) {
-		return $text;
+		return trim($text);
 	} else {
 		foreach(explode(" ", $text) as $search_item) {
-			if(strlen($search_item) >= 3) {
+			if(strlen($search_item) >= 2) {
 				$s[] = $search_item;
 			}
 		}
 		return implode(" ", $s);
+	}
+}
+function optimize_name($text, $unicode = true) {
+	if($unicode) {
+		return preg_replace("#[^\w+\d+\s+\'\,]#u", "", $text);
+	} else {
+		return str_replace("..", ".", preg_replace("#[^\w+\d+\s+\'\,]#", ".", $text));
 	}
 }
 
@@ -83,7 +90,7 @@ Select;
 	case "album":
 		$filt[] = "bif:contains(?label, '\"" . clean_text($_GET["album"]) . "\"')";
 		if(isset($_GET["artist"]) && trim($_GET["artist"]) !== "") {
-			$filt[] = 'regex(?artista, "' . trim($_GET["artist"]) . '", "i")';
+			$filt[] = 'regex(?label, "' . clean_text($_GET["artist"]) . '", "i")';
 		}
 		$query = <<<Select
 SELECT * WHERE {
@@ -112,44 +119,49 @@ Select;
 		$query .= "} LIMIT 1";
 		break;
 	case "film":
+		if(isset($_GET["title"]) && trim($_GET["title"]) !== "") {
+			$filt[] = 'regex(?label, "^' . optimize_name(trim($_GET["title"]), false) . '")';
+		} else {
+			$filt = $filters;
+		}
 		$query = <<<Select
 SELECT * WHERE {
 	?item a <http://dbpedia.org/ontology/Film> . 
 	?item	rdfs:label ?label .
-	?item	dbp:titoloitaliano ?titolo .
 	?item	dbo:abstract ?abstract .
 	
-	OPTIONAL { ?item	dbp:titoloitaliano ?titoloitaliano }.
-	OPTIONAL { ?item	dbp:titolooriginale ?titolooriginale }.
+	OPTIONAL { ?item	dbp:titoloitaliano ?titolo_in_italiano }.
+	OPTIONAL { ?item	dbp:titolooriginale ?titolo_originale }.
 	OPTIONAL { ?item	dbp:attori ?attori }.
 	OPTIONAL { ?item	rdfs:annouscita ?anno }.
 	OPTIONAL { ?item	rdfs:comment ?commento }.
-	OPTIONAL { ?item	dbp:casaproduzione ?casaproduzione }.
+	OPTIONAL { ?item	dbp:casaproduzione ?casa_di_produzione }.
 	OPTIONAL { ?item	foaf:depiction ?immagine }.
 	OPTIONAL { ?item	dbo:thumbnail ?thumbnail }.
 	OPTIONAL { ?item	dbp:didascalia ?didascalia }.
-	OPTIONAL { ?item	dbp:distribuzioneitalia ?distribuzioneitalia }.
+	OPTIONAL { ?item	dbp:distribuzioneitalia ?distribuzione_in_Italia }.
 	OPTIONAL { ?item	dbp:doppiatoriitaliani ?doppiatori }.
 	OPTIONAL { ?item	dbp:durata ?durata }.
-	OPTIONAL { ?item	dbp:fotografo ?fotografo }.
-	OPTIONAL { ?item	dbp:montatore ?montatore }.
-	OPTIONAL { ?item	dbp:produttore ?produttore }.
-	OPTIONAL { ?item	dbp:sceneggiatore ?sceneggiatore }.
-	OPTIONAL { ?item	dbp:scenografo ?scenografo }.
+	OPTIONAL { ?item	dbp:fotografo ?fotografia }.
+	OPTIONAL { ?item	dbp:montatore ?montaggio }.
+	OPTIONAL { ?item	dbp:produttore ?produzione }.
+	OPTIONAL { ?item	dbp:sceneggiatore ?sceneggiatura }.
+	OPTIONAL { ?item	dbp:scenografo ?scenografia }.
 	OPTIONAL { ?item	dbp:soggetto ?soggetto }.
-	OPTIONAL { ?item	dbp:regista ?regista }.
+	OPTIONAL { ?item	dbp:regista ?regia }.
 	OPTIONAL { ?item	dbp:tipoaudio ?audio }.
 	OPTIONAL { ?item	dbp:tipocolore ?colore }.
 	OPTIONAL { ?item	dbp:genere ?genere  }.
 	OPTIONAL { ?item	foaf:isPrimaryTopicOf ?pagina_Wikipedia }.
 	
 Select;
-		$query .= "	FILTER (" . implode(" && ", $filters) . ")\n";
+		$query .= "	FILTER (" . implode(" && ", $filt) . ")\n";
 		$query .= "} LIMIT 1";
 		break;
 	case "person":
 		if(isset($_GET["artist"]) && trim($_GET["artist"]) !== "") {
-			$filt[] = 'regex(?label, "' . trim($_GET["artist"]) . '", "i")';
+			$filt[] = 'regex(?label, "^' . optimize_name(trim($_GET["artist"])) . '$", "i")';
+			$filt[] = 'bound(?nome)';
 		} else {
 			$filt = $filters;
 		}
@@ -177,13 +189,13 @@ SELECT * WHERE {
 	OPTIONAL { ?item	dbp:immagine ?immagine }.
 	OPTIONAL { ?item	dbo:thumbnail ?thumbnail }.
 	OPTIONAL { ?item	dbp:genere ?genere }.
+	OPTIONAL { ?item	dbp:annonascita ?anno_di_nascita }.
+	OPTIONAL { ?item	dbp:annomorte ?anno_di_morte }.
 	OPTIONAL { ?item	dbo:birthPlace ?luogo_nascita }.
-	OPTIONAL { ?item	dbp:annonascita ?anno_nascita }.
-	OPTIONAL { ?item	dbp:annoInizioAttività ?fondazione }.
-	OPTIONAL { ?item	dbp:annoFineAttività ?scioglimento }.
-	OPTIONAL { ?item	dbo:deathPlace ?luogo_morte }.
-	OPTIONAL { ?item	dbp:annomorte ?anno_morte }.
-	OPTIONAL { ?item	dbp:tombeFamose ?luogo_sepoltura }.
+	OPTIONAL { ?item	dbo:deathPlace ?luogo_di_morte }.
+	OPTIONAL { ?item	dbp:annoInizioAttività ?inizio_attivita }.
+	OPTIONAL { ?item	dbp:annoFineAttività ?fine_attivita }.
+	OPTIONAL { ?item	dbp:tombeFamose ?luogo_di_sepoltura }.
 	OPTIONAL { ?item	foaf:isPrimaryTopicOf ?pagina_Wikipedia }.
 	
 Select;
@@ -218,7 +230,6 @@ Select;
 		$query .= "	FILTER (" . implode(" && ", $filters) . ")\n";
 		$query .= "} LIMIT 1";
 		break;
-		
 }
 if($_GET["debug"] == "true") {
 	print_r($query);
@@ -230,7 +241,6 @@ if($_GET["debug"] == "true") {
 }
 if(count($result) > 0) {
 	foreach($result[0] as $k => $row) {
-		
 		$reg_exUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
 		if(preg_match($reg_exUrl, $row, $url) && $k !== "immagine" && $k !== "thumbnail" && $k !== "item") {
 			$f = (pathinfo($url[0]));
@@ -249,8 +259,17 @@ if(count($result) > 0) {
 			if(isset($res["durata"]) && strlen(trim($res["durata"])) > 0) {
 				$res["durata_totale"] = gmdate("H:i:s", round($res["durata"]));
 			}
+			if(isset($res["audio"]) && strpos(trim($res["audio"]), "sonor") !== false) {
+				$res["audio"] = "si";
+			}
+			if(isset($res["colore"]) && strpos(trim($res["colore"]), "color") !== false) {
+				$res["colore"] = "si";
+			}
 			if($k !== "item" && $k !== "thumbnail") {
-				$res[$k] = trim($row);
+				$res[$k] = preg_replace("/\*(\ |)(.*?)\:(.*?)(\n|$)/", '<dt><small>$2</small></dt><dd><small>$3</small></dd>', trim($row));
+				if(strpos($res[$k], "<dt>") !== false) {
+					$res[$k] = '<dl class="dl-horizontal collapse" id="' . $k . '_link">' . $res[$k] . "</dl>";
+				}
 			}
 		}
 	}

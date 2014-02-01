@@ -12,6 +12,14 @@ if(isset($_GET["c"])) {
 if(strpos($_GET["s"], "Scarica:") !== false) {
 	require_once("common/include/funcs/download.php");
 }
+function mb_pathinfo($filepath) {
+	preg_match('%^(.*?)[\\\\/]*(([^/\\\\]*?)(\.([^\.\\\\/]+?)|))[\\\\/\.]*$%im',$filepath,$m);
+	if($m[1]) $ret['dirname']=$m[1];
+	if($m[2]) $ret['basename']=$m[2];
+	if($m[5]) $ret['extension']=$m[5];
+	if($m[3]) $ret['filename']=$m[3];
+	return $ret;
+}
 $search_types = array("query" => "Tutti i risultati possibili", "exactquery" => "Testo esatto", "orquery" =>"Singola parola", "likequery" => "Somiglianza nei termini", "whatsnew" => "Nuova scansione del crawler");
 // Generate RSA key
 if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
@@ -54,9 +62,9 @@ if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 		$tk = explode("://", $filepath);
 		$GLOBALS["dest_token"] = $tk[0];
 		if($GLOBALS["dest_token"] == $rsa->my_token()) {
-			$file = str_replace("//", "/", $GLOBALS["config"]["NAS"]["root_share_dir"] . "/" . $tk[1]);
+			$file = str_replace("///", "/", $GLOBALS["config"]["NAS"]["root_share_dir"] . "/" . $tk[1]);
 			$GLOBALS["root_dir"] = $GLOBALS["config"]["NAS"]["root_share_dir"];
-			$info = pathinfo($file);
+			$info = mb_pathinfo($file);
 		} else {
 			$GLOBALS["root_dir"] = "";
 			// Non è un file interno

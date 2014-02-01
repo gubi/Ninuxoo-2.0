@@ -77,6 +77,8 @@ if(file_exists($file)) {
 				// Add other cases of extension group
 				// that you want to view on browser
 			}
+			$text = file_get_contents($file);
+			print utf8_encode($text);
 		} else {
 			header("Pragma: public"); // required
 			header("Expires: 0"); // no cache
@@ -88,8 +90,9 @@ if(file_exists($file)) {
 			header("Content-Transfer-Encoding: binary");
 			header("Content-Length: " . $file_size); // provide file size
 			header("Connection: close");
+			
+			@readfile($file);
 		}
-		@readfile($file);
 		exit();
 	}
 } else {

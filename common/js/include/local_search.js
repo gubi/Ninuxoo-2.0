@@ -3,6 +3,7 @@ $.rawurldecode = function(str) { return decodeURIComponent((str + '').replace(/%
 $.utf8_to_b64 = function(str) { return window.btoa(unescape(encodeURIComponent(str))); };
 $.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str))); };
 $.ucfirst = function(str) { var firstLetter = str.substr(0, 1); return firstLetter.toUpperCase() + str.substr(1); };
+$.strpos = function(haystack, needle, offset) { var i = (haystack + "").indexOf(needle, (offset || 0)); return i === -1 ? false : i; };
 
 $.ultrie = function(resourcetrie) {
 	var a = {};
@@ -152,13 +153,14 @@ $(document).ready(function() {
 						comments: (($("#media_comments").length > 0) ? $("#media_comments").text() : "")
 					};
 					$("#audio_spectrum").prev(".well.text-muted").fadeIn(300);
-					$.get("http://192.168.36.210/common/include/lib/php-waveform-svg.php", {file: $("#hash").text()}, function(waveform) {
+					$.get("common/include/lib/php-waveform-svg.php", {file: $("#hash").text()}, function(waveform) {
 						if(waveform !== "no file") {
 							$("#audio_spectrum").prev(".well.text-muted").fadeOut(300, function() {
 								$("#audio_spectrum").html('<div style="width: 100%; height: 5em; padding: 0 10px; border: #ddd 1px solid;">' + waveform + '</iframe>').fadeIn(600);
 							});
 						}
 					}, "text");
+					
 					if(info.album.length > 0) {
 						info.type = "album";
 						$("#semantic_album").prev(".well.text-muted").fadeIn(300);
@@ -174,7 +176,7 @@ $(document).ready(function() {
 										if(i == Math.round((obj_size-3)/2)) {
 											album_data += '</dl></div><div class="col-lg-6"><dl class="dl-horizontal">';
 										}
-										album_data += "<dt>" + $.ucfirst(key.replace(/_/g, " ")) + "</dt><dd>" + val + "</dd>";
+										album_data += "<dt>" + $.ucfirst(key.replace(/_/g, " ")) + ":</dt><dd>" + val + "</dd>";
 									}
 								});
 								$("#semantic_album").append('<div class="panel panel-body">' + ((semantic_data.commento != undefined) ? semantic_data.commento : semantic_data.abstract) + '</div>');
@@ -186,38 +188,40 @@ $(document).ready(function() {
 									$("#semantic_artist").after("<hr />");
 									$("#semantic_album").slideDown(300);
 								});
+								
+								
+								if(semantic_data.artista.length > 0) {
+									$("#semantic_artist").prev(".well.text-muted").fadeIn(300);
+									$.get_semantic_data({type: "person", artist: semantic_data.artista}, function(semantic_data) {
+										if(semantic_data !== null) {
+											var artist_data = "",
+											obj_size = $.map(semantic_data, function(n, i) { return i; }).length,
+											i = 0;
+											$("#artist_name").text(semantic_data.label);
+											$.each(semantic_data, function(key, val) {
+												if(key != "label" && key != "abstract"  && key != "commento" && key != "immagine") {
+													i++;
+													if(i == Math.round((obj_size-3)/2)) {
+														artist_data += '</dl></div><div class="col-lg-6"><dl class="dl-horizontal">';
+													}
+													artist_data += "<dt>" + $.ucfirst(key.replace(/_/g, " ")) + ":</dt><dd>" + val + "</dd>";
+												}
+											});
+											$("#semantic_artist").append('<div class="panel panel-body">' + ((semantic_data.commento != undefined && semantic_data.commento.length > 0) ? semantic_data.commento : (semantic_data.abstract.length > 1) ? semantic_data.abstract : '<span class="text-muted">Non sono presenti cenni riguardo all\'autore</span>') + '</div>');
+											if(semantic_data.immagine != undefined) {
+												$("#semantic_artist .panel-body").prepend('<img src="' + semantic_data.immagine + '" class="left" style="max-width: 200px;" />');
+											}
+											$("#semantic_artist").append('<div class="panel panel-footer"><div class="col-lg-6"><dl class="dl-horizontal">' + artist_data + '</dl></div></div>');
+											$("#semantic_artist").prev(".well.text-muted").fadeOut(300, function() {
+												$("#semantic_artist").slideDown(300);
+											});
+										} else {
+											$("#semantic_artist").prev(".well.text-muted").fadeOut(300);
+										}
+									});
+								}
 							} else {
 								$("#semantic_album").prev(".well.text-muted").fadeOut(300);
-							}
-						});
-						
-						info.type = "person";
-						$("#semantic_artist").prev(".well.text-muted").fadeIn(300);
-						$.get_semantic_data(info, function(semantic_data) {
-							if(semantic_data !== null) {
-								var artist_data = "",
-								obj_size = $.map(semantic_data, function(n, i) { return i; }).length,
-								i = 0;
-								$("#artist_name").text(semantic_data.label);
-								$.each(semantic_data, function(key, val) {
-									if(key != "label" && key != "abstract"  && key != "commento" && key != "immagine") {
-										i++;
-										if(i == Math.round((obj_size-3)/2)) {
-											artist_data += '</dl></div><div class="col-lg-6"><dl class="dl-horizontal">';
-										}
-										artist_data += "<dt>" + $.ucfirst(key.replace(/_/g, " ")) + "</dt><dd>" + val + "</dd>";
-									}
-								});
-								$("#semantic_artist").append('<div class="panel panel-body">' + ((semantic_data.commento != undefined && semantic_data.commento.length > 0) ? semantic_data.commento : (semantic_data.abstract.length > 1) ? semantic_data.abstract : '<span class="text-muted">Non sono presenti cenni riguardo all\'autore</span>') + '</div>');
-								if(semantic_data.immagine != undefined) {
-									$("#semantic_artist .panel-body").prepend('<img src="' + semantic_data.immagine + '" class="left" style="max-width: 200px;" />');
-								}
-								$("#semantic_artist").append('<div class="panel panel-footer"><div class="col-lg-6"><dl class="dl-horizontal">' + artist_data + '</dl></div></div>');
-								$("#semantic_artist").prev(".well.text-muted").fadeOut(300, function() {
-									$("#semantic_artist").slideDown(300);
-								});
-							} else {
-								$("#semantic_artist").prev(".well.text-muted").fadeOut(300);
 							}
 						});
 					}
@@ -225,18 +229,73 @@ $(document).ready(function() {
 				case "video":
 					info = {
 						title: (($("#media_title").length > 0) ? $("#media_title").text() : ""),
-						artist: (($("#media_artist").length > 0) ? $("#media_artist").text() : ""),
-						album: (($("#media_album").length > 0) ? $("#media_album").text() : ""),
-						year: (($("#media_year").length > 0) ? $("#media_year").text() : ""),
-						length: (($("#media_length").length > 0) ? $("#media_length").text() : ""),
-						track: (($("#media_track").length > 0) ? $("#media_track").text() : ""),
-						genre: (($("#media_genre").length > 0) ? $("#media_genre").text() : ""),
-						comments: (($("#media_comments").length > 0) ? $("#media_comments").text() : "")
+						director: (($("#media_director").length > 0) ? $("#media_director").text() : ""),
+						year: (($("#media_year").length > 0) ? $("#media_year").text() : "")
 					};
 					info.type = "film";
-					if(info.album.length > 0) {
+					if(info.title.length > 0) {
+						$("#semantic_film").prev(".well.text-muted").fadeIn(300);
 						$.get_semantic_data(info, function(semantic_data) {
-							console.log(semantic_data);
+							if(semantic_data !== null) {
+								var film_data = "",
+								obj_size = $.map(semantic_data, function(n, i) { return i; }).length,
+								i = 0;
+								$("#film_name").text(semantic_data.label);
+								$.each(semantic_data, function(key, val) {
+									if(key != "titolo" && key != "label" && key != "abstract"  && key != "commento" && key != "immagine" && key !== "durata") {
+										i++;
+										if(i == Math.round((obj_size-3)/2)) {
+											film_data += '</dl></div><div class="col-lg-6"><dl class="dl-horizontal">';
+										}
+										if($.strpos(val, "<dt>")) {
+											film_data += '<dt>' + $.ucfirst(key.replace(/_/g, " ")) + ':</dt><dd><a data-toggle="collapse" data-parent="#collapse_' + key.replace(/_/g, " ") + '" href="#' + key.replace(/_/g, " ") + '_link"><small><span class="fa fa-caret-down"></span>&nbsp;espandi</small></a></dd><div style="padding-left: 20px; border-left: #ccc 2px solid; border-bottom: #ccc 1px solid;" class="panel-collapse" id="collapse_' + key.replace(/_/g, " ") + '">' + val + '</div>';
+										} else {
+											film_data += "<dt>" + $.ucfirst(key.replace(/_/g, " ")) + ':</dt><dd class="' + key + '">' + val + "</dd>";
+										}
+									}
+								});
+								$("#semantic_film").append('<div class="panel panel-body">' + ((semantic_data.commento != undefined && semantic_data.commento.length > 0) ? semantic_data.commento : (semantic_data.abstract.length > 1) ? semantic_data.abstract : '<span class="text-muted">Non sono presenti descrizioni riguardo all\'autore</span>') + '</div>');
+								if(semantic_data.immagine != undefined) {
+									$("#semantic_film .panel-body").prepend('<img src="' + semantic_data.immagine + '" class="left" style="max-width: 200px;" />');
+								}
+								$("#semantic_film").append('<div class="panel panel-footer"><div class="col-lg-6"><dl class="dl-horizontal">' + film_data + '</dl></div></div>');
+								$("#semantic_film").prev(".well.text-muted").fadeOut(300, function() {
+									$("#semantic_film").slideDown(300);
+								});
+								
+								if($(semantic_data.regia).text().length > 0) {
+									$("#semantic_director").prev(".well.text-muted").fadeIn(300);
+									$.get_semantic_data({type: "person", artist: $(semantic_data.regia).text()}, function(director_data) {
+										if(director_data !== null) {
+											var artist_data = "",
+											obj_size = $.map(director_data, function(n, i) { return i; }).length,
+											i = 0;
+											$("#director_name").text(director_data.label);
+											$.each(director_data, function(key, val) {
+												if(key != "label" && key != "abstract"  && key != "commento" && key != "immagine" && key != "didascalia") {
+													i++;
+													if(i == Math.round((obj_size-3)/2)) {
+														artist_data += '</dl></div><div class="col-lg-6"><dl class="dl-horizontal">';
+													}
+													artist_data += "<dt>" + $.ucfirst(key.replace(/_/g, " ")) + ":</dt><dd>" + val + "</dd>";
+												}
+											});
+											$("#semantic_director").append('<div class="panel panel-body">' + ((director_data.commento != undefined && director_data.commento.length > 0) ? director_data.commento : (director_data.abstract.length > 1) ? director_data.abstract : '<span class="text-muted">Non sono presenti cenni riguardo all\'autore</span>') + '</div>');
+											if(director_data.immagine != undefined) {
+												$("#semantic_director .panel-body").prepend('<img src="' + director_data.immagine + '" class="left" style="max-width: 200px;" />');
+											}
+											$("#semantic_director").append('<div class="panel panel-footer"><div class="col-lg-6"><dl class="dl-horizontal">' + artist_data + '</dl></div></div>');
+											$("#semantic_director").prev(".well.text-muted").fadeOut(300, function() {
+												$("#semantic_director").slideDown(300);
+											});
+										} else {
+											$("#semantic_director").prev(".well.text-muted").fadeOut(300);
+										}
+									});
+								}
+							} else {
+								$("#semantic_film").prev(".well.text-muted").fadeOut(300);
+							}
 						});
 					}
 					break;

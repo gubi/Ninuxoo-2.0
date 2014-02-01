@@ -15,6 +15,14 @@ $mime_type["txt"] = array(
 	"mime" => "text/plain",
 	"type" => "text"
 );
+$mime_type["srt"] = array(
+	"text" => "File di sottotitoli",
+	"icon" => "fa fa-file-text-o",
+	"owl" => "",
+	"semantic" => "",
+	"mime" => "text/plain",
+	"type" => "text"
+);
 $mime_type["atom"] = array(
 	"text" => "News feed",
 	"icon" => "fa fa-rss-square",
