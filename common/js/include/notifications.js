@@ -1,6 +1,13 @@
+function set_smiley(smiley) {
+	var current_val = $("#send_notice").val();
+	$("#send_notice").val(current_val + " " + smiley);
+	toggle_send_notice_btn();
+}
+
 function toggle_send_notice_btn() {
 	$("#send_notice_area > .input-group").removeClass("has-success");
 	$("#send_notice_btn").removeClass("btn-success").addClass("btn-primary").html('Invia&nbsp;&nbsp;<span class="glyphicon glyphicon-share-alt"></span>');
+	$("#smiley_btn").removeClass("btn-success").addClass("btn-default");
 	if($("#send_notice").val().length > 0 && $("#send_notice").val() != $("#send_previous_notice").val()) {
 		$("#send_notice_btn").removeClass("disabled");
 	} else {
@@ -81,7 +88,7 @@ function send_notice() {
 	$("#send_notice_area").attr("disabled", "disabled");
 	var password = makeid();
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt("message=" + $("#send_notice").val() + "&host=" + $("#user_data").val() + "&user_name=" + $("#user_name").val(), password);
+		var encryptedString = $.jCryption.encrypt("message=" + $.utf8_to_b64($("#send_notice").val()) + "&host=" + $("#user_data").val() + "&user_name=" + $("#user_name").val(), password);
 		
 		$.ajax({
 			url: "common/include/funcs/_ajax/decrypt.php",
@@ -94,11 +101,14 @@ function send_notice() {
 			success: function(response) {
 				$("#send_notice_area > .input-group").addClass("has-success");
 				if($("#send_notice_area .input-group-addon").length == 0) {
-					$("#send_notice_area .input-group").prepend('<span class="input-group-addon">#' + response + '</span>');
+					$("#send_notice").before('<span class="input-group-addon">#' + response + '</span>');
 				} else {
 					$("#send_notice_area .input-group-addon").text("#" + response);
 				}
 				$("#send_notice_btn").removeClass("btn-primary").addClass("btn-success disabled").html('Inviato&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span>');
+				setTimeout(function() {
+					$("#send_notice_area > .input-group").switchClass("has-success", "", 1000);
+				}, 2000);
 				$("#send_notice_area").attr("disabled", false);
 				$("#check_loader").fadeIn(600);
 				setTimeout(function() {

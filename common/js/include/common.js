@@ -111,7 +111,12 @@ $.fn.get_duration = function(options) {
 		$(this).next(".hour").text(total_time);
 	}
 }
-
+$.rawurlencode = function(str) { str = (str+'').toString(); return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A'); };
+$.rawurldecode = function(str) { return decodeURIComponent((str + '').replace(/%(?![\da-f]{2})/gi, function () { return '%25'; })); };
+$.utf8_to_b64 = function(str) { return window.btoa(unescape(encodeURIComponent(str))); };
+$.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str))); };
+$.ucfirst = function(str) { var firstLetter = str.substr(0, 1); return firstLetter.toUpperCase() + str.substr(1); };
+$.strpos = function(haystack, needle, offset) { var i = (haystack + "").indexOf(needle, (offset || 0)); return i === -1 ? false : i; };
 $.download = function(url, data, method){ if( url && data ){ data = typeof data == 'string' ? data : jQuery.param(data); var inputs = ''; jQuery.each(data.split('&'), function(){ var pair = this.split('='); inputs+='<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; }); jQuery('<form action="'+ url +'" method="'+ (method||'post') +'">'+inputs+'</form>').appendTo('body').submit().remove(); }; };
 
 function check_notify(active, autoupdate) {

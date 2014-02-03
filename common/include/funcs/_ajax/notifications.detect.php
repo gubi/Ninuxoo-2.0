@@ -1,6 +1,7 @@
 <?php
 header("Content-type: text/plain;");
 require_once("../../lib/markdown.php");
+require_once("../../lib/smileys.php");
 
 $magic_words = array("noip");
 
@@ -27,8 +28,11 @@ foreach($out[1] as $kp => $parsed) {
 	}
 	// ID: The sum md5 of Hostname and message, in numeric 4 digits
 	$group[$o[2]]["id"] = substr(abs(crc32(md5($o[5] . $message_raw))), 0, 4);
-	$group[$o[2]]["message"] = str_replace(array("<p>", "</p>", '<a href="http://'), array("", "", '<a target="_blank" href="http://'), Markdown($message_raw));
 	$group[$o[2]]["message_raw"] = $message_raw;
+		foreach($smileys as $sk => $sv) {
+			$message_raw = str_replace($smileys[$sk]["shortcut"], '<span class="fa ' . $smileys[$sk]["class"] . '" style="' . $smileys[$sk]["style"] . '"></span>', $message_raw);
+		}
+	$group[$o[2]]["message"] = str_replace(array("<p>", "</p>", '<a href="'), array("", "", '<a target="_blank" href="'), Markdown(preg_replace("/(\+|\-)(\d+)/", '<small><span class="btn-sm ' . ((preg_match("/\+\d+/", $message_raw)) ? "btn-success" : "btn-danger") . '"><b>$1$2</b></span></small>', $message_raw)));
 	$group[$o[2]]["own"] = ($o[6] == $_SERVER["SERVER_ADDR"]) ? true : false;
 }
 if(is_array($group)) {

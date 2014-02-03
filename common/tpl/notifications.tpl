@@ -61,18 +61,36 @@
 				<?php
 				if($GLOBALS["user_settings"]["Chat"]["show_ip"] == "false") {
 					?>
-					<div class="alert alert-warning"><span class="fa fa-info"></span>&nbsp;&nbsp;Come da impostazioni, l'indirizzo IP dei tuoi messaggi sar&agrave; celato</div> 
+					<div class="alert alert-warning"><span class="fa fa-info"></span>&nbsp;&nbsp;Come da impostazioni, l'indirizzo IP dei tuoi messaggi sar&agrave; celato a schermo (ma non su mdns!)</div> 
 					<?php
 				} else {
 					?>
-					<span class="info">&Egrave; possibile celare il proprio indirizzo ip antecedendo <code>noip:</code> al testo.</span> 
+					<span class="info">&Egrave; possibile celare a schermo il proprio indirizzo ip antecedendo <code>noip:</code> al testo.</span> 
 					<?php
 				}
 				?>
+				<p>
+				&Egrave; possibile inserire gli <a href="#smileys" id="smiley_btn" class="text-primary" data-toggle="collapse">smileys</a>
+				</p>
+				<div id="smileys" class="panel panel-default panel-collapse collapse">
+					<div class="panel-body">
+						<?php
+						require_once("common/include/lib/smileys.php");
+						foreach($smileys as $sk => $sv) {
+							if($sk > 1 && $smileys[($sk-1)]["group"] !== $smileys[$sk]["group"]) {
+								print "<br />";
+							}
+							if($smileys[($sk-1)]["class"] !== $smileys[$sk]["class"]) {
+								print '<button class="smiley_btn btn" title="' . $smileys[$sk]["title"] . '" onclick="set_smiley(\'' . $smileys[$sk]["shortcut"] . '\')"><span class="fa ' . $smileys[$sk]["class"] . '" style="' . $smileys[$sk]["style"] . '"></span></button>';
+							}
+						}
+						?>
+					</div>
+				</div>
+				<input type="hidden" id="user_data" value="<?php print $user["name"]; ?>" />
+				<input type="hidden" id="user_name" value="<?php print $user["email"]; ?>" />
+				<input type="hidden" id="send_previous_notice" value="" />
 				<div class="input-group">
-					<input type="hidden" id="user_data" value="<?php print $user["name"]; ?>" />
-					<input type="hidden" id="user_name" value="<?php print $user["username"]; ?>" />
-					<input type="hidden" id="send_previous_notice" value="" />
 					<input type="text" class="form-control" id="send_notice" style="height: 2.3em;" placeholder="Scrivi un messaggio" value="" />
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="send_notice_btn">Invia&nbsp;&nbsp;<span class="glyphicon glyphicon-share-alt"></span></button>
