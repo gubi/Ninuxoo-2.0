@@ -7,4 +7,4 @@ This is a beta version of the new Ninuxoo Search Engine.<br />
 Ninuxoo is a Search Engine and Indexer made by [Clauz](https://github.com/cl4u2) for the [Ninux Wireless Community Network](https://github.com/ninuxorg).
 
 → **Per maggiori istruzioni, seguire [l'apposito wiki](https://github.com/gubi/Ninuxoo-Semantic-Decentralized/wiki/Home)**<br />
-→ **Please, refer to the [wiki section](https://github.com/gubi/Ninuxoo-Semantic-Decentralized/wiki/Home-(en\))**
+→ **Please, refer to the [wiki section](https://github.com/gubi/Ninuxoo-Semantic-Decentralized/wiki/Home-(en))**
