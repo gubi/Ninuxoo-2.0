@@ -14,11 +14,15 @@ $conf->conf_replace("scan_audio_name_regex", $output["data_scan_audio_personaliz
 $conf->conf_replace("scan_video_name_order", $output["data_scan_video"], "../../conf/general_settings.ini");
 $conf->conf_replace("scan_video_name_regex", $output["data_scan_video_personalized"], "../../conf/general_settings.ini");
 
+$conf->conf_replace("allow_caching", ($output["allow_caching"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
+$conf->conf_replace("save_semantic_data", ($output["save_semantic_data"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
+$conf->conf_replace("save_audio_spectum", ($output["save_audio_spectum"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
+
 $conf->conf_replace("station_active", $output["station_active"], "../../conf/config.ini");
 $conf->conf_replace("station_name", $output["station_name"], "../../conf/config.ini");
 $conf->conf_replace("show_ninux_nodes", ($output["show_ninux_nodes"] == "on") ? "true" : "false", "../../conf/config.ini");
 $conf->conf_replace("show_region_area", ($output["show_region_area"] == "on") ? "true" : "false", "../../conf/config.ini");
-$conf->conf_replace("refresh_interval", ($output["meteo_refresh"]*1000), "../../conf/config.ini");
+$conf->conf_replace("refresh_interval", ($output["meteo_refresh"]), "../../conf/config.ini");
 
 $conf->conf_replace("station_city", $output["meteo_city"], "../../conf/config.ini");
 $conf->conf_replace("station_region", $output["meteo_region"], "../../conf/config.ini");

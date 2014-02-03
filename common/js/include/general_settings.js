@@ -1,3 +1,12 @@
+function switch_caching() {
+	if($("#allow_caching > span").hasClass("fa-check-square-o")) {
+		$(".caching_active").animate({opacity: "1"}, 300);
+		$(".caching_active input, #caching_active label, #caching_active a").attr("disabled", false);
+	} else {
+		$(".caching_active").animate({opacity: "0.5"}, 300);
+		$(".caching_active input, #caching_active label, #caching_active a").attr("disabled", "disabled");
+	}
+}
 $(document).ready(function() {
 	$("#session_length").on("keyup change", function() {
 		$(this).get_duration({timetype: "seconds"});
@@ -60,9 +69,18 @@ $(document).ready(function() {
 		disable_search_threshold: 5,
 		allow_single_deselect: true
 	});
-	$("#data_scan_ebook_personalized, #data_scan_audio_personalized, #data_scan_video_personalized").focusin(function() {
-		if($(this).closest(".input-group").find(".personalized").is(":checked") === false) {
-			$(this).closest(".input-group").find(".personalized").attr("checked", true);
+	$("#allow_caching").click(function() {
+		if($("#allow_caching > span").hasClass("fa-check-square-o")) {
+			$(this).attr("data-original-title", "Abilita il caching");
+			$("#allow_caching > span").removeClass("fa-check-square-o").addClass("fa-square-o");
+			$("#allow_caching_checkbox").attr("checked", false);
+		} else {
+			$(this).attr("data-original-title", "Disabilita il caching");
+			$("#allow_caching > span").removeClass("fa-square-o").addClass("fa-check-square-o");
+			$("#allow_caching_checkbox").attr("checked", "checked");
 		}
+		$(this).tooltip("hide");
+		switch_caching();
 	});
+	switch_caching();
 });

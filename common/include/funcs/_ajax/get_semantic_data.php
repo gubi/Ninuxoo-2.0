@@ -35,6 +35,13 @@ function optimize_name($text, $unicode = true) {
 	}
 }
 
+$config = parse_ini_file("../../conf/config.ini", true);
+$general_settings = parse_ini_file("../../conf/general_settings.ini", true);
+if(file_exists($config["NAS"]["root_share_dir"] . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json")) {
+	$json = file_get_contents($config["NAS"]["root_share_dir"] . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json");
+	print $json;
+	exit();
+}
 EasyRdf_Namespace::set("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 EasyRdf_Namespace::set("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 EasyRdf_Namespace::set("xs", "http://www.w3.org/2001/XMLSchema#");
@@ -120,7 +127,7 @@ Select;
 		break;
 	case "film":
 		if(isset($_GET["title"]) && trim($_GET["title"]) !== "") {
-			$filt[] = 'regex(?label, "^' . optimize_name(trim($_GET["title"]), false) . '")';
+			$filt[] = 'regex(?label, "' . optimize_name(trim($_GET["title"]), false) . '")';
 		} else {
 			$filt = $filters;
 		}
@@ -232,6 +239,8 @@ Select;
 		break;
 }
 if($_GET["debug"] == "true") {
+	print "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
+	print "PREFIX dbp: <http://it.dbpedia.org/property/>\n\n";
 	print_r($query);
 	print "\n\n";
 }
@@ -275,6 +284,12 @@ if(count($result) > 0) {
 	}
 	if($_GET["debug"] == "true") {
 		print_r($res);
+	}
+	if($general_settings["caching"]["allow_caching"] == "true" && $general_settings["caching"]["save_semantic_data"] == "true") {
+		if($fs = @fopen($config["NAS"]["root_share_dir"] . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json", "w")) {
+			fwrite($fs, json_encode($res) . PHP_EOL);
+			fclose($fs);
+		}
 	}
 } else {
 	$res = null;

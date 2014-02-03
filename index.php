@@ -29,7 +29,14 @@ if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 	}
 }
 $GLOBALS["general_settings"] = parse_ini_file("common/include/conf/general_settings.ini", true);
-$GLOBALS["config"] = parse_ini_file("common/include/conf/config.ini", 1);
+$GLOBALS["config"] = parse_ini_file("common/include/conf/config.ini", true);
+// Regenerate caching dir
+if($GLOBALS["general_settings"]["caching"]["allow_caching"] == "true") {
+	if(!file_exists($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache")) {
+		mkdir($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache/");
+		chmod($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache/", 0777);
+	}
+}
 if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 	$page_title = ucfirst(str_replace("_", " ", $_GET["s"]));
 	$page_name = ucfirst(str_replace("_", " ", $_GET["s"]));

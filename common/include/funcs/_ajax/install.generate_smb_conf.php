@@ -46,7 +46,11 @@ $general_settings .= 'scan_ebook_name_regex = ""' . "\n\n";
 $general_settings .= 'scan_audio_name_order = "no_track_artist_album"' . "\n";
 $general_settings .= 'scan_audio_name_regex = ""' . "\n\n";
 $general_settings .= 'scan_video_name_order = "title_year_director"' . "\n";
-$general_settings .= 'scan_video_name_regex = ""' . "\n";
+$general_settings .= 'scan_video_name_regex = ""' . "\n\n";
+$general_settings .= '[caching]' . "\n";
+$general_settings .= 'allow_caching = "true"' . "\n";
+$general_settings .= 'save_semantic_data = "true"' . "\n";
+$general_settings .= 'save_audio_spectum = "true"' . "\n";
 
 
 $config_ini = '; NINUXOO CONFIGURATION FILE' . "\n\n";
@@ -136,6 +140,8 @@ if($fp = @fopen($output["server_root"] . "common/include/conf/config.ini", "w"))
 		fwrite($fg, $general_settings . PHP_EOL);
 		fclose($fg);
 		$log->write("notice", "[install] The new file 'general_settings.ini' is located in 'common/include/conf/'");
+		mkdir($output["root_share_dir"] . ".ninuxoo_cache/");
+		chmod($output["root_share_dir"] . ".ninuxoo_cache/", 0777);
 		
 		// User login file
 		if(!file_exists($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]))) {
@@ -208,4 +214,3 @@ if($fp = @fopen($output["server_root"] . "common/include/conf/config.ini", "w"))
 
 print json_encode(array("data" => $data));
 ?>
-
