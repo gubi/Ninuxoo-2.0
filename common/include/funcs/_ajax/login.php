@@ -27,6 +27,7 @@ if(file_exists("../../conf/user/" . sha1($output["username"]))) {
 			$uconf->conf_replace("username", $output["username"], "../../conf/user/" . sha1($output["username"]) . "/user.conf");
 			$uconf->conf_replace("key", $data[0], "../../conf/user/" . sha1($output["username"]) . "/user.conf");
 		} else {
+			require_once("../../classes/chat.class.php");
 			$data = array();
 			$data[0] = trim($user_conf["User"]["key"]);
 			$data[1] = trim($user_conf["User"]["name"]);
@@ -41,6 +42,9 @@ if(file_exists("../../conf/user/" . sha1($output["username"]))) {
 			$setted_time = (int)$setting["login"]["session_length"];
 			
 			setcookie("n", $name, time() + $setted_time, "/");
+			$chat = new chat();
+			$chat->params($user_conf["Chat"]["nick"], $user_conf["User"]["email"], $user_conf["Chat"]["message"]);
+			$chat->set_status($user_conf["Chat"]["chat_status"]);
 		}
 		print json_encode($user_data);
 	} else {

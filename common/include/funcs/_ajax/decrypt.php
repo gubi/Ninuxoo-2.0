@@ -80,11 +80,17 @@ if(isset($_GET["getPublicKey"])) {
 	
 	$type = (isset($_GET["type"]) && trim($_GET["type"]) !== "") ? $_GET["type"] : $_POST["type"];
 	switch($type) {
+		case "change_chat_status":
+			require_once("chat.change_status.php");
+			break;
 		case "check_neighbor":
 			require_once("linked_nas.check_neighbor.php");
 			break;
 		case "check_notify":
 			require_once("notifications.detect.php");
+			break;
+		case "check_online_peoples":
+			require_once("chat.detect.php");
 			break;
 		case "check_personal_page":
 			require_once("personal_page.detect.php");
@@ -157,6 +163,9 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "send_notify":
 			require_once("notifications.send.php");
+			break;
+		case "set_socket":
+			require_once("chat.set_socket.php");
 			break;
 		case "start_scan":
 			require_once("local_scan.php");

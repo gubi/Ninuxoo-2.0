@@ -70,28 +70,13 @@
 				}
 				?>
 				<p>
-				&Egrave; possibile inserire gli <a href="#smileys" id="smiley_btn" class="text-primary" data-toggle="collapse">smileys</a>
+				&Egrave; possibile inserire gli <a href="#smileys" class="text-primary smiley_btn" data-toggle="collapse">smileys</a>
 				</p>
-				<div id="smileys" class="panel panel-default panel-collapse collapse">
-					<div class="panel-body">
-						<?php
-						require_once("common/include/lib/smileys.php");
-						foreach($smileys as $sk => $sv) {
-							if($sk > 1 && $smileys[($sk-1)]["group"] !== $smileys[$sk]["group"]) {
-								print "<br />";
-							}
-							if($smileys[($sk-1)]["class"] !== $smileys[$sk]["class"]) {
-								print '<button class="smiley_btn btn" title="' . $smileys[$sk]["title"] . '" onclick="set_smiley(\'' . $smileys[$sk]["shortcut"] . '\')"><span class="fa ' . $smileys[$sk]["class"] . '" style="' . $smileys[$sk]["style"] . '"></span></button>';
-							}
-						}
-						?>
-					</div>
-				</div>
 				<input type="hidden" id="user_data" value="<?php print $user["name"]; ?>" />
 				<input type="hidden" id="user_name" value="<?php print $user["email"]; ?>" />
 				<input type="hidden" id="send_previous_notice" value="" />
 				<div class="input-group">
-					<input type="text" class="form-control" id="send_notice" style="height: 2.3em;" placeholder="Scrivi un messaggio" value="" />
+					<input type="text" class="form-control" id="send_notice" style="height: 2.3em;" placeholder="Scrivi un messaggio" autofocus value="" />
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="send_notice_btn">Invia&nbsp;&nbsp;<span class="glyphicon glyphicon-share-alt"></span></button>
 					</span>

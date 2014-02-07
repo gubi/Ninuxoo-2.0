@@ -20,6 +20,9 @@
 		print $menu;
 		?>
 		<div id="top_menu_right">
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="javascript:void(0);" id="chat_btn" class="<?php print ($GLOBALS["user_settings"]["Notification"]["new_chat_messages"] == "true") ? "notify" : ""; ?>" style="padding-left: 5px;"><span class="fa fa-angle-left" style="padding-right: 5px;"></span><span class="fa fa-comment fa-flip-horizontal"></span><span class="fa fa-angle-right" style="padding-left: 5px; display: none;"></span></a></li>
+			</ul>
 			<?php
 			if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
 				?>
@@ -76,7 +79,7 @@
 							}
 							?>
 							<li class="divider"></li>
-							<li><a href="./Dashboard/Notifiche_di_gruppo" id="notify_btn" class="<?php print ($GLOBALS["user_settings"]["Notification"]["new_chat_messages"] == "true") ? "notify" : ""; ?>"><span class="fa fa-comments-o"></span>&nbsp;&nbsp;Chat di gruppo</a></li>
+							<li><a href="./Dashboard/Notifiche_di_gruppo" id="notify_btn" class="<?php print ($GLOBALS["user_settings"]["Notification"]["new_chat_messages"] == "true") ? "notify" : ""; ?>"><span class="fa fa-comments-o"></span>&nbsp;&nbsp;Notifiche di gruppo</a></li>
 							<li class="divider"></li>
 							<li><a href="./Esci"><span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;&nbsp;Esci</a></li>
 						</ul>

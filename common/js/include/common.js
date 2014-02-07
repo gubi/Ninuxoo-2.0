@@ -123,7 +123,10 @@ function check_notify(active, autoupdate) {
 	$("#check_loader").fadeIn(600);
 	$("#dash_notifications").addClass("disabled");
 	$("#check_notify_btn").addClass("disabled");
-	var password = makeid();
+	
+	if(password == undefined) {
+		var password = makeid();
+	}
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 		var encryptedString = $.jCryption.encrypt($("#editor_frm").serialize(), password);
 		
@@ -262,4 +265,35 @@ function check_notify(active, autoupdate) {
 			$(this).find("span.badge").remove();
 		});
 	}
+	$("#chat > .panel").resizable({
+		handles: "w",
+		autoHide: true,
+		minWidth: 250,
+		maxWidth: Math.round($(document).width()*0.5),
+		resize: function(event, ui) {
+			$("body").css({"left": "-" + ui.size.width + "px"});
+			$("#chat > .panel").css("left", "0");
+		}
+	});
+	$("#chat_btn").click(function() {
+		if($("body").css("left") != "0px") {
+			$(".fa-angle-left").fadeIn(300);
+			$(".fa-angle-right").fadeOut(300);
+			$("#chat").animate({"right": "-" + $("#chat").css("width")});
+			$("body").animate({"left": "0px"});
+		} else {
+			$(".fa-angle-left").fadeOut(300);
+			$(".fa-angle-right").fadeIn(300);
+			$("#chat").animate({"right": "0px"});
+			$("body").animate({"left": "-" + $("#chat").css("width")});
+			$("#chat_message").focus();
+		}
+	});
+	$(".smiley_btn").popover({ 
+		html : true,
+		placement: "top",
+		content: function() {
+			return $('#popover_content_wrapper').html();
+		}
+	});
 }

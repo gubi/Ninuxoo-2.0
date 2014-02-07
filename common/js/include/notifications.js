@@ -1,10 +1,14 @@
-function set_smiley(smiley) {
-	var current_val = $("#send_notice").val();
-	$("#send_notice").val(current_val + " " + smiley);
-	toggle_send_notice_btn();
+$.set_smiley = function(smiley, $obj) {
+	console.log($obj.closest("form").find("input.form-control").val());
+	var current_val = $obj.closest("form").find("input.form-control").val();
+	$obj.closest("form").find("input.form-control").val(current_val + " " + smiley);
+	$.toggle_send_notice_btn();
+	$(".smiley_btn").popover("hide");
+	$(".popover").css("display", "none");
+	$obj.closest("form").find("input.form-control").focus();
 }
 
-function toggle_send_notice_btn() {
+$.toggle_send_notice_btn = function() {
 	$("#send_notice_area > .input-group").removeClass("has-success");
 	$("#send_notice_btn").removeClass("btn-success").addClass("btn-primary").html('Invia&nbsp;&nbsp;<span class="glyphicon glyphicon-share-alt"></span>');
 	$("#smiley_btn").removeClass("btn-success").addClass("btn-default");
@@ -56,7 +60,10 @@ function mark_id_as_read() {
 }
 function remove_notice() {
 	$("#send_notice_area").attr("disabled", "disabled");
-	var password = makeid();
+	
+	if(password == undefined) {
+		var password = makeid();
+	}
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 		var encryptedString = $.jCryption.encrypt("host=" + $("#user_data").val(), password);
 		
@@ -75,7 +82,7 @@ function remove_notice() {
 					$("#send_notice_area .input-group-addon").remove();
 				}
 				$("#send_notice_area").attr("disabled", false);
-				toggle_send_notice_btn();
+				$.toggle_send_notice_btn();
 				$("#check_loader").fadeIn(600);
 				setTimeout(function() {
 					check_notify("true");
@@ -86,7 +93,10 @@ function remove_notice() {
 }
 function send_notice() {
 	$("#send_notice_area").attr("disabled", "disabled");
-	var password = makeid();
+	
+	if(password == undefined) {
+		var password = makeid();
+	}
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 		var encryptedString = $.jCryption.encrypt("message=" + $.utf8_to_b64($("#send_notice").val()) + "&host=" + $("#user_data").val() + "&user_name=" + $("#user_name").val(), password);
 		
@@ -133,7 +143,7 @@ $(document).ready(function() {
 		}
 	});
 	$("#send_notice").bind("change keyup", function() {
-		toggle_send_notice_btn();
+		$.toggle_send_notice_btn();
 	});
-	toggle_send_notice_btn();
+	$.toggle_send_notice_btn();
 });

@@ -225,5 +225,6 @@ $logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (
 		<?php require_once("common/tpl/footer.tpl"); ?>
 	<!--/div-->
 	<?php require_once("common/tpl/superfooter.tpl"); ?>
+	<?php if(isset($_COOKIE["n"])) { require_once("common/tpl/chat.tpl"); } ?>
 </body>
 </html>

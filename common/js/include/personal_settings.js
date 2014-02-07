@@ -14,7 +14,10 @@ $(document).ready(function() {
 	
 	$("#save_settings_btn").click(function() {
 		$("#page_loader").fadeIn(300);
-		var password = makeid();
+		
+		if(password == undefined) {
+			var password = makeid();
+		}
 		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 			var encryptedString = $.jCryption.encrypt($("#personal_settings_frm").serialize(), password);
 			console.log($("#personal_settings_frm").serialize());
@@ -43,5 +46,9 @@ $(document).ready(function() {
 			alert("Si &egrave; verificato un errore durante il salvataggio.", {icon: "error", title: "Ouch!"});
 		});
 		return false;
+	});
+	$("select").chosen({
+		disable_search_threshold: 5,
+		allow_single_deselect: true
 	});
 });

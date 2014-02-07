@@ -38,20 +38,41 @@
 		</div>
 	</div>
 	<div class="panel panel-default">
-		<div class="panel-heading"><span class="lead text-primary"><span class="fa fa-comments"></span>&nbsp;&nbsp;Chat di gruppo <a name="Chat_di_gruppo" id="Chat_di_gruppo"></a><small class="help-block">Imposta gli avvisi</small></span></div>
+		<div class="panel-heading"><span class="lead text-primary"><span class="fa fa-comments"></span>&nbsp;&nbsp;Messaggistica<a name="Chat" id="Chat"></a><small class="help-block">Notifiche e chat private</small></span></div>
+		<div class="panel-heading">
+			<span class="text-primary">Chat private</span>
+		</div>
+		<div class="panel-body">
+			<div class="form-group">
+				<label for="chat_status">Mostra sempre il mio stato come:</label>&nbsp;
+				<select id="chat_status" name="chat_status" tabindex="66" style="width: 150px;">
+					<option value="floating" <?php print (($GLOBALS["user_settings"]["Chat"]["chat_status"] == "online") ? "selected" : "") ?>>In linea</option>
+					<option value="open" <?php print (($GLOBALS["user_settings"]["Chat"]["chat_status"] == "do_not_disturb") ? "selected" : "") ?>>Non disturbare</option>
+					<option value="open" <?php print (($GLOBALS["user_settings"]["Chat"]["chat_status"] == "out") ? "selected" : "") ?>>Assente</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="chat_window">Finestra della chat:</label>&nbsp;
+				<select id="chat_window" name="chat_window" tabindex="66" style="width: 150px;">
+					<option value="floating" <?php print (($GLOBALS["user_settings"]["Chat"]["chat_window"] == "floating") ? "checked" : "") ?>>A scomparsa</option>
+					<option value="open" <?php print (($GLOBALS["user_settings"]["Chat"]["chat_window"] == "open") ? "checked" : "") ?>>Sempre aperta</option>
+				</select>
+			</div>
+		</div>
+		<div class="panel-heading">
+			<span class="text-primary">Notifiche di gruppo</span>
+		</div>
 		<div class="panel-body">
 			<div class="form-group">
 				<div class="checkbox">
 					<label>
 						<input type="checkbox" <?php print (($GLOBALS["user_settings"]["Chat"]["show_ip"] == "true") ? "checked" : ""); ?> id="show_ip" name="show_ip" tabindex="10" />
-						Mostra l'indirizzo IP nei messaggi della chat
+						Mostra l'indirizzo IP nei messaggi
 					</label>
 				</div>
 			</div>
-		</div>
-		<div class="panel-body">
 			<div class="form-group">
-				<label for="refresh_interval">Tempo di refresh:</label><br />
+				<label for="refresh_interval">Tempo di refresh delle notifiche:</label><br />
 				<input id="refresh_interval" class="input-lg" type="number" value=" <?php print $GLOBALS["user_settings"]["Chat"]["refresh_interval"]; ?>" name="refresh_interval" step="10" min="500" maxlength="8" size="7" tabindex="11">
 			</div>
 		</div>
