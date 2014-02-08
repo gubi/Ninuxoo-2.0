@@ -118,7 +118,26 @@ $.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str
 $.ucfirst = function(str) { var firstLetter = str.substr(0, 1); return firstLetter.toUpperCase() + str.substr(1); };
 $.strpos = function(haystack, needle, offset) { var i = (haystack + "").indexOf(needle, (offset || 0)); return i === -1 ? false : i; };
 $.download = function(url, data, method){ if( url && data ){ data = typeof data == 'string' ? data : jQuery.param(data); var inputs = ''; jQuery.each(data.split('&'), function(){ var pair = this.split('='); inputs+='<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; }); jQuery('<form action="'+ url +'" method="'+ (method||'post') +'">'+inputs+'</form>').appendTo('body').submit().remove(); }; };
-
+$.chat_panel = function(status) {
+	if (status == "close") {
+		$("#chat_btn").attr("data-original-title", "Apri il pannello delle chat");
+		$(".fa-angle-left").fadeIn(300);
+		$(".fa-angle-right").fadeOut(300);
+		$("#chat").animate({"right": "-" + $("#chat").css("width")}).switchClass("open", "closed");
+		$("body").animate({"left": "0px"});
+		return "closed";
+	} else {
+		$("#chat_btn").attr("data-original-title", "Chiudi il pannello delle chat");
+		$(".fa-angle-left").fadeOut(300);
+		$(".fa-angle-right").fadeIn(300);
+		$("#chat").animate({"right": "0px"}).switchClass("closed", "open");
+		if($("#chat").hasClass("floating")) {
+			$("body").animate({"left": "-" + $("#chat").css("width")});
+		}
+		$("#chat_message").focus();
+		return "open";
+	}
+}
 function check_notify(active, autoupdate) {
 	$("#check_loader").fadeIn(600);
 	$("#dash_notifications").addClass("disabled");
@@ -271,7 +290,9 @@ function check_notify(active, autoupdate) {
 		minWidth: 250,
 		maxWidth: Math.round($(document).width()*0.5),
 		resize: function(event, ui) {
-			$("body").css({"left": "-" + (ui.size.width - 1) + "px"});
+			if($("#chat").hasClass("floating")) {
+				$("body").css({"left": "-" + (ui.size.width - 1) + "px"});
+			}
 			$("#chat > .panel").css("left", "0");
 			$("#chat").css("width", ui.size.width + "px");
 			$("#chat_panel_width").text(ui.size.width + "px");
@@ -295,21 +316,50 @@ function check_notify(active, autoupdate) {
 			});
 		}
 	});
-	$("#chat_btn").click(function() {
-		var panel_status = "";
-		if($("body").css("left") != "0px") {
-			panel_status = "closed";
-			$(".fa-angle-left").fadeIn(300);
-			$(".fa-angle-right").fadeOut(300);
-			$("#chat").animate({"right": "-" + $("#chat").css("width")});
-			$("body").animate({"left": "0px"});
+	
+	$("#panel_position_btn").tooltip("destroy").tooltip({placement: "bottom"});
+	$("#chat_btn").tooltip("destroy").tooltip({placement: "auto", container: "body"});
+	$("#panel_position_btn").click(function() {
+		var panel_window = "";
+		
+		if($("#chat").hasClass("floating")) {
+			panel_window = "fixed";
+			$("#panel_position_btn").attr("data-original-title", "Aggancia alla pagina").tooltip("destroy").tooltip({placement: "bottom"});
+			$("#panel_position_btn > span").switchClass("fa-caret-square-o-left", "fa-caret-square-o-up");
+			$("#chat").switchClass("floating", "fixed");
+			$("body").animate({"left": "0px"}, 50);
 		} else {
-			panel_status = "open";
-			$(".fa-angle-left").fadeOut(300);
-			$(".fa-angle-right").fadeIn(300);
-			$("#chat").animate({"right": "0px"});
-			$("body").animate({"left": "-" + $("#chat").css("width")});
-			$("#chat_message").focus();
+			panel_window = "floating";
+			$("#panel_position_btn").attr("data-original-title", "Sgancia dalla pagina").tooltip("destroy").tooltip({placement: "bottom"});
+			$("#panel_position_btn > span").switchClass("fa-caret-square-o-up", "fa-caret-square-o-left");
+			$("#chat").switchClass("fixed", "floating");
+			$("body").animate({"left": "-" + $("#chat").css("width")}, 50);
+		}
+		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+			var encryptedString = $.jCryption.encrypt("user_username=" + $("#user_email").text() + "&panel_window=" + panel_window, password);
+			
+			$.ajax({
+				url: "common/include/funcs/_ajax/decrypt.php",
+				dataType: "json",
+				type: "POST",
+				data: {
+					jCryption: encryptedString,
+					type: "save_chat_panel_window"
+				}
+			});
+		});
+	});
+	if($("#chat").hasClass("open")) {
+		$.chat_panel("open");
+	}
+	$("#chat_btn").click(function() {
+		if($("#chat").hasClass("open")) {
+			var panel_status = $.chat_panel("close");
+		} else {
+			var panel_status = $.chat_panel("open");
+		}
+		if(password == undefined) {
+			var password = makeid();
 		}
 		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 			var encryptedString = $.jCryption.encrypt("user_username=" + $("#user_email").text() + "&status=" + panel_status, password);

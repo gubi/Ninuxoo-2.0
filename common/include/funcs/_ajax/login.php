@@ -43,7 +43,7 @@ if(file_exists("../../conf/user/" . sha1($output["username"]))) {
 			
 			setcookie("n", $name, time() + $setted_time, "/");
 			$chat = new chat();
-			$chat->params($user_conf["Chat"]["nick"], $user_conf["User"]["email"], $user_conf["Chat"]["message"]);
+			$chat->params($user_conf["Chat"]["nick"], $user_conf["User"]["email"], $user_conf["Chat"]["personal_message"]);
 			$chat->set_status($user_conf["Chat"]["chat_status"]);
 		}
 		print json_encode($user_data);

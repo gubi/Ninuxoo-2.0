@@ -2,7 +2,7 @@
 <script src="common/js/include/chat.js"></script>
 
 <span id="chat_panel_width"><?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?></span>
-<div id="chat" class="ui-widget-content<?php print (($GLOBALS["user_settings"]["Chat"]["panel_status"] == "closed") ? " closed" : " open") ?><?php print " " . $GLOBALS["user_settings"]["Chat"]["panel_position"] ?>" style="width: <?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px; right: -<?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px;">
+<div id="chat" class="ui-widget-content<?php print (($GLOBALS["user_settings"]["Chat"]["panel_status"] == "closed") ? " closed" : " open") ?><?php print " " . $GLOBALS["user_settings"]["Chat"]["chat_window"] ?>" style="width: <?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px; right: -<?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px;">
 	<div class="panel panel-default right col-lg-2" style="width: <?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px;">
 		<div class="panel-heading">
 			<div class="dropdown">
@@ -38,6 +38,7 @@
 					<li class="divider"></li>
 					<li><a href="http://192.168.36.210/Dashboard/Impostazioni_personali#Chat"><span class="fa fa-gear"></span>&nbsp;Impostazioni...</a></li>
 				</ul>
+				<a class="btn-default right" id="panel_position_btn" href="javascript:void(0)" title="<?php print ($GLOBALS["user_settings"]["Chat"]["chat_window"] == "floating") ? "Sgancia dalla pagina" : "Aggancia alla pagina"; ?>"><span class="fa<?php print ($GLOBALS["user_settings"]["Chat"]["chat_window"] == "floating") ? " fa-caret-square-o-left" : " fa-caret-square-o-up"; ?> text-muted"></span></a>
 			</div>
 		</div>
 		<div class="panel-body" id="online_peoples"></div>

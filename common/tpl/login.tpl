@@ -1,7 +1,6 @@
 <script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
 <script type="text/javascript" src="common/js/include/setup.js"></script>
 <?php
-$setting = parse_ini_file("common/include/conf/general_settings.ini", true);
 if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 	?>
 	<script type="text/javascript" src="common/js/include/login.js"></script>
@@ -15,19 +14,19 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 			<div class="well">
 				<div class="input-group">
 					<label for="username" class="control-label input-group-addon btn"><span class="glyphicon glyphicon-envelope" title="Indirizzo e-mail"></span></label>
-					<input type="email" class="form-control input-lg" id="username" name="username" placeholder="Indirizzo e-mail" autocomplete="off" autofocus required tabindex="1" />
+					<input type="email" class="form-control input-lg" id="username" name="username" placeholder="Indirizzo e-mail" <?php print ($GLOBALS["general_settings"]["login"]["allow_browser_save"] == "false") ? 'autocomplete="off"' : ''; ?> autofocus required tabindex="1" />
 				</div>
 				<br />
 				<div class="input-group">
 					<label for="password" class="control-label input-group-addon btn"><span class="glyphicon glyphicon-lock" title="password"></span></label>
-					<input type="password" class="form-control input-lg" id="password" name="password" placeholder="Una password valida" autocomplete="off" required tabindex="2" />
+					<input type="password" class="form-control input-lg" id="password" name="password" placeholder="Una password valida" <?php print ($GLOBALS["general_settings"]["login"]["allow_browser_save"] == "false") ? 'autocomplete="off"' : ''; ?> required tabindex="2" />
 				</div>
 				<br />
 				<a class="btn btn-link" href="./Accedi/Password_dimenticata"><span class="glyphicon glyphicon-remove"></span> Password dimenticata?</a>
 			</div>
 			<div class="btn-group right">
 				<?php
-				if($setting["login"]["allow_user_registration"] == "true") {
+				if($GLOBALS["general_settings"]["login"]["allow_user_registration"] == "true") {
 					print '<a class="btn btn-default" href="./Registrati"><span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;&nbsp;Registrati</a>';
 				}
 				?>

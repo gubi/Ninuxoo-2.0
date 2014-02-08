@@ -140,6 +140,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "save_chat_panel_status":
 			require_once("save_chat_panel_status.php");
 			break;
+		case "save_chat_panel_window":
+			require_once("save_chat_panel_window.php");
+			break;
 		case "save_editor_theme":
 			require_once("save_editor_theme.php");
 			break;

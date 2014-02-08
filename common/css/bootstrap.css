@@ -2919,7 +2919,7 @@ input[type="button"].btn-block {
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 1000;
+  z-index: 999999999999;
   display: none;
   float: left;
   min-width: 160px;
@@ -5002,7 +5002,6 @@ button.close {
 .modal {
   display: none;
   overflow: auto;
-  overflow-y: scroll;
   position: fixed;
   top: 0;
   right: 0;
@@ -5118,13 +5117,14 @@ button.close {
 }
 .tooltip {
   position: absolute;
-  z-index: 1030;
+  z-index: 9999999999999;
   display: block;
   visibility: visible;
   font-size: 1em;
   line-height: 1.4;
   opacity: 0;
   filter: alpha(opacity=0);
+  margin: 5px;
 }
 .tooltip.in {
   opacity: 0.9;
@@ -6324,4 +6324,3 @@ td.visible-print {
     70% { top: -0.3em; }
 	100% { top: 0; }
 }
-

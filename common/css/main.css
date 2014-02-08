@@ -764,16 +764,33 @@ ul#denied_list li img {
 	padding: 0 10px;
 	display: none;
 }
+#chat_btn > span.arrow {
+	display: inline-block;
+    width: 0px;
+}
+#chat_btn > span.arrow:first-child {
+	padding-right: 10px;
+	margin-left: -5px;
+}
+#chat_btn > span.arrow:last-child {
+	padding-left: 5px;
+}
 #chat {
 	position: fixed !important;
     width: auto;
 	height: 100%;
-	top: 0 !important;
 	right: -250px;
 	margin: 0 -2px 0 0;
 	padding: 0;
 	border-bottom: 0px none;
 	border-radius: 0;
+	z-index: 999;
+}
+#chat.floating {
+	top: 0;
+}
+#chat.fixed {
+	top: 40.5px;
 }
 #chat .panel:before {
 	font-family: "FontAwesome";
@@ -787,14 +804,16 @@ ul#denied_list li img {
 }
 #chat > .panel {
 	background-color: #fff;
-	background-image: linear-gradient(right center , #fff 96%, #e0e0e0);
-	background-image: -moz-linear-gradient(right center , #fff 96%, #e0e0e0);
-	background-image: -webkit-linear-gradient(right center , #fff 96%, #e0e0e0);
-	background-image: -o-linear-gradient(right center , #fff 96%, #e0e0e0);
-	background-image: -ms-linear-gradient(right center , #fff 96%, #e0e0e0);
+	background-image: linear-gradient(left center, #e0e0e0, #fff 20px);
+	background-image: -moz-linear-gradient(left center, #e0e0e0, #fff 20px);
+	background-image: -webkit-linear-gradient(left center, #e0e0e0, #fff 20px);
+	background-image: -o-linear-gradient(left center, #e0e0e0, #fff 20px);
+	background-image: -ms-linear-gradient(left center, #e0e0e0, #fff 20px);
 	height: 100%;
 	width: 250px;
 	border-radius: 0;
+	margin-left: 1px;
+    margin-top: -1px;
 }
 #chat > .panel > .panel-heading {
 	padding: 10px 0;
