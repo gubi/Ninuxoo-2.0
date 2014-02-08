@@ -3,9 +3,9 @@ header("Content-type: text/plain");
 require_once("../../classes/manage_conf_file.class.php");
 
 $conf = new manage_conf_file();
-$conf->conf_replace("use_editor_always", ($output["allow_editor_always"] == "on") ? "true" : "false", "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-$conf->conf_replace("allow_user_registration", ($output["allow_user_registration"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
 $conf->conf_replace("session_length", $output["session_length"], "../../conf/general_settings.ini");
+$conf->conf_replace("allow_user_registration", ($output["allow_user_registration"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
+$conf->conf_replace("allow_browser_save", ($output["allow_browser_save"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
 
 $conf->conf_replace("scan_ebook_name_order", $output["data_scan_ebook"], "../../conf/general_settings.ini");
 $conf->conf_replace("scan_ebook_name_regex", $output["data_scan_ebook_personalized"], "../../conf/general_settings.ini");
@@ -16,6 +16,7 @@ $conf->conf_replace("scan_video_name_regex", $output["data_scan_video_personaliz
 
 $conf->conf_replace("allow_caching", ($output["allow_caching"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
 $conf->conf_replace("save_semantic_data", ($output["save_semantic_data"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
+$conf->conf_replace("semantic_caching_refresh", $output["semantic_caching_refresh"], "../../conf/general_settings.ini");
 $conf->conf_replace("save_audio_spectum", ($output["save_audio_spectum"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
 
 $conf->conf_replace("station_active", $output["station_active"], "../../conf/config.ini");

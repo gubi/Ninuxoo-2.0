@@ -77,6 +77,35 @@
 			</div>
 		</div>
 	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<span class="lead text-primary">
+				<span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;Editor degli script <sup><a data-toggle="collapse" href="#script_editor_info" class="text-muted"><span class="fa fa-info"></span></a></sup><a name="Editor_degli_script" id="Editor_degli_script"></a><small class="help-block"></small>
+			</span>
+		
+			<div id="script_editor_info" class="info panel-body panel-collapse collapse">
+				<p>
+					L'editor degli script &egrave; un utile strumento per la lettura e la modifica di linguaggi di programmazione.<br />
+					Questo tool appartiene all'editor delle configurazioni dei device, ma &egrave; possibile attivarlo anche in tutto il pannello di amministrazione, sostituendolo all'editor di testo per il Markdown.
+				</p>
+				<p>
+					Durante il suo uso, &egrave; possibile utilizzare le scorciatoie di tastiera per abilitare le sue funzionalit&agrave; aggiuntive.<br />
+					Trascinando un file di testo all'interno dell'editor ne verr&agrave; acquisito il relativo contenuto.<br />
+				</p>
+				<?php
+				require_once("common/tpl/shortcut_legend.tpl");
+				?>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" <?php print (($GLOBALS["user_settings"]["User"]["use_editor_always"] == "true") ? "checked" : "") ?> id="allow_editor_always" name="allow_editor_always" tabindex="60" />
+					Usa l'editor di linguaggi in tutto il Pannello di Amministrazione
+				</label>
+			</div>
+		</div>
+	</div>
 	<hr />
 	<?php
 	if(!$GLOBALS["is_admin"]) {

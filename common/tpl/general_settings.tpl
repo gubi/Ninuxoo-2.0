@@ -10,9 +10,24 @@
 <form method="post" action="" id="settings_frm" onsubmit="return false;" role="form">
 	<input type="hidden" value="<?php print $username; ?>" name="user_username" id="user_username" />
 	<div class="panel panel-default">
-		<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-time"></span>&nbsp;&nbsp;Accesso al Sistema <a name="Accesso_al_Sistema" id="Accesso_al_Sistema"></a><small class="help-block">Durata generale della sessione</small></span></div>
+		<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-time"></span>&nbsp;&nbsp;Accesso al Sistema <a name="Accesso_al_Sistema" id="Accesso_al_Sistema"></a><small class="help-block">Impostazioni relative alle connessioni al sistema</small></span></div>
 		<div class="panel-body">
-			<input type="number" class="input-lg" size="5" maxlength="7" min="0" step="10" id="session_length" name="session_length" value="<?php print $GLOBALS["general_settings"]["login"]["session_length"]; ?>" autofocus tabindex="1" />
+			<div class="form-group">
+				<div class="input-group">
+					<label for="session_length">Durata generale di una sessione: </label>
+					<input type="number" class="input-lg" size="5" maxlength="7" min="0" step="10" id="session_length" name="session_length" value="<?php print $GLOBALS["general_settings"]["login"]["session_length"]; ?>" autofocus tabindex="1" />
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" <?php print (($GLOBALS["general_settings"]["login"]["allow_browser_save"] == "true") ? "checked" : ""); ?> id="allow_browser_save" name="allow_browser_save" tabindex="2" />
+							Permetti ai browsers di salvare i dati di connessione
+						</label>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="panel panel-default">
@@ -143,6 +158,9 @@
 				<b>Nota:</b> i dati in locale potrebbero occupare molto spazio se si hanno molti files in condivisione.
 			</div>
 		</div>
+		<div class="panel-heading">
+			<span class="text-primary">Dati semantici</span>
+		</div>
 		<div class="panel-body caching_active">
 			<div class="checkbox">
 				<label>
@@ -150,6 +168,22 @@
 					Memorizza i dati semantici
 				</label>
 			</div>
+			<div class="form-group">
+				<label for="semantic_caching_refresh">Re-sincronizza i dati acquisiti se pi&ugrave; vecchi di: </label>
+				<select style="width: 150px;" tabindex="36" name="semantic_caching_refresh" id="semantic_caching_refresh">
+					<option value="never" <?php print (($GLOBALS["general_settings"]["caching"]["semantic_caching_refresh"] == "never") ? "selected" : ""); ?>>Mai</option>
+					<option value="7" <?php print (($GLOBALS["general_settings"]["caching"]["semantic_caching_refresh"] == "7") ? "selected" : ""); ?>>1 settimana</option>
+					<option value="15" <?php print (($GLOBALS["general_settings"]["caching"]["semantic_caching_refresh"] == "15") ? "selected" : ""); ?>>15 giorni</option>
+					<option value="30" <?php print (($GLOBALS["general_settings"]["caching"]["semantic_caching_refresh"] == "30") ? "selected" : ""); ?>>1 mese</option>
+					<option value="180" <?php print (($GLOBALS["general_settings"]["caching"]["semantic_caching_refresh"] == "180") ? "selected" : ""); ?>>6 mesi</option>
+					<option value="365" <?php print (($GLOBALS["general_settings"]["caching"]["semantic_caching_refresh"] == "365") ? "selected" : ""); ?>>1 anno</option>
+				</select>
+			</div>
+		</div>
+		<div class="panel-heading">
+			<span class="text-primary">Spettri audio</span>
+		</div>
+		<div class="panel-body caching_active">
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" <?php print (($GLOBALS["general_settings"]["caching"]["save_audio_spectum"] == "true") ? "checked" : ""); ?> id="save_audio_spectum" name="save_audio_spectum" tabindex="45" />
@@ -167,35 +201,6 @@
 				<label>
 					<input type="checkbox" <?php print (($GLOBALS["general_settings"]["login"]["allow_user_registration"] == "true") ? "checked" : ""); ?> id="allow_user_registration" name="allow_user_registration" tabindex="55" />
 					Consenti agli utenti di potersi auto-registrare
-				</label>
-			</div>
-		</div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<span class="lead text-primary">
-				<span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;Editor degli script <sup><a data-toggle="collapse" href="#script_editor_info" class="text-muted"><span class="fa fa-info"></span></a></sup><a name="Editor_degli_script" id="Editor_degli_script"></a><small class="help-block"></small>
-			</span>
-		
-			<div id="script_editor_info" class="info panel-body panel-collapse collapse">
-				<p>
-					L'editor degli script &egrave; un utile strumento per la lettura e la modifica di linguaggi di programmazione.<br />
-					Questo tool appartiene all'editor delle configurazioni dei device, ma &egrave; possibile attivarlo anche in tutto il pannello di amministrazione, sostituendolo all'editor di testo per il Markdown.
-				</p>
-				<p>
-					Durante il suo uso, &egrave; possibile utilizzare le scorciatoie di tastiera per abilitare le sue funzionalit&agrave; aggiuntive.<br />
-					Trascinando un file di testo all'interno dell'editor ne verr&agrave; acquisito il relativo contenuto.<br />
-				</p>
-				<?php
-				require_once("common/tpl/shortcut_legend.tpl");
-				?>
-			</div>
-		</div>
-		<div class="panel-body">
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" <?php print (($GLOBALS["user_settings"]["User"]["use_editor_always"] == "true") ? "checked" : "") ?> id="allow_editor_always" name="allow_editor_always" tabindex="60" />
-					Usa l'editor di linguaggi in tutto il Pannello di Amministrazione
 				</label>
 			</div>
 		</div>
