@@ -69,7 +69,7 @@ class manage_conf_file {
 			}
 		}
 		$files_to_search = array($ini_file) ;
-		$search_string  = "/" . $search . ".*/";
+		$search_string  = "/(" . $search . ").*/";
 		if(!is_numeric($replace)){
 			$replace = "\"" . $replace . "\"";
 		}
@@ -78,7 +78,7 @@ class manage_conf_file {
 		$snr = new File_SearchReplace($search_string,
 					      $replace_string,
 					      $files_to_search,
-					      '', // directorie(s) to search
+					      "", // directorie(s) to search
 					      false) ;
 		
 		$snr->setSearchFunction("preg");

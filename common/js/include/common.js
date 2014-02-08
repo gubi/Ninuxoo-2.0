@@ -128,7 +128,7 @@ function check_notify(active, autoupdate) {
 		var password = makeid();
 	}
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt($("#editor_frm").serialize(), password);
+		var encryptedString = $.jCryption.encrypt("", password);
 		
 		$.ajax({
 			url: "common/include/funcs/_ajax/decrypt.php",
@@ -271,23 +271,59 @@ function check_notify(active, autoupdate) {
 		minWidth: 250,
 		maxWidth: Math.round($(document).width()*0.5),
 		resize: function(event, ui) {
-			$("body").css({"left": "-" + ui.size.width + "px"});
+			$("body").css({"left": "-" + (ui.size.width - 1) + "px"});
 			$("#chat > .panel").css("left", "0");
+			$("#chat").css("width", ui.size.width + "px");
+			$("#chat_panel_width").text(ui.size.width + "px");
+		},
+		stop: function() {
+			if(password == undefined) {
+				var password = makeid();
+			}
+			$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+				var encryptedString = $.jCryption.encrypt("user_username=" + $("#user_email").text() + "&size=" + $("#chat").css("width"), password);
+				
+				$.ajax({
+					url: "common/include/funcs/_ajax/decrypt.php",
+					dataType: "json",
+					type: "POST",
+					data: {
+						jCryption: encryptedString,
+						type: "save_chat_panel_size"
+					}
+				});
+			});
 		}
 	});
 	$("#chat_btn").click(function() {
+		var panel_status = "";
 		if($("body").css("left") != "0px") {
+			panel_status = "closed";
 			$(".fa-angle-left").fadeIn(300);
 			$(".fa-angle-right").fadeOut(300);
 			$("#chat").animate({"right": "-" + $("#chat").css("width")});
 			$("body").animate({"left": "0px"});
 		} else {
+			panel_status = "open";
 			$(".fa-angle-left").fadeOut(300);
 			$(".fa-angle-right").fadeIn(300);
 			$("#chat").animate({"right": "0px"});
 			$("body").animate({"left": "-" + $("#chat").css("width")});
 			$("#chat_message").focus();
 		}
+		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+			var encryptedString = $.jCryption.encrypt("user_username=" + $("#user_email").text() + "&status=" + panel_status, password);
+			
+			$.ajax({
+				url: "common/include/funcs/_ajax/decrypt.php",
+				dataType: "json",
+				type: "POST",
+				data: {
+					jCryption: encryptedString,
+					type: "save_chat_panel_status"
+				}
+			});
+		});
 	});
 	$(".smiley_btn").popover({ 
 		html : true,

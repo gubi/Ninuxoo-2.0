@@ -1,8 +1,9 @@
 <link rel="stylesheet" href="common/js/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen" />
 <script src="common/js/include/chat.js"></script>
 
-<div id="chat" class="ui-widget-content">
-	<div class="panel panel-default right col-lg-2">
+<span id="chat_panel_width"><?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?></span>
+<div id="chat" class="ui-widget-content<?php print (($GLOBALS["user_settings"]["Chat"]["panel_status"] == "closed") ? " closed" : " open") ?><?php print " " . $GLOBALS["user_settings"]["Chat"]["panel_position"] ?>" style="width: <?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px; right: -<?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px;">
+	<div class="panel panel-default right col-lg-2" style="width: <?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px;">
 		<div class="panel-heading">
 			<div class="dropdown">
 				<?php

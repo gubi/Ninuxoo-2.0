@@ -134,6 +134,12 @@ if(isset($_GET["getPublicKey"])) {
 		case "reset_password":
 			require_once("reset_password.php");
 			break;
+		case "save_chat_panel_size":
+			require_once("save_chat_panel_size.php");
+			break;
+		case "save_chat_panel_status":
+			require_once("save_chat_panel_status.php");
+			break;
 		case "save_editor_theme":
 			require_once("save_editor_theme.php");
 			break;
