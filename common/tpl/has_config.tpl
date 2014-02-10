@@ -1,17 +1,17 @@
 <!-- Treeview -->
-<link rel="stylesheet" href="<?php print $NAS_absolute_uri; ?>/common/js/jquery.treeview/jquery.treeview.css" type="text/css" media="screen" />
-<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/jquery.treeview/jquery.treeview.js"></script>
-<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/jquery.treeview/jquery.treeview.edit.js"></script>
-<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/jquery.treeview/jquery.treeview.async.js"></script>
+<link rel="stylesheet" href="common/js/jquery.treeview/jquery.treeview.css" type="text/css" media="screen" />
+<script type="text/javascript" src="common/js/jquery.treeview/jquery.treeview.js"></script>
+<script type="text/javascript" src="common/js/jquery.treeview/jquery.treeview.edit.js"></script>
+<script type="text/javascript" src="common/js/jquery.treeview/jquery.treeview.async.js"></script>
 
 <?php if(isset($_GET["s"]) && trim($_GET["s"]) == "advanced") { ?>
 	<!--Chosen-->
-	<link rel="stylesheet" href="<?php print $NAS_absolute_uri; ?>/common/js/chosen/chosen.css" />
-	<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/chosen/chosen-bootstrap.jquery.js"></script>
+	<link rel="stylesheet" href="common/js/chosen/chosen.css" />
+	<script type="text/javascript" src="common/js/chosen/chosen-bootstrap.jquery.js"></script>
 <?php } ?>
 <!--Zoombox-->
-<script type="text/javascript" src="<?php print $NAS_absolute_uri; ?>/common/js/zoombox/zoombox.js"></script>
-<link rel="stylesheet" href="<?php print $NAS_absolute_uri; ?>/common/js/zoombox/zoombox.css" />
+<script type="text/javascript" src="common/js/zoombox/zoombox.js"></script>
+<link rel="stylesheet" href="common/js/zoombox/zoombox.css" />
 <script type="text/javascript">
 
 $.extend({getUrlVars: function(){ var vars = [], hash; var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&'); for(var i = 0; i < hashes.length; i++) { hash = hashes[i].split('='); vars.push(hash[0]); vars[hash[0]] = hash[1]; } return vars; }, _GET: function(name){ return $.getUrlVars()[name]; }});
@@ -47,6 +47,7 @@ $(document).ready(function() {
 	if($._GET("s") == undefined || $._GET("s") != ""){
 		get_stats();
 	}
+	/*
 	if($._GET("s") != undefined && $._GET("s") == "advanced"){
 		<?php require_once("common/js/include/advanced_search.js"); ?>
 	} else {
@@ -226,7 +227,7 @@ $(document).ready(function() {
 						$("#page_content").append('<div class="search_results"><h1 style="text-indent: 0; margin: 0 0 20px 0; border: 0px none;">Scheda del film</h1></div><div id="page_content_content"><div id="wiki_content" style="padding-bottom: 50px;"></div><table cellspacing="10" cellpadding="10" style="width: auto;"><tr><td id="cast_content" valign="top"></td><td id="production_content" valign="top"></td></tr></table>')
 						switch(data.results.type){
 							case "Film":
-									/* Menu laterale */
+									/* Menu laterale *\/
 									media_stats_data = '<li><a href="javascript: void(0);">Anno</a>: <span style="display: none;" id="film_year"></span></li>';
 									media_stats_data += '<li><a href="javascript: void(0);">Paese</a>: <span style="display: none;" id="film_country"></span></li>';
 									media_stats_data += '<li><a href="javascript: void(0);">Genere</a>: <span style="display: none;" id="film_genre"></span></li>';
@@ -403,7 +404,7 @@ $(document).ready(function() {
 											$("#poster_box").fadeIn(300);
 										}, 2000);
 										
-								});*/
+								});*\/
 								$("#poster_box").fadeIn(300);
 								$("#loader").fadeOut(300, function(){
 									$("#page_content").fadeIn(600);
@@ -430,6 +431,7 @@ $(document).ready(function() {
 				}
 			});
 		}
+		*/
 	}
 	$("#logo a[title]").tooltip({placement: "left"});
 	if($._GET("s") != undefined && $._GET("s") == "advanced"){

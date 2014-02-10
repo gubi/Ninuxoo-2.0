@@ -1,5 +1,4 @@
-// Check internet connection...
-function check_internet() {
+$.check_internet = function() {
 	$.get("common/include/funcs/_ajax/check_internet_status.php", {check: "true"}, function(data) {
 		if(data == "disabled") {
 			if($("#show_form[disabled]")) {
@@ -22,7 +21,7 @@ function check_internet() {
 				}
 			}
 			setTimeout(function() {
-				check_internet();
+				$.check_internet();
 			}, 15000);
 		} else if(data == "ok") {
 			if($("#show_form[disabled]")) {
@@ -46,19 +45,19 @@ function check_internet() {
 			}
 			
 			if($("#check_nodes").length == 0) {
-				get_nodes();
+				$.get_nodes();
 			}
 			setTimeout(function() {
-				check_internet();
+				$.check_internet();
 			}, 30000);
 		}
 	});
-}
-function ucfirst(str) {
+};
+$.ucfirst = function(str) {
 	var firstLetter = str.substr(0, 1);
 	return firstLetter.toUpperCase() + str.substr(1);
-}
-function get_nodes() {
+};
+$.get_nodes = function() {
 	if($("#checking_nodes").length == 0 || $("checking_nodes").text() == "false") {
 		$("body").prepend('<div id="checking_nodes" style="display: none;">true</div>');
 		
@@ -92,7 +91,7 @@ function get_nodes() {
 								$("#node_map").val("http://map.ninux.org/select/" + v.slug + "/").attr("disabled", false);
 								$("#node_type").val(v.type).attr("disabled", "disabled");
 								
-								calculate_meteo_data(v.lat, v.lng);
+								$.calculate_meteo_data(v.lat, v.lng);
 								$("#tmp_lat").val(v.lat);
 								$("#tmp_lng").val(v.lng);
 							}
@@ -123,15 +122,15 @@ function get_nodes() {
 			apprise("Non &egrave; stato possibile rilevare l'albero dei nodi dal MapServer.<br />L'errore riscontrato &egrave; il seguente:<br /><code>" + data.responseText + "</code>", {icon: "error", title: "Ouch!"});
 		});
 	}
-}
-function get_samba(remote_nas) {
+};
+$.get_shares = function(remote_nas) {
 	if (remote_nas == undefined) {
 		var remote_nas = "";
 	}
-	var password = makeid();	
+	var password = $.makeid();	
 	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 		var encryptedString = $.jCryption.encrypt("file=" + remote_nas, password);
-		
+		$("#root_share_dir_refresh_btn > span").addClass("fa-spin");
 		$.ajax({
 			url: "common/include/funcs/_ajax/decrypt.php",
 			dataType: "json",
@@ -141,27 +140,30 @@ function get_samba(remote_nas) {
 				type: "get_shares"
 			},
 			success: function(result) {
-				$("#lloader").remove();
+				$("#root_share_dir_refresh_btn > span").removeClass("fa-spin");
 				if(!result["alert"]) {
 					var paths = "";
 					$.each(result["shares"], function(item, data) {
-						paths += data + "\n";
-						$("#shared_paths").val(paths).attr("disabled", false);
+						paths += '<option value="' + data + '">' + data + "</option>\n";
+						$("#shared_paths").html(paths).attr("disabled", false).multiselect("rebuild");
 						if($("#root_share_dir_error").length > 0) {
-							$("#root_share_dir").removeClass("error");
+							$("#root_share_dir").removeClass("text-block");
 						}
 						$("#root_share_dir_error").remove();
+						$("#root_share_dir").closest(".form-group").removeClass("has-error");
 					});
 				} else {
-					$("#root_share_dir").addClass("error").after('<span id="root_share_dir_error" class="error">&nbsp;&nbsp;&nbsp;&nbsp;' + result["alert"] + '</span>');
-					$("#shared_paths").val("").attr("disabled", "disabled");
+					if($("#root_share_dir_error").length == 0) {
+						$("#root_share_dir").closest(".form-group").addClass("has-error").after('<span id="root_share_dir_error" class="text-block"><span class="text-danger">' + result["alert"] + '</span></span>');
+					}
+					$("#shared_paths").val("").attr("disabled", "disabled").multiselect("rebuild");
 					apprise(result["alert"], {icon: "warning", title: "Mmmm..."});
 				}
 			}
 		});
 	});
-}
-function calculate_meteo_data(latitude, longitude) {
+};
+$.calculate_meteo_data = function(latitude, longitude) {
 	String.prototype.multi_replace = function (hash) {
 		var str = this, key;
 		for (key in hash) {
@@ -174,53 +176,11 @@ function calculate_meteo_data(latitude, longitude) {
 	$("#meteo_lng").attr("disabled", false).val(longitude);
 	
 	$.get("common/include/funcs/_ajax/read_json.php?uri=http://nominatim.openstreetmap.org/reverse?format=json%26lat=" + latitude + "%26lon=" + longitude, function(geodata) {
-		var hash = {
-			"Via dello": "",
-			"Via della": "",
-			"Via dei": "",
-			"Via degli": "",
-			"Via delle": "",
-			"Via del": "",
-			"Via di": "",
-			"Viale dello": "",
-			"Viale della": "",
-			"Viale dei": "",
-			"Viale degli": "",
-			"Viale delle": "",
-			"Viale del": "",
-			"Viale": "",
-			"Via": "",
-			"Vicolo": ""
-		};
-		var regioni = new Array();
-		regioni["ABR"] = "Abruzzo";
-		regioni["BAS"] = "Basilicata";
-		regioni["CAL"] = "Calabria";
-		regioni["CAM"] = "Campania";
-		regioni["EMI"] = "Emilia-Romagna";
-		regioni["EMR"] = "Emilia-Romagna";
-		regioni["ERO"] = "Emilia-Romagna";
-		regioni["FVG"] = "Friuli-Venezia Giulia";
-		regioni["FRI"] = "Friuli-Venezia Giulia";
-		regioni["LAZ"] = "Lazio";
-		regioni["LIG"] = "Liguria";
-		regioni["LOM"] = "Lombardia";
-		regioni["MAR"] = "Marche";
-		regioni["MOL"] = "Molise";
-		regioni["PIE"] = "Piemonte";
-		regioni["PUG"] = "Puglia";
-		regioni["SAR"] = "Sardegna";
-		regioni["SIC"] = "Sicilia";
-		regioni["TOS"] = "Toscana";
-		regioni["TAA"] = "Trentino-AltoAdige";
-		regioni["TRE"] = "Trentino-Alto] Adige";
-		regioni["UMB"] = "Umbria";
-		regioni["VDA"] = "Valle d'Aosta";
-		regioni["VAO"] = "Valle d'Aosta";
-		regioni["VEN"] = "Veneto";
+		var hash = {"Via dello": "", "Via della": "", "Via dei": "", "Via degli": "", "Via delle": "", "Via del": "", "Via di": "", "Viale dello": "", "Viale della": "", "Viale dei": "", "Viale degli": "", "Viale delle": "", "Viale del": "", "Viale": "", "Via": "", "Vicolo": ""};
+		var regioni = {"ABR": "Abruzzo", "BAS": "Basilicata", "CAL": "Calabria", "CAM": "Campania", "EMI": "Emilia-Romagna", "EMR": "Emilia-Romagna", "ERO": "Emilia-Romagna", "FVG": "Friuli-Venezia Giulia", "FRI": "Friuli-Venezia Giulia", "LAZ": "Lazio", "LIG": "Liguria", "LOM": "Lombardia", "MAR": "Marche", "MOL": "Molise", "PIE": "Piemonte", "PUG": "Puglia", "SAR": "Sardegna", "SIC": "Sicilia", "TOS": "Toscana", "TAA": "Trentino-AltoAdige", "TRE": "Trentino-Alto] Adige", "UMB": "Umbria", "VDA": "Valle d'Aosta", "VAO": "Valle d'Aosta", "VEN": "Veneto"};
 		var zona = (geodata["address"].suburb != undefined) ? geodata["address"].suburb : (geodata["address"].bus_stop != undefined) ? geodata["address"].bus_stop.replace(/via /gi, "") : geodata["address"].road.multi_replace(hash);
 		$("#meteo_name").val("Meteo " + $.trim($("#node_name").val()) + " (" + geodata["address"].city + " ~ " + $.trim(zona) + ")");
-		$("#meteo_zone").val($.trim(zona));
+		$("#meteo_zone").attr("disabled", false).val($.trim(zona));
 		$("#meteo_city").attr("disabled", false).val(geodata["address"].city);
 		$("#meteo_region").attr("disabled", false).val(regioni[geodata["address"].state]);
 		$("#meteo_country").attr("disabled", false).val(geodata["address"].country);
@@ -239,8 +199,8 @@ function calculate_meteo_data(latitude, longitude) {
 			$("#meteo_altitude_unit").attr("disabled", false).trigger("liszt:updated");
 		});
 	}, "json");
-}
-function makeid() {
+};
+$.makeid = function() {
 	var text = "",
 	possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	
@@ -248,8 +208,8 @@ function makeid() {
 		text += possible.charAt(Math.floor(Math.random() * possible.length));
 	}
 	return text;
-}
-function install() {
+};
+$.install = function() {
 	if($("#pgp_pubkey").val() != "") {
 		$("#pgp_pubkey").removeClass("error");
 		if($("#user_password").val() == $("#user_password2").val()) {
@@ -264,7 +224,7 @@ function install() {
 				$("#setup_loader > h1").text("Installazione di Ninuxoo...");
 				$("#setup_loader").fadeIn(450, function() {
 					$("#setup_loader > span").text("Creazione del file di config...");
-					var password = makeid();
+					var password = $.makeid();
 					
 					$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 						var encryptedString = $.jCryption.encrypt($("#install_frm").serialize(), password);
@@ -318,7 +278,8 @@ function install() {
 				} else if($("#nas_description").val().length == 0) {
 					$("#nas_description").addClass("error").focus();
 				} else if($("#root_share_dir").val().length == 0) {
-					$("#root_share_dir").addClass("error").focus();
+					$("#root_share_dir").closest(".form-group").addClass("has-error");
+					$("#root_share_dir").focus();
 				} else if($("#shared_paths").val().length == 0) {
 					$("#shared_paths").addClass("error").focus();
 				} else if($("#meteo_name").val().length == 0) {
@@ -342,11 +303,11 @@ function install() {
 			}
 		});
 	}
-}
-function extractEmails(text) {
+};
+$.extractEmails = function(text) {
 	return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
-}
-function getkey() {
+};
+$.getkey = function() {
 	var pu = new getPublicKey($("#pgp_pubkey").val()),
 	fingerprint = pu.fp.match(/.{4}/g);
 	if(pu.vers == -1) return;
@@ -354,7 +315,7 @@ function getkey() {
 	if($("#pgp_key_results").html().length > 0) {
 		$("#pgp_version").text(pu.vers);
 		$("#pgp_user").html('<a href="mailto:' + pu.user + '">' + pu.user.replace("<", "&lt;").replace(">", "&gt;") + '</a>');
-		$("#user_username").val(extractEmails(pu.user));
+		$("#user_username").val($.extractEmails(pu.user));
 		if(fingerprint != null && fingerprint.length > 2) {
 			$("#pgp_fingerprint").html('<span class="fingblock">' + fingerprint.join('</span><span class="fingblock">') + '</span>');
 		} else {
@@ -373,7 +334,7 @@ function getkey() {
 			}
 		}
 	} else {
-		$("#user_username").val(extractEmails(pu.user));
+		$("#user_username").val($.extractEmails(pu.user));
 		if(fingerprint != null && fingerprint.length > 2) {
 			$("#pgp_fingerprint").html('<span class="fingblock">' + fingerprint.join('</span><span class="fingblock">') + '</span>');
 		} else {
@@ -392,4 +353,224 @@ function getkey() {
 			}
 		}
 	}
-}
+};
+$(function () {
+	'use strict';
+	$.fn.show_connection_error = function() {
+		if(this.is("input") && this.attr("type") != "checkbox"){
+			this.addClass("error").after('<span class="error no_connection">&nbsp;&nbsp;&nbsp;Connessione ad internet assente...</span>');
+		}
+		this.attr("disabled", "disabled");
+		if(this.is("select")){
+			this.trigger("liszt:updated");
+		}
+	};
+	$.fn.hide_connection_error = function() {
+		this.attr("disabled", false);
+		if(this.is("select")){
+			this.trigger("liszt:updated");
+		}
+		if(this.hasClass("error")){
+			this.removeClass("error");
+		}
+	};
+	$("#pgp_pubkey").val("");
+	$("#node_name").attr("data-placeholder", "Caricamento della lista dei nodi dal MapServer...");
+	$("#node_map").val("");
+	$("#node_type").val("");
+	$("#nas_name").val("");
+	$("#nas_description").val("");
+	$("#smb_conf_paths").val("");
+	$("#shared_paths").multiselect({
+						buttonClass: 'btn btn-default',
+						maxHeight: 400,
+						enableCaseInsensitiveFiltering: true,
+						filterPlaceholder: "Filtra...",
+						includeSelectAllOption: true,
+						selectAllText: "Seleziona tutte",
+						selectAllValue: 'multiselect-all',
+						buttonWidth: 'auto',
+						buttonText: function(options) {
+							if (options.length == 0) {
+								return 'Nessuna directory selezionata <b class="caret"></b>';
+							} else if (options.length > 6) {
+								return options.length + ' selezionate <b class="caret"></b>';
+							} else {
+								var selected = '';
+								options.each(function() {
+									selected += $(this).text() + ', ';
+								});
+								return selected.substr(0, selected.length -2) + ' <b class="caret"></b>';
+							}
+						}
+					});
+	$("#meteo_name").val("");
+	$("#meteo_city").val("");
+	$("#meteo_zone").val("");
+	$("#meteo_region").val("");
+	$("#meteo_country").val("");
+	$("#meteo_lat").val("");
+	$("#meteo_lng").val("");
+	$("#meteo_owid").val("");
+	$("#meteo_altitude_mt").val("");
+	$("#meteo_altitude_ft").val("");
+	$("#node_name").chosen({
+		disable_search_threshold: 5,
+		no_results_text: "Nessun nodo rilevato per",
+		allow_single_deselect: true
+	});
+	$("#node_type, #meteo_altitude_unit").chosen();
+	$("#db_type").chosen({
+		disable_search_threshold: 5,
+		allow_single_deselect: true
+	});
+	$.check_internet();
+	
+	$("#nlloader").show();
+	var title = $("title").text();
+	$("#nas_name").keyup(function() {
+		if($(this).val().length > 0) {
+			$(this).val($.ucfirst($(this).val()));
+			$("#header h1").text("Setup (" + $(this).val() + ")");
+			$("title").text(title + " (" + $(this).val() + ")");
+			$("#nas_description").val("NAS Rete Comunitaria Ninux - " + $(this).val());
+		} else {
+			$("#header h1").text("Setup");
+			$("title").text(title);
+			$("#nas_description").val("");
+		}
+	});
+	$("#pgp_pubkey").on('keyup change', function(e){
+		$.getkey();
+	});
+	$("#user_password2").change(function() {
+		if($("#user_password").length == 0 || $("#user_password2").length == 0 || $("#user_password").val() != $("#user_password2").val()) {
+			$("#user_password").attr("class", "error");
+			$("#user_password2").attr("class", "error");
+			apprise("Le password non sono identiche", function(r) {
+				$("#user_password").focus();
+			});
+		} else {
+			$("#user_password").toggleClass("error", "", 300);
+			$("#user_password2").toggleClass("error", "", 300);
+		}
+	});
+	$("#root_share_dir").change(function(){
+		$.get_shares($("#root_share_dir").val());
+		$(".multiselect-search").focus();
+	});
+	$("#root_share_dir_refresh_btn").click(function(){
+		$.get_shares($("#root_share_dir").val());
+	});
+	$("#meteo_city").change(function() {
+		$.get("common/include/funcs/_ajax/read_json.php?uri=http://openweathermap.org/data/2.1/find/name?q=" + $(this).val(), function(data) {
+			$("#meteo_owid").val(data.list[0].id);
+		}, "json");
+	});
+	$("#install").click(function() {
+		$.install();
+		return false;
+	});
+	$("#install_meteo").click(function() {
+		if($("#install_meteo > span").hasClass("fa-check-square-o")) {
+			$("#install_meteo > span").removeClass("fa-check-square-o").addClass("fa-square-o");
+			$("#install_meteo_checkbox").attr("checked", false);
+			$("#meteo_name").attr("disabled", true);
+			$("#meteo_city").attr("disabled", true);
+			$("#meteo_zone").attr("disabled", true);
+			$("#meteo_region").attr("disabled", true);
+			$("#meteo_country").attr("disabled", true);
+			$("#meteo_lat").attr("disabled", true);
+			$("#meteo_lng").attr("disabled", true);
+			$("#meteo_owid").attr("disabled", true);
+			$("#meteo_altitude_mt").attr("disabled", true);
+			$("#meteo_altitude_ft").attr("disabled", true);
+			$("#meteo_altitude_unit").attr("disabled", true).trigger("liszt:updated");
+		} else {
+			$("#install_meteo > span").removeClass("fa-square-o").addClass("fa-check-square-o");
+			$("#install_meteo_checkbox").attr("checked", "checked");
+			$("#meteo_name").attr("disabled", false).focus();
+			$("#meteo_city").attr("disabled", false);
+			$("#meteo_zone").attr("disabled", false);
+			$("#meteo_region").attr("disabled", false);
+			$("#meteo_country").attr("disabled", false);
+			$("#meteo_lat").attr("disabled", false);
+			$("#meteo_lng").attr("disabled", false);
+			$("#meteo_owid").attr("disabled", false);
+			$("#meteo_altitude_mt").attr("disabled", false);
+			$("#meteo_altitude_ft").attr("disabled", false);
+			$("#meteo_altitude_unit").attr("disabled", false).trigger("liszt:updated");
+		}
+	});
+	$("#install_database").click(function() {
+		if($("#install_database > span").hasClass("fa-check-square-o")) {
+			$("#install_database > span").removeClass("fa-check-square-o").addClass("fa-square-o");
+			$("#install_database_checkbox").attr("checked", false);
+			$("#db_type").attr("disabled", true);
+			$("#mysql_host").attr("disabled", true);
+			$("#mysql_username").attr("disabled", true);
+			$("#mysql_password").attr("disabled", true);
+			$("#mysql_db_name").attr("disabled", true);
+			$("#mysql_db_table").attr("disabled", true);
+			$("#db_type").attr("disabled", true).trigger("liszt:updated");
+		} else {
+			$("#install_database > span").removeClass("fa-square-o").addClass("fa-check-square-o");
+			$("#install_database_checkbox").attr("checked", "checked");
+			$("#db_type").attr("disabled", false).focus();
+			$("#mysql_host").attr("disabled", false);
+			$("#mysql_username").attr("disabled", false);
+			$("#mysql_password").attr("disabled", false);
+			$("#mysql_db_name").attr("disabled", false);
+			$("#mysql_db_table").attr("disabled", false);
+			$("#db_type").attr("disabled", false).trigger("liszt:updated");
+		}
+	});
+	$("#paranoid_mode").click(function() {
+		if($("#node_name").val().length > 0) {
+			$("#calculate_meteo_data_span").show();
+			$("#meteo_name").attr("disabled", true).val("");
+			$("#meteo_city").attr("disabled", true).val("");
+			$("#meteo_zone").attr("disabled", true).val("");
+			$("#meteo_region").attr("disabled", true).val("");
+			$("#meteo_country").attr("disabled", true).val("");
+			$("#meteo_lat").attr("disabled", true).val("");
+			$("#meteo_lng").attr("disabled", true).val("");
+			$("#meteo_owid").attr("disabled", true).val("");
+			$("#meteo_altitude_mt").attr("disabled", true).val("");
+			$("#meteo_altitude_ft").attr("disabled", true).val("");
+			$("#meteo_altitude_unit").attr("disabled", true).trigger("liszt:updated");
+			$("#install_meteo").attr("checked", false);
+			
+			
+			$("#calculate_meteo_data").click(function() {
+				$("#meteo_name").attr("disabled", false).val("Meteo " + $("#node_name").val());
+				
+				$.calculate_meteo_data($("#tmp_lat").val(), $("#tmp_lng").val());
+				$("#install_meteo").attr("checked", true);
+			});
+		} else {
+			$("#node_name").mousedown();
+		}
+	});
+	$("#show_form").click(function() {
+		$(this + ", #abstract").hide();
+		$("html, body").animate({ scrollTop: ($("form").offset().top) }, 300);
+		$("form.frm").slideDown(300, function() {
+			$("body").prepend('<div id="form_loaded" style="display: none;">true</div>');
+			$("#node_name").attr("disabled", false);
+			$("#pgp_pubkey").focus();
+			$.get_shares($("#root_share_dir").val());
+		});
+		return false;
+	});
+	$("#show_nas_advanced_options").click(function() {
+		$(this).hide();
+		$("#nas_advanced_options").slideDown(300);
+		return false;
+	});
+	$("#show_meteo_advanced_options").click(function() {
+		$(this).hide();
+		$("#meteo_advanced_options").slideDown(300);
+		return false;
+	});
+});

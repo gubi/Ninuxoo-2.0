@@ -90,14 +90,16 @@
 					</li>
 					<?php
 				} else {
-					if(isset($_GET["s"]) && trim($_GET["s"]) == "accedi") {
-						?>
-						<li><a href="javascript:void(0);"><span class="glyphicon glyphicon-log-in"></span></a><span id="login_btn_txt">&nbsp;&nbsp;Accedi</span></li>
-						<?php
-					} else {
-						?>
-						<li><a href="./Accedi"><span class="glyphicon glyphicon-log-in"></span><span id="login_btn_txt">&nbsp;&nbsp;Accedi</span></a></li>
-						<?php
+					if($has_config) {
+						if(isset($_GET["s"]) && trim($_GET["s"]) == "accedi") {
+							?>
+							<li><a href="javascript:void(0);"><span class="glyphicon glyphicon-log-in"></span></a><span id="login_btn_txt">&nbsp;&nbsp;Accedi</span></li>
+							<?php
+						} else {
+							?>
+							<li><a href="./Accedi"><span class="glyphicon glyphicon-log-in"></span><span id="login_btn_txt">&nbsp;&nbsp;Accedi</span></a></li>
+							<?php
+						}
 					}
 				}
 				?>

@@ -1,6 +1,5 @@
 <?php
 header("Content-type: text/plain");
-require_once("json_service.php");
 
 $contents = shell_exec("curl http://map.ninux.org/nodes.json");
 if(strlen($contents) == 0){

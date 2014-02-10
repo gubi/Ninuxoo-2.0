@@ -28,73 +28,75 @@ if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 		shell_exec('openssl rsa -pubout -in common/include/conf/rsa_2048_priv.pem -out common/include/conf/rsa_2048_pub.pem');
 	}
 }
-$GLOBALS["general_settings"] = parse_ini_file("common/include/conf/general_settings.ini", true);
-$GLOBALS["config"] = parse_ini_file("common/include/conf/config.ini", true);
-// Regenerate caching dir
-if($GLOBALS["general_settings"]["caching"]["allow_caching"] == "true") {
-	if(!file_exists($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache")) {
-		mkdir($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache/");
-		chmod($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache/", 0777);
-	}
-}
-if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
-	$page_title = ucfirst(str_replace("_", " ", $_GET["s"]));
-	$page_name = ucfirst(str_replace("_", " ", $_GET["s"]));
-	$page_name_last = "";
-	$search_term = ((strpos($_GET["s"], "Cerca:") !== false) ? str_replace("Cerca:", "", $_GET["s"]) : "");
-	
-	if(isset($_GET["q"]) && trim($_GET["q"]) !== "") {
-		$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["q"]));
-		$page_name = ucfirst(str_replace("_", " ", $_GET["q"]));
-		$page_name_last = ucfirst(str_replace("_", " ", $_GET["s"]));
-		$search_term = ((strpos($_GET["q"], "Cerca:") !== false) ? str_replace("Cerca:", "", $_GET["q"]) : "");
-		
-		if(isset($_GET["id"]) && trim($_GET["id"]) !== "") {
-			$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["id"]));
-			$page_name = ucfirst(str_replace("_", " ", $_GET["id"]));
-			$page_name_last = ucfirst(str_replace("_", " ", $_GET["q"]));
-			$search_term = ((strpos($_GET["id"], "Cerca:") !== false) ? str_replace("Cerca:", "", $_GET["id"]) : "");
+if(file_exists("common/include/conf/general_settings.ini")) {
+	$GLOBALS["general_settings"] = parse_ini_file("common/include/conf/general_settings.ini", true);
+	$GLOBALS["config"] = parse_ini_file("common/include/conf/config.ini", true);
+	// Regenerate caching dir
+	if($GLOBALS["general_settings"]["caching"]["allow_caching"] == "true") {
+		if(!file_exists($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache")) {
+			mkdir($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache/");
+			chmod($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache/", 0777);
 		}
 	}
-	if(strlen($search_term) > 0 && $page_name_last !== "Ricerca avanzata") {
-		$page_title = "Risultati della ricerca per \"" . $search_term . "\"";
-		$GLOBALS["breadcrumb"] = "Ricerca di \"" . $search_term . "\"";
-	}
-	if(strpos($_GET["s"], "Scheda:") !== false || strpos($_GET["s"], "Esplora:") !== false) {
-		require_once("common/include/classes/rsa.class.php");
+	if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {
+		$page_title = ucfirst(str_replace("_", " ", $_GET["s"]));
+		$page_name = ucfirst(str_replace("_", " ", $_GET["s"]));
+		$page_name_last = "";
+		$search_term = ((strpos($_GET["s"], "Cerca:") !== false) ? str_replace("Cerca:", "", $_GET["s"]) : "");
 		
-		$rsa = new rsa();
-		$hash = rawurldecode(str_replace(array("/Scheda:?", "/Esplora:?"), "", $_SERVER["REQUEST_URI"]));
-		$filepath = trim(base64_decode($hash));
-		$tk = explode("://", $filepath);
-		$GLOBALS["dest_token"] = $tk[0];
-		if($GLOBALS["dest_token"] == $rsa->my_token()) {
-			$file = str_replace("///", "/", $GLOBALS["config"]["NAS"]["root_share_dir"] . "/" . $tk[1]);
-			$GLOBALS["root_dir"] = $GLOBALS["config"]["NAS"]["root_share_dir"];
-			$info = mb_pathinfo($file);
-		} else {
-			$GLOBALS["root_dir"] = "";
-			// Non è un file interno
-			// Chiedo in mdns
+		if(isset($_GET["q"]) && trim($_GET["q"]) !== "") {
+			$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["q"]));
+			$page_name = ucfirst(str_replace("_", " ", $_GET["q"]));
+			$page_name_last = ucfirst(str_replace("_", " ", $_GET["s"]));
+			$search_term = ((strpos($_GET["q"], "Cerca:") !== false) ? str_replace("Cerca:", "", $_GET["q"]) : "");
+			
+			if(isset($_GET["id"]) && trim($_GET["id"]) !== "") {
+				$page_title .= " &rsaquo; " . ucfirst(str_replace("_", " ", $_GET["id"]));
+				$page_name = ucfirst(str_replace("_", " ", $_GET["id"]));
+				$page_name_last = ucfirst(str_replace("_", " ", $_GET["q"]));
+				$search_term = ((strpos($_GET["id"], "Cerca:") !== false) ? str_replace("Cerca:", "", $_GET["id"]) : "");
+			}
 		}
-		$filename = $info["basename"];
-		
-		if(strpos($_GET["s"], "Scheda:") !== false) {
-			$search_term = $filename;
-			$GLOBALS["breadcrumb"] = "Dettagli sul file \"" . $search_term . "\"";
-			$page_title = "Dettagli del file per \"" . $search_term . "\"";
-		} else {
-			$search_term = $filename;
-			$GLOBALS["breadcrumb"] = "Directory \"" . $search_term . "\"";
-			$page_title = "Esplorazione della directory \"" . $search_term . "\"";
+		if(strlen($search_term) > 0 && $page_name_last !== "Ricerca avanzata") {
+			$page_title = "Risultati della ricerca per \"" . $search_term . "\"";
+			$GLOBALS["breadcrumb"] = "Ricerca di \"" . $search_term . "\"";
 		}
+		if(strpos($_GET["s"], "Scheda:") !== false || strpos($_GET["s"], "Esplora:") !== false) {
+			require_once("common/include/classes/rsa.class.php");
+			
+			$rsa = new rsa();
+			$hash = rawurldecode(str_replace(array("/Scheda:?", "/Esplora:?"), "", $_SERVER["REQUEST_URI"]));
+			$filepath = trim(base64_decode($hash));
+			$tk = explode("://", $filepath);
+			$GLOBALS["dest_token"] = $tk[0];
+			if($GLOBALS["dest_token"] == $rsa->my_token()) {
+				$file = str_replace("///", "/", $GLOBALS["config"]["NAS"]["root_share_dir"] . "/" . $tk[1]);
+				$GLOBALS["root_dir"] = $GLOBALS["config"]["NAS"]["root_share_dir"];
+				$info = mb_pathinfo($file);
+			} else {
+				$GLOBALS["root_dir"] = "";
+				// Non è un file interno
+				// Chiedo in mdns
+			}
+			$filename = $info["basename"];
+			
+			if(strpos($_GET["s"], "Scheda:") !== false) {
+				$search_term = $filename;
+				$GLOBALS["breadcrumb"] = "Dettagli sul file \"" . $search_term . "\"";
+				$page_title = "Dettagli del file per \"" . $search_term . "\"";
+			} else {
+				$search_term = $filename;
+				$GLOBALS["breadcrumb"] = "Directory \"" . $search_term . "\"";
+				$page_title = "Esplorazione della directory \"" . $search_term . "\"";
+			}
+		}
+	} else {
+		$page_title = "";
+		$search_term = "";
 	}
-} else {
-	$page_title = "";
-	$search_term = "";
-}
 
-$advanced_pages = array("accedi", "admin", "dashboard", "sito_locale");
+	$advanced_pages = array("accedi", "admin", "dashboard", "sito_locale");
+}
 // Check if config exist else start setup
 $has_config = (!file_exists("common/include/conf/config.ini")) ? false : true;
 if(!$has_config) {
@@ -108,7 +110,6 @@ if(!$has_config) {
 	if(isset($_GET["setup"]) || isset($_GET["s"]) && trim($_GET["s"]) == "login" && isset($_COOKIE["n"])) {
 		header("Location: ./");
 	}
-	$NAS_absolute_uri = preg_replace("{/$}", "", $GLOBALS["config"]["NAS"]["http_root"]);
 	$NAS_IP = $GLOBALS["config"]["NAS"]["ipv4"];
 	
 	$GLOBALS["search_term"] = $search_term;
@@ -151,6 +152,7 @@ $logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (
 	<link rel="stylesheet" href="common/css/bootstrap.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/js/font-awesome/css/font-awesome.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/css/picol-font-awesome.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="common/css/entypo.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/css/main.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="common/css/device.css" type="text/css" media="screen" />
 	<link rel="search" type="application/opensearchdescription+xml" title="Ninuxoo" href="osd.xml" />

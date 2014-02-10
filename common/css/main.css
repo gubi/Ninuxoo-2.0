@@ -1030,6 +1030,16 @@ td.trusted.selected:after, td.untrusted.selected:after {
 #explore_content .item.list-group-item:after {
 	clear: both;
 }
+#pgp_pubkey {
+	background: url("../media/img/gnupg_logo_bg.png") 20px 20px no-repeat;
+	background-size: 100px;
+}
+.box > .icon { text-align: center; position: relative; }
+.box > .icon > .image { position: relative; z-index: 2; margin: auto; width: 125px; height: 125px; border: 8px solid white; line-height: 150px; border-radius: 50%; vertical-align: middle; display: inline-block; }
+.box > .icon > .image > span { font-size: 63px !important; color: #fff !important; }
+.box > .icon > .description { margin-top: -45px; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; }
+.box > .icon > .description > .more { margin-top: 20px; }
+.box .space { height: 30px; }
 
 /**
  * RECT FOR BACKGROUND COLOUR
