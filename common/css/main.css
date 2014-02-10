@@ -117,7 +117,6 @@ form.frm {
 	display: block;
 	font-weight: bold;
 	margin: 1em 0 5px 0;
-	color: #666;
 	clear: both;
 	white-space: pre;
 }
@@ -1034,10 +1033,14 @@ td.trusted.selected:after, td.untrusted.selected:after {
 	background: url("../media/img/gnupg_logo_bg.png") 20px 20px no-repeat;
 	background-size: 100px;
 }
+.fingblock { margin: 0 2px; }
+.fingblock:first-child { margin-left: 0; }
+.fingblock:last-child { margin-right: 0; }
 .box > .icon { text-align: center; position: relative; }
 .box > .icon > .image { position: relative; z-index: 2; margin: auto; width: 125px; height: 125px; border: 8px solid white; line-height: 150px; border-radius: 50%; vertical-align: middle; display: inline-block; }
-.box > .icon > .image > span { font-size: 63px !important; color: #fff !important; }
+.box > .icon > .image > span { font-size: 63px !important; color: #fff !important; text-shadow: 0 0 9px #333; }
 .box > .icon > .description { margin-top: -45px; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; }
+.box > .icon .description h3 { text-shadow: 0 0 6px #aaa; }
 .box > .icon > .description > .more { margin-top: 20px; }
 .box .space { height: 30px; }
 

@@ -144,7 +144,7 @@ $.get_shares = function(remote_nas) {
 				if(!result["alert"]) {
 					var paths = "";
 					$.each(result["shares"], function(item, data) {
-						paths += '<option value="' + data + '">' + data + "</option>\n";
+						paths += '<option value="' + data + '" selected>' + data + "</option>\n";
 						$("#shared_paths").html(paths).attr("disabled", false).multiselect("rebuild");
 						if($("#root_share_dir_error").length > 0) {
 							$("#root_share_dir").removeClass("text-block");
@@ -227,7 +227,7 @@ $.install = function() {
 					var password = $.makeid();
 					
 					$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-						var encryptedString = $.jCryption.encrypt($("#install_frm").serialize(), password);
+						var encryptedString = $.jCryption.encrypt($("#install_frm").serialize() + "&shared_paths=" + $("#shared_paths").val().join(","), password);
 						
 						$.ajax({
 							url: "common/include/funcs/_ajax/decrypt.php",
@@ -382,28 +382,29 @@ $(function () {
 	$("#nas_description").val("");
 	$("#smb_conf_paths").val("");
 	$("#shared_paths").multiselect({
-						buttonClass: 'btn btn-default',
-						maxHeight: 400,
-						enableCaseInsensitiveFiltering: true,
-						filterPlaceholder: "Filtra...",
-						includeSelectAllOption: true,
-						selectAllText: "Seleziona tutte",
-						selectAllValue: 'multiselect-all',
-						buttonWidth: 'auto',
-						buttonText: function(options) {
-							if (options.length == 0) {
-								return 'Nessuna directory selezionata <b class="caret"></b>';
-							} else if (options.length > 6) {
-								return options.length + ' selezionate <b class="caret"></b>';
-							} else {
-								var selected = '';
-								options.each(function() {
-									selected += $(this).text() + ', ';
-								});
-								return selected.substr(0, selected.length -2) + ' <b class="caret"></b>';
-							}
-						}
-					});
+		buttonClass: 'btn btn-default',
+		maxHeight: 400,
+		enableCaseInsensitiveFiltering: true,
+		filterPlaceholder: "Filtra...",
+		includeSelectAllOption: true,
+		selectAllText: "Seleziona tutte",
+		selectAllValue: 'multiselect-all',
+		buttonWidth: 'auto',
+		buttonContainer: '<div class="btn-group" />',
+		buttonText: function(options) {
+			if (options.length == 0) {
+				return 'Nessuna directory selezionata <b class="caret"></b>';
+			} else if (options.length > 6) {
+				return options.length + ' selezionate <b class="caret"></b>';
+			} else {
+				var selected = '';
+				options.each(function() {
+					selected += $(this).text() + ', ';
+				});
+				return selected.substr(0, selected.length -2) + ' <b class="caret"></b>';
+			}
+		}
+	});
 	$("#meteo_name").val("");
 	$("#meteo_city").val("");
 	$("#meteo_zone").val("");
@@ -428,7 +429,7 @@ $(function () {
 	
 	$("#nlloader").show();
 	var title = $("title").text();
-	$("#nas_name").keyup(function() {
+	$("#nas_name").bind("keyup change", function() {
 		if($(this).val().length > 0) {
 			$(this).val($.ucfirst($(this).val()));
 			$("#header h1").text("Setup (" + $(this).val() + ")");

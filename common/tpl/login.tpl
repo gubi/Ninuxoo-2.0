@@ -1,8 +1,8 @@
 <script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
-<script type="text/javascript" src="common/js/include/setup.js"></script>
 <?php
 if(!isset($_GET["q"]) || trim($_GET["q"]) !== "Password_dimenticata") {
 	?>
+	<script type="text/javascript" src="common/js/include/common.js"></script>
 	<script type="text/javascript" src="common/js/include/login.js"></script>
 	<div class="row">
 		<div id="loader"></div>

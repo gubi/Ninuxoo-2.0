@@ -16,7 +16,7 @@ $output["api_dir"] = str_replace("//", "/", $output["api_dir"] . "/");
 	$mdns = new mdns();
 	$owner_key = $mdns->get_owner_key($output["user_username"]);
 	$owner = $mdns->get_owner($owner_key);
-	
+
 $user_conf = '[User]' . "\n";
 $user_conf .= 'name = "' . $owner["name"] . '"' . "\n";
 $user_conf .= 'key = "' . $owner_key . '"' . "\n";
@@ -28,12 +28,20 @@ $user_conf .= '[Notification]' . "\n";
 $user_conf .= 'new_files = "true"' . "\n";
 $user_conf .= 'new_chat_messages = "true"' . "\n\n";
 $user_conf .= '[Chat]' . "\n";
+$user_conf .= 'nick = ""' . "\n";
+$user_conf .= 'personal_message = ""' . "\n\n";
 $user_conf .= 'show_ip = "false"' . "\n";
 $user_conf .= 'refresh_interval = 30000' . "\n";
+$user_conf .= 'chat_status = "online"' . "\n";
+$user_conf .= 'chat_window = "floating"' . "\n\n";
+$user_conf .= 'panel_position = "right"' . "\n";
+$user_conf .= 'panel_status = "open"' . "\n";
+$user_conf .= 'panel_width = 250' . "\n";
 
 $general_settings = '[login]' . "\n";
 $general_settings .= 'session_length = 3600' . "\n";
-$general_settings .= 'allow_user_registration = "true"' . "\n\n";
+$general_settings .= 'allow_user_registration = "true"' . "\n";
+$general_settings .= 'allow_browser_save = "true"' . "\n\n";
 $general_settings .= 'admin[] = "' . sha1($output["user_username"]) . '"' . "\n\n";
 $general_settings .= '[searches]' . "\n";
 $general_settings .= 'show_ip = "false"' . "\n";
@@ -50,6 +58,7 @@ $general_settings .= 'scan_video_name_regex = ""' . "\n\n";
 $general_settings .= '[caching]' . "\n";
 $general_settings .= 'allow_caching = "true"' . "\n";
 $general_settings .= 'save_semantic_data = "true"' . "\n";
+$general_settings .= 'semantic_caching_refresh = 30' . "\n";
 $general_settings .= 'save_audio_spectum = "true"' . "\n";
 
 
@@ -66,7 +75,7 @@ $config_ini .= 'root_share_dir = "' . $output["root_share_dir"] . '"' . "\n";
 $config_ini .= 'root_dir = "' . $output["server_root"] . '"' . "\n";
 $config_ini .= 'listing_file_dir = "' . $output["api_dir"] . '"' . "\n\n";
 $config_ini .= ';Public shared directories array' . "\n";
-$shared_dirs = explode("\n", trim($output["shared_paths"]));
+$shared_dirs = explode(",", trim($output["shared_paths"]));
 foreach($shared_dirs as $kshared => $shared) {
 	$info = pathinfo($shared);
 	$config_ini .= 'nas_shares[] = "/' . trim($info["basename"]) . '"' . "\n" . (($kshared == (count($shared_dirs) - 1)) ? "\n" : "");
@@ -140,15 +149,15 @@ if($fp = @fopen($output["server_root"] . "common/include/conf/config.ini", "w"))
 		fwrite($fg, $general_settings . PHP_EOL);
 		fclose($fg);
 		$log->write("notice", "[install] The new file 'general_settings.ini' is located in 'common/include/conf/'");
-		mkdir($output["root_share_dir"] . ".ninuxoo_cache/");
-		chmod($output["root_share_dir"] . ".ninuxoo_cache/", 0777);
+		@mkdir($output["root_share_dir"] . ".ninuxoo_cache/");
+		@chmod($output["root_share_dir"] . ".ninuxoo_cache/", 0777);
 		
 		// User login file
 		if(!file_exists($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]))) {
-			mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/");
-			chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/", 0777);
-			mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/");
-			chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/", 0777);
+			@mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/");
+			@chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/", 0777);
+			@mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/");
+			@chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/", 0777);
 		}
 		if($fu = @fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/user.conf", "w")) {
 			fwrite($fu, $user_conf . PHP_EOL);

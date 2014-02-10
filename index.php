@@ -29,6 +29,8 @@ if(!file_exists("common/include/conf/rsa_2048_priv.pem")) {
 	}
 }
 if(file_exists("common/include/conf/general_settings.ini")) {
+	@chmod("common/include/conf/general_settings.ini", 0777);
+	@chmod("common/include/conf/config.ini", 0777);
 	$GLOBALS["general_settings"] = parse_ini_file("common/include/conf/general_settings.ini", true);
 	$GLOBALS["config"] = parse_ini_file("common/include/conf/config.ini", true);
 	// Regenerate caching dir
@@ -123,8 +125,9 @@ if(isset($_COOKIE["n"])) {
 		$user["name"] = strstr($c[0], " ", true);
 		$user["email"] = $c[1];
 		$user["key"] = "0x" . $c[2];
-	$username = $c[1];
+	$username = trim($c[1]);
 	$GLOBALS["user_settings"] = parse_ini_file("common/include/conf/user/" . sha1($username) . "/user.conf", true);
+	@chmod("common/include/conf/user/" . sha1($username) . "/user.conf", 0777);
 	
 	if(in_array(sha1($username), $GLOBALS["general_settings"]["login"]["admin"])) {
 		$GLOBALS["is_admin"] = true;

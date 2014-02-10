@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="common/js/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen" />
 <script src="common/js/include/chat.js"></script>
 
-<span id="chat_panel_width"><?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?></span>
+<span id="chat_panel_width" style="display: none;"><?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?></span>
 <div id="chat" class="ui-widget-content<?php print (($GLOBALS["user_settings"]["Chat"]["panel_status"] == "closed") ? " closed" : " open") ?><?php print " " . $GLOBALS["user_settings"]["Chat"]["chat_window"] ?>" style="width: <?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px; right: -<?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px;">
 	<div class="panel panel-default right col-lg-2" style="width: <?php print $GLOBALS["user_settings"]["Chat"]["panel_width"]; ?>px;">
 		<div class="panel-heading">
@@ -30,7 +30,15 @@
 				?>
 				<span id="user_id" style="display: none;"><?php print md5($GLOBALS["user_settings"]["User"]["email"] . $GLOBALS["user_settings"]["Chat"]["personal_message"]); ?></span>
 				<span id="user_email" style="display: none;"><?php print $GLOBALS["user_settings"]["User"]["email"]; ?></span>
-				<a href="javascript:void(0);" class="btn-default" id="change_status_btn" style="margin-top: -5px; padding: 5px 10px;" data-toggle="dropdown"><?php print $status; ?>&nbsp;<span class="caret"></span></a> <?php print $GLOBALS["user_settings"]["Chat"]["nick"]; ?>
+				<?php
+				if(strlen($GLOBALS["user_settings"]["Chat"]["nick"]) > 0) {
+					$nick = $GLOBALS["user_settings"]["Chat"]["nick"];
+				} else {
+					$name = explode(" ", $GLOBALS["user_settings"]["User"]["name"]);
+					$nick = trim($name[0]);
+				}
+				?>
+				<a href="javascript:void(0);" class="btn-default" id="change_status_btn" style="margin-top: -5px; padding: 5px 10px;" data-toggle="dropdown"><?php print $status; ?>&nbsp;<span class="caret"></span></a> <?php print $nick; ?>
 				<ul class="dropdown-menu dropdown-menu-right">
 					<li <?php print (($GLOBALS["user_settings"]["Chat"]["chat_status"] == "online") ? 'class="active"' : "") ?>><a class="chat_status" id="chat_online" href="javascript:void(0);"><?php print $status_online; ?></a></li>
 					<li <?php print (($GLOBALS["user_settings"]["Chat"]["chat_status"] == "do_not_disturb") ? 'class="active"' : "") ?>><a class="chat_status" id="chat_do_not_disturb" href="javascript:void(0);"><?php print $status_do_not_disturb; ?></a></li>

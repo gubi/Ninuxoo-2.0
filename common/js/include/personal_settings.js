@@ -20,7 +20,6 @@ $(document).ready(function() {
 		}
 		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 			var encryptedString = $.jCryption.encrypt($("#personal_settings_frm").serialize(), password);
-			console.log($("#personal_settings_frm").serialize());
 			
 			$.ajax({
 				url: "common/include/funcs/_ajax/decrypt.php",

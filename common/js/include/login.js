@@ -1,8 +1,10 @@
 function login() {
 	if($("#username").val() !== "") {
 		if($("#password").val() !== "") {
+			
 			$("#page_loader").fadeIn(150);
-			var password = makeid();	
+			
+			var password = makeid();
 			$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 				var encryptedString = $.jCryption.encrypt($("#login_frm").serialize(), password);
 				
@@ -36,7 +38,7 @@ function login() {
 		$("#username").addClass("error").focus();
 	}
 	return false;
-}
+};
 $(document).ready(function() {
 	$("#username, #password").on("keyup change", function() {
 		if($(this).val().length > 0) {
