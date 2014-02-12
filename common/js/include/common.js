@@ -120,14 +120,14 @@ $.strpos = function(haystack, needle, offset) { var i = (haystack + "").indexOf(
 $.download = function(url, data, method){ if( url && data ){ data = typeof data == 'string' ? data : jQuery.param(data); var inputs = ''; jQuery.each(data.split('&'), function(){ var pair = this.split('='); inputs+='<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; }); jQuery('<form action="'+ url +'" method="'+ (method||'post') +'">'+inputs+'</form>').appendTo('body').submit().remove(); }; };
 $.chat_panel = function(status) {
 	if (status == "close") {
-		$("#chat_btn").attr("data-original-title", "Apri il pannello delle chat");
+		$(".chat_btn").attr("data-original-title", "Apri il pannello delle chat");
 		$(".fa-angle-left").fadeIn(300);
 		$(".fa-angle-right").fadeOut(300);
 		$("#chat").animate({"right": "-" + $("#chat").css("width")}).switchClass("open", "closed");
 		$("body").animate({"left": "0px"});
 		return "closed";
 	} else {
-		$("#chat_btn").attr("data-original-title", "Chiudi il pannello delle chat");
+		$(".chat_btn").attr("data-original-title", "Chiudi il pannello delle chat");
 		$(".fa-angle-left").fadeOut(300);
 		$(".fa-angle-right").fadeIn(300);
 		$("#chat").animate({"right": "0px"}).switchClass("closed", "open");
@@ -317,21 +317,22 @@ function check_notify(active, autoupdate) {
 		}
 	});
 	
-	$("#panel_position_btn").tooltip("destroy").tooltip({placement: "bottom"});
-	$("#chat_btn").tooltip("destroy").tooltip({placement: "auto", container: "body"});
+	$("#panel_position_btn").tooltip("destroy").tooltip({placement: "bottom", container: "#chat"});
+	$("body .chat_btn").tooltip("destroy").tooltip({placement: "auto", container: "body", delay: {show: 1000, hide: 0}});
+	$("#chat .chat_btn").tooltip("destroy").tooltip({placement: "auto", container: "#chat", delay: {show: 1000, hide: 0}});
 	$("#panel_position_btn").click(function() {
 		var panel_window = "";
 		
 		if($("#chat").hasClass("floating")) {
 			panel_window = "fixed";
-			$("#panel_position_btn").attr("data-original-title", "Aggancia alla pagina").tooltip("destroy").tooltip({placement: "bottom"});
-			$("#panel_position_btn > span").switchClass("fa-caret-square-o-left", "fa-caret-square-o-up");
+			$("#panel_position_btn").attr("data-original-title", "Aggancia alla pagina").tooltip("destroy").tooltip({placement: "bottom", container: "#chat"});
+			$("#panel_position_btn > span").removeClass("fa-rotate-180");
 			$("#chat").switchClass("floating", "fixed");
 			$("body").animate({"left": "0px"}, 50);
 		} else {
 			panel_window = "floating";
-			$("#panel_position_btn").attr("data-original-title", "Sgancia dalla pagina").tooltip("destroy").tooltip({placement: "bottom"});
-			$("#panel_position_btn > span").switchClass("fa-caret-square-o-up", "fa-caret-square-o-left");
+			$("#panel_position_btn").attr("data-original-title", "Sgancia dalla pagina").tooltip("destroy").tooltip({placement: "bottom", container: "#chat"});
+			$("#panel_position_btn > span").addClass("fa-rotate-180");
 			$("#chat").switchClass("fixed", "floating");
 			$("body").animate({"left": "-" + $("#chat").css("width")}, 50);
 		}
@@ -352,7 +353,7 @@ function check_notify(active, autoupdate) {
 	if($("#chat").hasClass("open")) {
 		$.chat_panel("open");
 	}
-	$("#chat_btn").click(function() {
+	$(".chat_btn").click(function() {
 		if($("#chat").hasClass("open")) {
 			var panel_status = $.chat_panel("close");
 		} else {
