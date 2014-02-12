@@ -24,7 +24,7 @@
 			if(isset($_COOKIE["n"])) {
 				?>
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="javascript:void(0);" id="chat_btn" class="<?php print ($GLOBALS["user_settings"]["Notification"]["new_chat_messages"] == "true") ? "notify" : ""; ?>" style="padding-left: 5px;" title="<?php print ($GLOBALS["user_settings"]["Chat"]["panel_status"] == "open") ? "Chiudi il pannello delle chat" : "Apri il pannello delle chat"; ?>"><span class="arrow"><span class="fa fa-angle-left" style="padding-right: 5px;"></span></span><span class="fa fa-comment fa-flip-horizontal"></span><span class="arrow"><span class="fa fa-angle-right" style="display: none;"></span></span></a></li>
+					<li><a href="javascript:void(0);" class="chat_btn <?php print ($GLOBALS["user_settings"]["Notification"]["new_chat_messages"] == "true") ? "notify" : ""; ?>" style="padding-left: 5px;" title="<?php print ($GLOBALS["user_settings"]["Chat"]["panel_status"] == "open") ? "Chiudi il pannello delle chat" : "Apri il pannello delle chat"; ?>"><span class="arrow"><span class="fa fa-angle-left" style="padding-right: 5px;"></span></span><span class="fa fa-comment fa-flip-horizontal"></span><span class="arrow"><span class="fa fa-angle-right" style="display: none;"></span></span></a></li>
 				</ul>
 				<?php
 			}

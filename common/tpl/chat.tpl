@@ -46,7 +46,10 @@
 					<li class="divider"></li>
 					<li><a href="http://192.168.36.210/Dashboard/Impostazioni_personali#Chat"><span class="fa fa-gear"></span>&nbsp;Impostazioni...</a></li>
 				</ul>
-				<a class="btn-default right" id="panel_position_btn" href="javascript:void(0)" title="<?php print ($GLOBALS["user_settings"]["Chat"]["chat_window"] == "floating") ? "Sgancia dalla pagina" : "Aggancia alla pagina"; ?>"><span class="fa<?php print ($GLOBALS["user_settings"]["Chat"]["chat_window"] == "floating") ? " fa-caret-square-o-left" : " fa-caret-square-o-up"; ?> text-muted"></span></a>
+				<a class="btn-default right" id="panel_position_btn" href="javascript:void(0)" title="<?php print ($GLOBALS["user_settings"]["Chat"]["chat_window"] == "floating") ? "Sgancia dalla pagina" : "Aggancia alla pagina"; ?>"><span class="fa fa-external-link-square<?php print ($GLOBALS["user_settings"]["Chat"]["chat_window"] == "floating") ? " fa-rotate-180" : ""; ?> text-muted"></span></a>
+				<a href="javascript:void(0);" class="btn-default right chat_btn" title="Chiudi il pannello delle chat">
+					<span class="fa fa-fw fa-caret-square-o-right text-muted" style="padding-right: 5px;"></span>
+				</a>
 			</div>
 		</div>
 		<div class="panel-body" id="online_peoples"></div>
