@@ -1,4 +1,4 @@
-function check_nas(time) {
+$.check_nas = function(time) {
 	time = parseInt(time);
 	
 	var minutes_txt = "minuti";
@@ -16,7 +16,7 @@ function check_nas(time) {
 		if (countdown <= 0) {
 			clearInterval(timerId);
 			setTimeout(function() {
-				check_nas(time);
+				$.check_nas(time);
 			}, 1000);
 		}
 		if(timer == "0:0") {
@@ -42,8 +42,8 @@ function check_nas(time) {
 						if(item !== "finded") {
 							if($("tr#nas_" + item).length == 0) {
 								$("#finded_nas tr#no_nas").remove();
-								$("#finded_nas").append('<tr id="nas_' + item + '"><td class="status">' + finded["img"] + '</td><td class="hostname"><i>' + finded["hostname"] + '</i><input type="hidden" class="token" value="' + finded["token"] + '" /></td><td class="owner"><a title="Contatta il proprietario di questo NAS" href="mailto:' + finded["owner"]["email"] + '">' + finded["owner"]["key"] + '</a></td><td style="color: #999;">' + finded["geo_zone"] + '</td><td style="color: #999;">' + finded["reachability"] + '</td><td class="mark_btns" style="color: #999;"><table cellpadding="0" cellspacing="0" class="mark"><tr><td class="' + finded["status_t"] + '"></td><td class="' + finded["status_u"] + '"></td></tr></table></td></tr>');
-								linked_nas_functions();
+								$("#finded_nas > tbody").append('<tr id="nas_' + item + '"><td class="status">' + finded["img"] + '</td><td class="hostname"><i>' + finded["hostname"] + '</i><input type="hidden" class="token" value="' + finded["token"] + '" /></td><td class="owner"><a title="Contatta il proprietario di questo NAS" href="mailto:' + finded["owner"]["email"] + '">' + finded["owner"]["key"] + '</a></td><td style="color: #999;">' + finded["geo_zone"] + '</td><td style="color: #999;">' + finded["reachability"] + '</td><td class="mark_btns" style="color: #999;"><table cellpadding="0" cellspacing="0" class="mark"><tr><td class="' + finded["status_t"] + '"></td><td class="' + finded["status_u"] + '"></td></tr></table></td></tr>');
+								$.linked_nas_functions();
 							}
 						}
 					});
@@ -55,7 +55,7 @@ function check_nas(time) {
 		});
 	});
 }
-function linked_nas_functions() {
+$.linked_nas_functions = function() {
 	$(".mark td").click(function() {
 		var token = $(this).closest("table").attr("id"),
 		main = $(this).closest("table").parent("td").parent("tr"),
@@ -74,7 +74,7 @@ function linked_nas_functions() {
 		}
 		switch($(this).attr("class")) {
 			case "trusted selected":
-				apprise('<p>Il <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b> appartiene a ' + owner + ', lo conosci?<br />Mandagli un messaggio per farti riconoscere!</p><p>Gli verr&agrave; inviata un\'e-mail e se accettarer&agrave; i vostri NAS si collegheranno.</p>', {title: "Heylà invia un messaggio", icon: "success", textCancel: "Annulla", textOk: "Invia &rsaquo;", message: "true"}, function(r) {
+				apprise('<p>Il <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b> appartiene a "' + owner + '", lo conosci?<br />Mandagli un messaggio per farti riconoscere!</p><p>Gli verr&agrave; inviata un\'e-mail e se accetter&agrave; i vostri NAS si collegheranno.</p>', {title: "Heylà invia un messaggio", icon: "success", fa_icon: "fa-sign-in", textCancel: "Annulla", confirm: "true", textOk: "Invia &rsaquo;", message: true}, function(r) {
 					if(r) {
 						$("#page_loader").fadeIn(300);
 						var password = makeid();
@@ -96,11 +96,8 @@ function linked_nas_functions() {
 											alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
 										}
 									} else {
-										/*
 										$("#page_loader").fadeOut(300);
-										$("#original_name").val($("#config_name").val());
-										$("#remove_btn").attr("disabled", false);
-										*/
+										$("#apprise").modal("hide");
 									}
 								}
 							});
@@ -109,7 +106,8 @@ function linked_nas_functions() {
 							alert("Si &egrave; verificato un errore durante il processo.", {icon: "error", title: "Ouch!"});
 						});
 					} else {
-						main.find(".selected").removeClass("selected");
+						$("#page_loader").fadeOut(300);
+						main.find("td.selected").removeClass("selected");
 						if(current_status != "") {
 							main.find("td." + current_status).addClass("selected");
 						}
@@ -119,9 +117,9 @@ function linked_nas_functions() {
 				image.attr("src", "common/media/img/mainframe_settings_32_333.png");
 				break;
 			case "untrusted selected":
-				apprise('<p>Il <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b> ver&agrave; definitivamente scollegato e sar&agrave; marcato come &quot;untrusted&quot;.<br />Non potr&agrave; più effettuare ricerche su questo device n&eacute; acquisire alcun tipo di API.<br />Finch&eacute; sar&agrave; marcato come tale, tutte le richieste di connessione da parte sua<br />verranno rifiutate e non saranno pi&ugrave; notificate.</p><p>Si &egrave; sicuri di voler continuare?</p>', {title: "Rimozione della fiducia", icon: "warning", textCancel: "Annulla", textOk: "Prosegui &rsaquo;", confirm: "true"}, function(r) {
+				apprise('<p>Il <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b> ver&agrave; definitivamente scollegato e sar&agrave; marcato come &quot;untrusted&quot;.<br />Ci&ograve; significa che finch&eacute; sar&agrave; marcato come tale non si potranno pi&ugrave; effettuare ricerche su questo device n&eacute; acquisire alcun tipo di API, tutte le richieste di connessione da parte sua verranno rifiutate e non saranno pi&ugrave; notificate.</p><p>Si &egrave; sicuri di voler continuare?</p>', {title: "Rimozione della fiducia", icon: "warning", textCancel: "Annulla", textOk: "Prosegui &rsaquo;", confirm: "true"}, function(r) {
 					if(r) {
-						apprise('Rimuovo la fiducia al <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b>...', {progress: "true"});
+						apprise('Rimuovo la fiducia al <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b>...', {title: "Rimozione della fiducia", icon: "warning", progress: "true"});
 						
 						$("#page_loader").fadeIn(300);
 						var password = makeid();
@@ -141,14 +139,12 @@ function linked_nas_functions() {
 										var risp = response["data"].split("::");
 										if(risp[0] == "error") {
 											$("#page_loader").fadeOut(300);
-											$("#aOverlay").fadeOut(300);
-											$(".appriseOuter").fadeOut(300);
+											$("#apprise").modal("hide");
 											alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
 										}
 									} else {
 										$("#page_loader").fadeOut(300);
-										$("#aOverlay").fadeOut(300);
-										$(".appriseOuter").fadeOut(300);
+										$("#apprise").modal("hide");
 									}
 								}
 							});
@@ -189,21 +185,18 @@ function linked_nas_functions() {
 										var risp = response["data"].split("::");
 										if(risp[0] == "error") {
 											$("#page_loader").fadeOut(300);
-											$("#aOverlay").fadeOut(300);
-											$(".appriseOuter").fadeOut(300);
+											$("#apprise").modal("hide");
 											alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
 										}
 									} else {
 										$("#page_loader").fadeOut(300);
-										$("#aOverlay").fadeOut(300);
-										$(".appriseOuter").fadeOut(300);
+										$("#apprise").modal("hide");
 									}
 								}
 							});
 						}, function() {
 							$("#page_loader").fadeOut(300);
-							$("#aOverlay").fadeOut(300);
-							$(".appriseOuter").fadeOut(300);
+							$("#apprise").modal("hide");
 							alert("Si &egrave; verificato un errore durante il processo.", {icon: "error", title: "Ouch!"});
 						});
 					} else {
@@ -216,9 +209,9 @@ function linked_nas_functions() {
 				break;
 		}
 	});
-}
+};
 $(document).ready(function() {
-	check_nas(1);
+	$.check_nas(1);
 	
 	$("#add_nas_ip").click(function() {
 		apprise("Inserisci l'indirizzo IP del NAS", {"input": true}, function(r){
@@ -228,13 +221,11 @@ $(document).ready(function() {
 					var resp = response.split(" ");
 					if (resp[0] !== "Hello") {
 						$("#page_loader").fadeOut(300);
-						$("#aOverlay").fadeOut(300);
-						$(".appriseOuter").fadeOut(300);
+						$("#apprise").modal("hide");
 						apprise("Si &egrave; verificato un errore durante il processo:\n" + response, {icon: "error", title: "Ouch!"});
 					} else {
 						$("#page_loader").fadeOut(300);
-						$("#aOverlay").fadeOut(300);
-						$(".appriseOuter").fadeOut(300);
+						$("#apprise").modal("hide");
 						apprise("okay");
 					}
 				});

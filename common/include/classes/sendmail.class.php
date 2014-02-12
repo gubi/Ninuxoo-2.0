@@ -11,6 +11,8 @@ class Sendmail {
 		return $this->config["Mail"]["mail_program"];
 	}
 	private function headers() {
+		$headers_txt = "";
+		
 		$headers["Content-Type"] = "text/plain; charset=UTF-8";
 		$headers["Content-Transfer-Encoding"] = "quoted-printable";
 		$headers["X-Mailer"] = "PHP5";
@@ -44,8 +46,8 @@ class Sendmail {
 			$params["auth"] = $this->config["Mail"]["auth"];
 			$params["username"] = $this->config["Mail"]["username"];
 			$params["password"] = $this->config["Mail"]["password"];
-			print_r($headers);
-			print_r($params);
+			//print_r($headers);
+			//print_r($params);
 			$mail_object =& Mail::factory("sendmail", $params);
 			$mail = $mail_object->send($to, $headers, $body);
 			if (PEAR::isError($mail)) {

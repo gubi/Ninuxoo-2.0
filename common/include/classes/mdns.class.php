@@ -61,51 +61,70 @@ class mdns {
 		}
 		return $oo;
 	}
+	private function return_reachability($out) {
+		foreach($out as $k => $v) {
+			$o[] = $v[1];
+		}
+		if(count($o) > 1) {
+			sort($o);
+			$oo = implode(", ", $o);
+		} else {
+			$oo = $o[0];
+		}
+		return $oo;
+	}
 	public function scan($get_owner = false, $filter = "") {
 		$avh = shell_exec("avahi-browse _dns-sd._udp -prtl");
 		preg_match_all("/\=\;(.*?)\n/is", $avh, $out);
 		
-		foreach($out[1] as $kp => $parsed) {
-			$o = explode(";", $parsed);
-			$msg = explode(":", $o[8]);
-			if (is_array($msg)) {
-				$message = explode("::", base64_decode($msg[1]));
+		foreach($out as $kp => $vp) {
+			foreach($vp as $kkp => $parsed) {
+				$o[$kkp] = explode(";", $parsed);
+				$msg[$kkp] = explode(":", $o[$kkp][8]);
+			}
+		}
+		foreach ($msg as $mk => $mv) {
+			if (is_array($mv)) {
+				$message = explode("::", base64_decode($mv[1]));
 				if (is_array($message) && trim($message[1]) !== "") {
-					if($filter == ""){
+					/*if($filter == ""){
 						$checkt = "";
 					} else {
 						$checkt = $filter;
 					}
 					if($filter == $checkt) {
-						if(is_array($this->check_trusted()) && in_array("" . $message[2], $this->check_trusted())) {
-							$status = "trusted";
-						} else if(is_array($this->check_untrusted()) && in_array("" . $message[2], $this->check_untrusted())) {
-							$status = "untrusted";
-						} else {
-							$status = "unknown";
-						}
-						if($o[3] == "_dns-sd._udp" && $o[7] == 64689 && trim($msg[0], '"') == "Hello guys I'm a Ninuxoo device") {
-							$ips = array_filter(array_map("trim", explode(" ", shell_exec("hostname  -I"))));
-							
-							if(in_array($o[6], $ips)) {
-								if($get_owner == true) {
-									$ndata[stripcslashes($o[2])]["owner"] = $this->get_owner($message[0]);
-								}
-								$ndata[stripcslashes($o[2])]["owner"]["key"] = trim($message[0], '"');
-								$ndata[stripcslashes($o[2])]["geo_zone"] = trim($message[1]);
-								$ndata[stripcslashes($o[2])]["reachability"][] = stripcslashes($o[1]);
-								$ndata[stripcslashes($o[2])]["token"] = base64_encode($message[2]);
-								$ndata[stripcslashes($o[2])]["status"] = $status;
-								$ndata[stripcslashes($o[2])]["address"] = $this->get_address($out[1], stripcslashes($o[2]));
+					*/
+					if(is_array($this->check_trusted()) && in_array("" . $message[2], $this->check_trusted())) {
+						$status = "trusted";
+					} else if(is_array($this->check_untrusted()) && in_array("" . $message[2], $this->check_untrusted())) {
+						$status = "untrusted";
+					} else {
+						$status = "unknown";
+					}
+					if($o[$mk][3] == "_dns-sd._udp" && $o[$mk][7] == 64689 && trim($mv[0], '"') == "Hello guys I'm a Ninuxoo device") {
+						$ips = array_filter(array_map("trim", explode(" ", shell_exec("hostname  -I"))));
+						
+						if(!in_array($o[6], $ips)) {
+							if($get_owner == true) {
+								$ndata[stripcslashes($o[$mk][2])]["owner"] = $this->get_owner($message[0]);
 							}
+							$ndata[stripcslashes($o[$mk][2])]["owner"]["key"] = trim($message[0], '"');
+							$ndata[stripcslashes($o[$mk][2])]["geo_zone"] = trim($message[1]);
+							$ndata[stripcslashes($o[$mk][2])]["reachability"][] = $this->return_reachability($o);
+							$ndata[stripcslashes($o[$mk][2])]["token"] = base64_encode($message[2]);
+							$ndata[stripcslashes($o[$mk][2])]["status"] = $status;
+							$ndata[stripcslashes($o[$mk][2])]["address"] = $this->get_address($out[1], stripcslashes($o[$mk][2]));
 						}
+					}
+					/*
 					} else {
 						$ndata = "error::This token unexist!";
 					}
+					*/
 				}
 			}
+			return $ndata;
 		}
-		return $ndata;
 	}
 	public function check_ip($ip) {
 		return (shell_exec("nc -zu " . $ip . " 64689; echo $?") == 0) ? true : false;

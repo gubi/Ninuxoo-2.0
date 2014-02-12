@@ -13,6 +13,8 @@ class rsa {
 		exit();
 	}
 	public function get_time_limit($limit = false, $show_deadline = false) {
+		date_default_timezone_set("Europe/Rome");
+		
 		if(!isset($limit) || $limit == false || $limit == null) {
 			$data = date("Y-m-d H:i:s");
 		} else {
@@ -34,7 +36,7 @@ class rsa {
 		$difference = $deadline - $now;
 		
 		if(!$show_deadline) {
-			$sec_diff = (intval($difference - ($hours_left * (60 * 60)) - ($mins_left * 60)) > 0) ? true : false;
+			$sec_diff = ((strtotime($data) - strtotime(date("Y-m-d H:i:s"))) > 0) ? true : false;
 		} else {
 			$sec_diff = date('Y-m-d H:i:s', strtotime($to_string, strtotime($data)));
 		}
@@ -77,33 +79,25 @@ class rsa {
 		return $decrypted;
 	}
 	public function public_encrypt($dir, $pub_key, $key_to_encrypt, $time_limit = null){
-		if($this->get_time_limit($time_limit, true)) {
-			$this->gen_aes_key($dir);
-			shell_exec('openssl enc -aes-256-cbc -salt -in ' . $dir . $key_to_encrypt . ' -out ' . $dir . 'rsa_2048_pub.enc~ -pass file:' . $dir . 'aesKey~');
-			shell_exec('openssl rsautl -encrypt -inkey ' . $dir . $pub_key . ' -pubin -in ' . $dir . 'aesKey~ -out ' . $dir . 'aesKey.enc~');
-			$encrypted = shell_exec('cat ' . $dir . '/rsa_2048_pub.enc~ | base64 -');
-			$enckey = shell_exec('cat ' . $dir . 'aesKey.enc~ | base64 -');
-			shell_exec('rm ' . $dir . '/rsa_2048_pub.enc~ ' . $dir . 'aesKey.enc~');
-			$this->rm_aes_key($dir);
-			
-			return trim($encrypted) . "::::" . trim($enckey) . "::::" . $this->simple_encrypt($time_limit);
-		} else {
-			return false;
-		}
+		$this->gen_aes_key($dir);
+		shell_exec('openssl enc -aes-256-cbc -salt -in ' . $dir . $key_to_encrypt . ' -out ' . $dir . 'rsa_2048_pub.enc~ -pass file:' . $dir . 'aesKey~');
+		shell_exec('openssl rsautl -encrypt -inkey ' . $dir . $pub_key . ' -pubin -in ' . $dir . 'aesKey~ -out ' . $dir . 'aesKey.enc~');
+		$encrypted = shell_exec('cat ' . $dir . '/rsa_2048_pub.enc~ | base64 -');
+		$enckey = shell_exec('cat ' . $dir . 'aesKey.enc~ | base64 -');
+		shell_exec('rm ' . $dir . '/rsa_2048_pub.enc~ ' . $dir . 'aesKey.enc~');
+		$this->rm_aes_key($dir);
+		
+		return trim($encrypted) . "::::" . trim($enckey) . (($time_limit !== null && $this->get_time_limit($time_limit, true)) ? "::::" . $this->simple_encrypt($time_limit) : "");
 	}
-	public function private_decrypt($dir, $priv_key, $crypted_aes, $crypted_key, $time_limit = null){
-		if($this->get_time_limit($time_limit, true)) {
-			shell_exec('echo "' . $crypted_aes . '" | base64 -d - > ' . $dir . 'aesKey.enc~');
-			shell_exec('echo "' . $crypted_key . '" | base64 -d - > ' . $dir . 'rsa_2048_pub.enc~');
-			shell_exec('openssl rsautl -decrypt -inkey ' . $dir . $priv_key . ' -in ' . $dir . 'aesKey.enc~ -out ' . $dir . 'aesKey.decrypted');
-			shell_exec('openssl enc -d -aes-256-cbc -in ' . $dir . 'rsa_2048_pub.enc~ -out ' . $dir . 'rsa_2048_pub.dec~ -pass file:' . $dir . 'aesKey.decrypted');
-			$public_key = shell_exec('cat ' . $dir . '/rsa_2048_pub.dec~'); 
-			shell_exec('rm ' . $dir . '/aesKey.decrypted ' . $dir . '/aesKey.enc~ ' . $dir . 'rsa_2048_pub.enc~ ' . $dir . 'rsa_2048_pub.dec~');
-			
-			return $public_key;
-		} else {
-			return false;
-		}
+	public function private_decrypt($dir, $priv_key, $crypted_aes, $crypted_key){
+		shell_exec('echo "' . $crypted_aes . '" | base64 -d - > ' . $dir . 'aesKey.enc~');
+		shell_exec('echo "' . $crypted_key . '" | base64 -d - > ' . $dir . 'rsa_2048_pub.enc~');
+		shell_exec('openssl rsautl -decrypt -inkey ' . $dir . $priv_key . ' -in ' . $dir . 'aesKey.enc~ -out ' . $dir . 'aesKey.decrypted');
+		shell_exec('openssl enc -d -aes-256-cbc -in ' . $dir . 'rsa_2048_pub.enc~ -out ' . $dir . 'rsa_2048_pub.dec~ -pass file:' . $dir . 'aesKey.decrypted');
+		$public_key = shell_exec('cat ' . $dir . '/rsa_2048_pub.dec~'); 
+		shell_exec('rm ' . $dir . '/aesKey.decrypted ' . $dir . '/aesKey.enc~ ' . $dir . 'rsa_2048_pub.enc~ ' . $dir . 'rsa_2048_pub.dec~');
+		
+		return $public_key;
 	}
 }
 ?>
