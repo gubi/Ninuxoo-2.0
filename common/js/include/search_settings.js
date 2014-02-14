@@ -1,11 +1,45 @@
 $(document).ready(function() {
-	$("select").chosen({
+	$("html, body").animate({ scrollTop: ($("h1").eq(1).offset().top) }, 300);
+	
+	$("select:not(#shared_paths)").chosen({
 		disable_search_threshold: 5,
 		allow_single_deselect: true
 	});
-	$("html, body").animate({ scrollTop: ($("h1").eq(1).offset().top) }, 300);
+	$("#shared_paths").multiselect({
+		buttonClass: 'btn btn-default',
+		maxHeight: 400,
+		enableCaseInsensitiveFiltering: true,
+		filterPlaceholder: "Filtra...",
+		includeSelectAllOption: true,
+		selectAllText: "Seleziona tutte",
+		selectAllValue: 'multiselect-all',
+		buttonWidth: 'auto',
+		buttonContainer: '<div class="btn-group" />',
+		buttonText: function(options) {
+			if (options.length == 0) {
+				return 'Nessuna directory selezionata <b class="caret"></b>';
+			} else if (options.length > 6) {
+				return options.length + ' selezionate <b class="caret"></b>';
+			} else {
+				var selected = '';
+				options.each(function() {
+					selected += $(this).text() + ', ';
+				});
+				return selected.substr(0, selected.length -2) + ' <b class="caret"></b>';
+			}
+		}
+	});
+	$("#root_share_dir").change(function(){
+		$.get_shares($("#root_share_dir").val());
+		$(".multiselect-search").focus();
+	});
+	$("#root_share_dir_refresh_btn").click(function(){
+		$.get_shares($("#root_share_dir").val());
+	});
+	$.get_shares($("#root_share_dir").val());
 	
 	$("#start_scan_btn").click(function() {
+		apprise("", {title: 'Scansione del <acronym title="Network Attached Storage">NAS</acronym> in corso...', icon: "fa-magic fa-bounce", progress: "true"});
 		$(this).removeClass("btn-success").addClass("btn-warning").addClass("disabled").find("span").addClass("fa-spin");
 		var password = makeid();
 		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
@@ -26,6 +60,7 @@ $(document).ready(function() {
 					$("#last_items_count").html(response["data"]["files_count"]);
 					$(".appriseOuter").fadeOut(300);
 					$(".appriseOverlay").fadeOut(300);
+					$("#apprise").modal("hide");
 				}
 			});
 		}, function() {
@@ -35,9 +70,19 @@ $(document).ready(function() {
 	});
 	$("#save_search_params_btn").click(function() {
 		$("#page_loader").fadeIn(300);
-		var password = makeid();
+		var password = makeid(),
+		shared_paths = "";
 		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-			var encryptedString = $.jCryption.encrypt($("#search_settings_frm").serialize(), password);
+			if($("#shared_paths option:selected").index() > 0) {
+				if($("#shared_paths").val().length > 0) {
+					if($("#shared_paths").val().length == 1) {
+						shared_paths = $("#shared_paths").val();
+					} else {
+						shared_paths = $("#shared_paths").val().join(",");
+					}
+				}
+			}
+			var encryptedString = $.jCryption.encrypt($("#search_settings_frm").serialize() + "&shared_paths=" + $.rawurlencode(shared_paths), password);
 			
 			$.ajax({
 				url: "common/include/funcs/_ajax/decrypt.php",
@@ -62,6 +107,11 @@ $(document).ready(function() {
 			$("#page_loader").fadeOut(300);
 			alert("Si &egrave; verificato un errore durante il salvataggio.", {icon: "error", title: "Ouch!"});
 		});
+		return false;
+	});
+	$("#show_nas_advanced_options").click(function() {
+		$(this).hide();
+		$("#nas_advanced_options").slideDown(300);
 		return false;
 	});
 });

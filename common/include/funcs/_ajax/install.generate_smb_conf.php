@@ -76,10 +76,6 @@ $config_ini .= 'root_dir = "' . $output["server_root"] . '"' . "\n";
 $config_ini .= 'listing_file_dir = "' . $output["api_dir"] . '"' . "\n\n";
 $config_ini .= ';Public shared directories array' . "\n";
 $shared_dirs = explode(",", trim($output["shared_paths"]));
-foreach($shared_dirs as $kshared => $shared) {
-	$info = pathinfo($shared);
-	$config_ini .= 'nas_shares[] = "/' . trim($info["basename"]) . '"' . "\n" . (($kshared == (count($shared_dirs) - 1)) ? "\n" : "");
-}
 $config_ini .= ';Auto updated data (do not edit)' . "\n";
 $config_ini .= 'last_scan_date = "' . date("Y-m-d") . '"' . "\n";
 $config_ini .= 'last_items_count = 0' . "\n";
@@ -115,6 +111,10 @@ $config_ini .= 'longitude = ' . $output["meteo_lng"] . "\n\n";
 $config_ini .= 'show_ninux_nodes = "true"' . "\n";
 $config_ini .= 'show_region_area = "true"' . "\n";
 $config_ini .= 'refresh_interval = 48000' . "\n";
+foreach($shared_dirs as $kshared => $shared) {
+	$info = pathinfo($shared);
+	$scan_shares .= '/' . trim($info["basename"]) . '"' . "\n" . (($kshared == (count($shared_dirs) - 1)) ? "\n" : "");
+}
 
 $db_conf = "[database]\n";
 $db_conf .= 'type = "' . $output["db_type"] . '" ;use "mysql", "sqlite" or "postgresql"' . "\n\n";
@@ -144,77 +144,86 @@ if($fp = @fopen($output["server_root"] . "common/include/conf/config.ini", "w"))
 	fclose($fp);
 	$log->write("notice", "[install] The new file 'config.ini' is located in 'common/include/conf/'");
 	
-	// Main config file
-	if($fg = @fopen($output["server_root"] . "common/include/conf/general_settings.ini", "w")) {
-		fwrite($fg, $general_settings . PHP_EOL);
-		fclose($fg);
-		$log->write("notice", "[install] The new file 'general_settings.ini' is located in 'common/include/conf/'");
-		@mkdir($output["root_share_dir"] . ".ninuxoo_cache/");
-		@chmod($output["root_share_dir"] . ".ninuxoo_cache/", 0777);
+	if($fss = @fopen($output["server_root"] . "common/include/conf/scan_shares", "w")) {
+		fwrite($fss, $scan_shares . PHP_EOL);
+		fclose($fss);
+		$log->write("notice", "[install] The new file 'scan_shares' is located in 'common/include/conf/'");
 		
-		// User login file
-		if(!file_exists($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]))) {
-			@mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/");
-			@chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/", 0777);
-			@mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/");
-			@chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/", 0777);
-		}
-		if($fu = @fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/user.conf", "w")) {
-			fwrite($fu, $user_conf . PHP_EOL);
-			fclose($fu);
-			$log->write("notice", "[install] The new file 'user.conf' is located in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'");
+		// Main config file
+		if($fg = @fopen($output["server_root"] . "common/include/conf/general_settings.ini", "w")) {
+			fwrite($fg, $general_settings . PHP_EOL);
+			fclose($fg);
+			$log->write("notice", "[install] The new file 'general_settings.ini' is located in 'common/include/conf/'");
+			@mkdir($output["root_share_dir"] . ".ninuxoo_cache/");
+			@chmod($output["root_share_dir"] . ".ninuxoo_cache/", 0777);
 			
-			// User public PGP file
-			if($fpgp = @fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/pubkey.asc", "w")) {
-				fwrite($fpgp, $output["pgp_pubkey"] . PHP_EOL);
-				fclose($fpgp);
-				$log->write("notice", "[install] The new file 'pubkey.asc' is located in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'");
+			// User login file
+			if(!file_exists($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]))) {
+				@mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/");
+				@chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/", 0777);
+				@mkdir($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/");
+				@chmod($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/configs/", 0777);
+			}
+			if($fu = @fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/user.conf", "w")) {
+				fwrite($fu, $user_conf . PHP_EOL);
+				fclose($fu);
+				$log->write("notice", "[install] The new file 'user.conf' is located in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'");
 				
-				// Avahi service
-				if($fas = @fopen($output["server_root"] . "common/include/conf/ninuxoo.service", "w")) {
-					fwrite($fas, $avahi_service . PHP_EOL);
-					fclose($fas);
-					$log->write("notice", "[install] The new file 'ninuxoo.service' is located in 'common/include/conf/'");
+				// User public PGP file
+				if($fpgp = @fopen($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]) . "/pubkey.asc", "w")) {
+					fwrite($fpgp, $output["pgp_pubkey"] . PHP_EOL);
+					fclose($fpgp);
+					$log->write("notice", "[install] The new file 'pubkey.asc' is located in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'");
 					
-					// Database config file
-					if($fdb = @fopen($output["server_root"] . "common/include/conf/db.ini", "w")) {
-						fwrite($fdb, $db_conf . PHP_EOL);
-						fclose($fdb);
-						$log->write("notice", "[install] The new file 'db.ini' is located in 'common/include/conf/'");
+					// Avahi service
+					if($fas = @fopen($output["server_root"] . "common/include/conf/ninuxoo.service", "w")) {
+						fwrite($fas, $avahi_service . PHP_EOL);
+						fclose($fas);
+						$log->write("notice", "[install] The new file 'ninuxoo.service' is located in 'common/include/conf/'");
 						
-						// Crontab
-						if($fc = @fopen($output["server_root"] . "crontab", "w+")) {
-							fwrite($fc, "# Ninuxoo Local scan job\n00 */6 * * * root /usr/bin/php " . $output["server_root"] . "scan.php" . PHP_EOL);
-							fclose($fc);
+						// Database config file
+						if($fdb = @fopen($output["server_root"] . "common/include/conf/db.ini", "w")) {
+							fwrite($fdb, $db_conf . PHP_EOL);
+							fclose($fdb);
+							$log->write("notice", "[install] The new file 'db.ini' is located in 'common/include/conf/'");
 							
-							if(!exec("crontab " . $output["server_root"] . "crontab")) {
-								$log->write("notice", "[warning] A problem has occurred during installation of crontab. Please open and copy '" . $output["server_root"] . "crontab' and paste in '$ (sudo) crontab -e' manually.");
+							// Crontab
+							if($fc = @fopen($output["server_root"] . "crontab", "w+")) {
+								fwrite($fc, "# Ninuxoo Local scan job\n00 */6 * * * root /usr/bin/php " . $output["server_root"] . "scan.php" . PHP_EOL);
+								fclose($fc);
+								
+								if(!exec("crontab " . $output["server_root"] . "crontab")) {
+									$log->write("notice", "[warning] A problem has occurred during installation of crontab. Please open and copy '" . $output["server_root"] . "crontab' and paste in '$ (sudo) crontab -e' manually.");
+								}
+								mail($output["user_username"], "Benvenuto in Ninuxoo!", "Prova", "From: ninuxoo@ninux.org");
+								$data = "ok";
+							} else {
+								$log->write("error", "[install] Can't create 'crontab' file in '" . $output["server_root"] . "'. Installation malformed");
+								$data = "error::Sono stati riscontrati dei problemi nella creazione del crontab.\nInstallazione avvenuta con successo.\nInstallare il cronjob manualmente.\nConsultare la documentazione per maggiori informazioni.";
 							}
-							mail($output["user_username"], "Benvenuto in Ninuxoo!", "Prova", "From: ninuxoo@ninux.org");
-							$data = "ok";
 						} else {
-							$log->write("error", "[install] Can't create 'crontab' file in '" . $output["server_root"] . "'. Installation malformed");
-							$data = "error::Sono stati riscontrati dei problemi nella creazione del crontab.\nInstallazione avvenuta con successo.\nInstallare il cronjob manualmente.\nConsultare la documentazione per maggiori informazioni.";
+							$log->write("error", "[install] Can't create 'db.ini' in 'common/include/conf/'. Installation malformed");
+							$data = "error::Non si gode dei permessi sufficienti per salvare la chiave PGP dell'utente.\nInstallazione parzialmente riuscita :/";
 						}
 					} else {
-						$log->write("error", "[install] Can't create 'db.ini' in 'common/include/conf/'. Installation malformed");
-						$data = "error::Non si gode dei permessi sufficienti per salvare la chiave PGP dell'utente.\nInstallazione parzialmente riuscita :/";
+						$log->write("error", "[install] Can't create 'ninuxoo.service' in 'common/include/conf/'. Installation malformed");
+						$data = "error::Non si gode dei permessi sufficienti per salvare il file per annunciare il NAS in rete.\nSar&agrave; necessario generarlo manualmente. Per maggiori info seguire la documentazione.\nInstallazione parzialmente riuscita :/";
 					}
 				} else {
-					$log->write("error", "[install] Can't create 'ninuxoo.service' in 'common/include/conf/'. Installation malformed");
-					$data = "error::Non si gode dei permessi sufficienti per salvare il file per annunciare il NAS in rete.\nSar&agrave; necessario generarlo manualmente. Per maggiori info seguire la documentazione.\nInstallazione parzialmente riuscita :/";
+					$log->write("error", "[install] Can't create 'pubkey.asc' in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'. Installation malformed");
+					$data = "error::Non si gode dei permessi sufficienti per creare il file di config per il database MySQL.\nInstallazione parzialmente riuscita :/";
 				}
 			} else {
-				$log->write("error", "[install] Can't create 'pubkey.asc' in 'common/include/conf/user/" . sha1($output["user_username"]) . "/'. Installation malformed");
+				$log->write("error", "[install] Can't create 'user.conf' in 'common/include/conf/" . sha1($output["user_username"]) . "/'. Installation malformed");
 				$data = "error::Non si gode dei permessi sufficienti per creare il file di config per il database MySQL.\nInstallazione parzialmente riuscita :/";
 			}
 		} else {
-			$log->write("error", "[install] Can't create 'user.conf' in 'common/include/conf/" . sha1($output["user_username"]) . "/'. Installation malformed");
-			$data = "error::Non si gode dei permessi sufficienti per creare il file di config per il database MySQL.\nInstallazione parzialmente riuscita :/";
+			$log->write("error", "[install] Can't create 'general_settings.ini' in 'common/include/conf/'. Install aborted");
+			$data = "error::Non si gode dei permessi sufficienti per creare il file delle credenziali di accesso.\nInstallazione non riuscita :/";
 		}
 	} else {
-		$log->write("error", "[install] Can't create 'general_settings.ini' in 'common/include/conf/'. Installation malformed");
-		$data = "error::Non si gode dei permessi sufficienti per creare il file delle credenziali di accesso.\nInstallazione parzialmente riuscita :/";
+		$log->write("error", "[install] Can't create 'scan_shares' in 'common/include/conf/'. Install aborted");
+		$data = "error::Non si gode dei permessi sufficienti per creare il file delle directory condivise.\nInstallazione non riuscita :/";
 	}
 } else {
 	$log->write("error", "[install] Can't create 'config.ini' in 'common/include/conf/'. Install aborted");

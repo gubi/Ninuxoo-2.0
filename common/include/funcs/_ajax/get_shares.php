@@ -1,6 +1,11 @@
 <?php
 header("Content-type: text/plain");
 
+$output["file"] = rawurldecode($output["file"]);
+if(strlen($output["file"]) == 0) {
+	$config = parse_ini_file("../../conf/config.ini", true);
+	$output["file"] = $config["NAS"]["root_share_dir"];
+}
 if(isset($output["file"]) && trim($output["file"]) !== ""){
 	$file_exists = true;
 }

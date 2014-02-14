@@ -105,7 +105,7 @@ if(!$has_config) {
 	if(!isset($_GET["setup"])) {
 		header("Location: http://" . preg_replace("/\/+/", "/", str_replace(array($_GET["s"], $_GET["id"], $_GET["q"]), "", $_SERVER["HTTP_HOST"] . "/" . $_SERVER["REQUEST_URI"]) . "?setup"));
 	} else {
-		$GLOBALS["config"]["NAS"]["name"] = "Local Semantic Ninuxoo setup";
+		$GLOBALS["config"]["NAS"]["nas_name"] = "Local Semantic Ninuxoo setup";
 		$NAS_absolute_uri = "http://" . $_SERVER["SERVER_ADDR"];
 	}
 } else {
@@ -138,18 +138,18 @@ if(isset($_COOKIE["n"])) {
 		}
 	}
 }
-$logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (($has_config) ? $GLOBALS["config"]["NAS"]["name"] : "Setup") .'</h1>';
+$logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (($has_config) ? $GLOBALS["config"]["NAS"]["nas_name"] : "Setup") .'</h1>';
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Ninuxoo <?php print $GLOBALS["config"]["NAS"]["name"] . " | " . $page_title; ?></title>
+	<title>Ninuxoo <?php print $GLOBALS["config"]["NAS"]["nas_name"] . " | " . $page_title; ?></title>
 	
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 	<base href="<?php print $GLOBALS["config"]["NAS"]["http_root"]; ?>" />
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="author" content="Ninux.org Community - the Ninux Software Team" />
-	<meta name="description" content="Ninux.org search engine" />
+	<meta name="description" content="Ninux.org search engine | <?php print $GLOBALS["NAS"]["nas_description"]; ?>" />
 	
 	<link rel="shortcut icon" href="common/media/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="common/css/bootstrap.css" type="text/css" media="screen" />

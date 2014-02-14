@@ -7,6 +7,7 @@
 <script language="Javascript" src="common/js/GnuPG/sha1.js" type="text/javascript"></script>
 <script language="Javascript" src="common/js/GnuPG/base64.js" type="text/javascript"></script>
 <script language="Javascript" src="common/js/GnuPG/PGpubkey.js" type="text/javascript"></script>
+<script type="text/javascript" src="common/js/include/get_shares.js"></script>
 <script type="text/javascript" src="common/js/include/setup.js"></script>
 <div>
 	<div id="setup_loader"><h1></h1><span></span></div>
@@ -184,10 +185,10 @@
 				</span>
 			</div>
 			<div id="nas_advanced_options" style="display: none;">
-				<div class="panel-heading">
+				<div class="panel-heading advanced">
 					<span class="lead text-primary">Impostazioni <acronym title="Network Attached Storage">NAS</acronym> avanzate</span>
 				</div>
-				<div class="panel-footer">
+				<div class="panel-footer advanced">
 					<label for="uri_address">Indirizzo <acronym title="Uniform Resource Identifier">URI</acronym>:</label>
 					<input type="text" name="uri_address" id="uri_address" style="width: 50%;" value="<?php print (($_SERVER["HTTPS"]) ? "https//" : "http://") . $_SERVER["SERVER_ADDR"]; ?>" tabindex="10" />
 					
@@ -233,16 +234,16 @@
 				</span>
 			</div>
 			<div id="meteo_advanced_options" style="display: none;">
-				<div class="panel-heading">
+				<div class="panel-heading advanced">
 					<span class="lead text-primary">Impostazioni Meteo avanzate <sup><a data-toggle="collapse" href="#advanced_meteo_station_info" class="text-muted"><span class="fa fa-info"></span></a></sup></span>
 				</div>
-				<div id="advanced_meteo_station_info" class="panel-body panel-collapse collapse">
+				<div id="advanced_meteo_station_info" class="panel-body advanced panel-collapse collapse">
 					<p>
 						<b>Nota</b>: in meteorologia &egrave; importante identificare la posizione geografica delle misurazioni, ecco il perch&eacute; di tanta accuratezza nel posizionamento.<br />
 						Per i pi&ugrave; attenti alla privacy &egrave; possibile <a href="javascript: void(0);" id="paranoid_mode">cancellare i dati relativi all'interfaccia Meteo</a> <span id="calculate_meteo_data_span" style="display: none;">(<a href="javascript: void(0);" id="calculate_meteo_data">ricalcola</a>)</span> ;)
 					</p>
 				</div>
-				<div class="panel-footer">
+				<div class="panel-footer advanced">
 					<span class="form-group">
 						<label for="meteo_city">Citt&agrave;:</label>
 						<input type="text" name="meteo_city" id="meteo_city" style="width: 50%;" value="" tabindex="18" />
@@ -260,10 +261,10 @@
 						<input type="text" name="meteo_country" id="meteo_country" style="width: 50%;" value="" tabindex="21" />
 					</span>
 				</div>
-				<div class="panel-heading">
+				<div class="panel-heading advanced">
 					<span class="lead text-primary">Altri dati geografici</span>
 				</div>
-				<div class="panel-footer">
+				<div class="panel-footer advanced">
 					<span class="form-group col-lg-12">
 						<label for="meteo_owid">OpenWeather ID:</label>
 						<input type="text" name="meteo_owid" id="meteo_owid" value="" tabindex="22" />
@@ -295,7 +296,7 @@
 					</span>
 				</div>
 				<hr />
-				<div class="panel-heading">
+				<div class="panel-heading advanced">
 					<span class="lead text-primary">
 						<button type="button" title="Imposta la connessione al database" id="install_database" class="btn btn-default right" tabindex="16"><span class="fa fa-fw fa-square-o"></span></button>
 						<input type="checkbox" name="install_database" id="install_database_checkbox" tabindex="16" style="display: none;" />
@@ -303,7 +304,7 @@
 						<small class="help-block">Dati necessari alla connessione al database</small>
 					</span>
 				</div>
-				<div id="database_info" class="panel-body panel-collapse collapse">
+				<div id="database_info" class="panel-body advanced panel-collapse collapse">
 					<p>
 						Se si dispone fisicamente di una Stazione Meteorologica bisogna fare in modo che Ninuxoo possa leggere i dati salvati dalla Stazione su un database.<br />
 						Inserisci qui di seguito i dati relativi alla connessione al database.<br />
@@ -312,7 +313,7 @@
 						In caso di difficolt&agrave; ad acquisire i dati dalla propria Stazione, con poche risorse economiche &egrave; possibile valutare la possibilit&agrave; di utilizzare dei dispositivi <acronym title="Advanced RISC Machine">ARM</acronym> adattati allo scopo.
 					</p>
 				</div>
-				<div class="panel-footer">
+				<div class="panel-footer advanced">
 					<span class="form-group">
 						<label for="db_type">Tipo di database:</label>
 						<select name="db_type" id="db_type" disabled style="width: 200px;" tabindex="28">

@@ -25,6 +25,7 @@ class local_search {
 		$this->root_dir = $this->conf["NAS"]["root_dir"];
 		$this->root_share_dir = $this->conf["NAS"]["root_share_dir"];
 		$this->listing_file_dir = $this->conf["NAS"]["listing_file_dir"];
+		$this->nas_shares = explode("\n", file_get_contents(str_replace("//", "/", $this->dir . "/") . "scan_shares"));
 		$this->root_path = ($root_path == null) ? $this->listing_file_dir : $this->root_share_dir . $root_path;
 	}
 	private function start_time(){
@@ -385,7 +386,7 @@ class local_search {
 			$list = explode("\n", shell_exec("find " . $this->params["path"] . " -maxdepth 1"));
 			foreach($list as $k => $v){
 				if($_get == "" || $_get == "/") {
-					if(!in_array($v, $this->conf["NAS"]["nas_shares"])) {
+					if(!in_array($v, $this->nas_shares)) {
 						unset($list[$k]);
 					}
 				}
@@ -396,7 +397,7 @@ class local_search {
 			$config_list = array_values(array_filter(str_replace($this->params["replace_path"], $this->params["replace_uri"], $list)));
 		} else {
 			$config = $this->conf;
-			$config_list = str_replace($this->params["replace_path"], $this->params["replace_uri"], $this->conf["NAS"]["nas_shares"]);
+			$config_list = str_replace($this->params["replace_path"], $this->params["replace_uri"], $this->nas_shares);
 		}
 		foreach($config_list as $list){
 			$listing[$list] = $list;

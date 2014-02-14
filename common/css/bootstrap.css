@@ -2257,6 +2257,47 @@ fieldset[disabled] .btn-info.active {
   color: #5bc0de;
   background-color: #fff;
 }
+.btn-grey {
+  color: #666;
+  background-color: #ccc;
+  border-color: #aaa;
+}
+.btn-grey:hover,
+.btn-grey:focus,
+.btn-grey:active,
+.btn-grey.active,
+.open .dropdown-toggle.btn-grey {
+  color: #333;
+  background-color: #bbb;
+  border-color: #aaa;
+}
+.btn-grey:active,
+.btn-grey.active,
+.open .dropdown-toggle.btn-grey {
+  background-image: none;
+}
+.btn-grey.disabled,
+.btn-grey[disabled],
+fieldset[disabled] .btn-grey,
+.btn-grey.disabled:hover,
+.btn-grey[disabled]:hover,
+fieldset[disabled] .btn-grey:hover,
+.btn-grey.disabled:focus,
+.btn-grey[disabled]:focus,
+fieldset[disabled] .btn-grey:focus,
+.btn-grey.disabled:active,
+.btn-grey[disabled]:active,
+fieldset[disabled] .btn-grey:active,
+.btn-grey.disabled.active,
+.btn-grey[disabled].active,
+fieldset[disabled] .btn-grey.active {
+  background-color: #dedede;
+  border-color: #cdcdcd;
+}
+.btn-grey .badge {
+  color: #ccc;
+  background-color: #fff;
+}
 .btn-link {
   color: #ef531d;
   font-weight: normal;
@@ -4786,6 +4827,12 @@ a.list-group-item.active:focus .list-group-item-text {
 }
 .panel-heading a {
 	text-decoration: none;
+}
+.panel-heading.advanced,
+.panel-body.advanced,
+.panel-footer.advanced {
+	padding-left: 2em;
+	border-left: #ffbb77 1px solid;
 }
 .panel-body {
   padding: 15px;

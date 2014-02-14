@@ -8,14 +8,19 @@ $crypted = base64_encode($rsa->simple_private_encrypt($token));
 ?>
 <link href="common/js/chosen/chosen-bootstrap.css" rel="stylesheet" />
 <script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
+<script type="text/javascript" src="common/js/multiselect/js/bootstrap-multiselect.js"></script>
+<link rel="stylesheet" href="common/js/multiselect/css/bootstrap-multiselect.css" type="text/css"/>
 <script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
 <script type="text/javascript" src="common/js/include/common.js"></script>
+<script type="text/javascript" src="common/js/include/get_shares.js"></script>
 <script type="text/javascript" src="common/js/include/search_settings.js"></script>
 <h1>Impostazioni di ricerca</h1>
 <br />
 <form method="post" action="" id="search_settings_frm" role="form" onsubmit="return false;">
 	<div class="panel panel-default">
-		<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;Scansioni locali <a name="Scansioni_locali" id="Scansioni_locali"></a><small class="help-block">Report delle scansioni dei files</small></span></div>
+		<div class="panel-heading">
+			<span class="lead text-primary"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;Scansioni locali <a name="Scansioni_locali" id="Scansioni_locali"></a><small class="help-block">Report delle scansioni dei files</small></span>
+		</div>
 		<?php
 		$config = parse_ini_file("common/include/conf/config.ini", true);
 		$settings = parse_ini_file("common/include/conf/general_settings.ini", true);
@@ -34,9 +39,79 @@ $crypted = base64_encode($rsa->simple_private_encrypt($token));
 		</table>
 	</div>
 	<input type="hidden" value="<?php print $crypted; ?>" id="token" />
-	<a id="start_scan_btn" class="btn btn-warning right" href="javascript:void(0);" tabindex="1">Scansione manuale&nbsp;&nbsp;&nbsp;<span class="fa fa-refresh"></span></a>
+	<a id="start_scan_btn" class="btn btn-grey right" href="javascript:void(0);" tabindex="1">Scansione manuale&nbsp;&nbsp;&nbsp;<span class="fa fa-refresh"></span></a>
 	<br />
 	<br />
+	<br />
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<span class="lead text-primary">
+				<span class="fa fa-hdd-o"></span>&nbsp;&nbsp;<acronym title="Network Attached Storage">NAS</acronym>  <sup><a data-toggle="collapse" href="#nas_share_info" class="text-muted"><span class="fa fa-info"></span></a></sup><a name="NAS" id="NAS"></a>
+				<small class="help-block">Impostazioni relative alla risorsa locale</small>
+			</span>
+			<div id="nas_share_info" class="panel-body panel-collapse collapse">
+				<p>
+					La directory di default per le condivisioni &egrave; <tt>/mnt/NAS</tt>.<br />
+					Se si vuole condividere un Hard Disk esterno, &egrave; necessario che sia montato in maniera permanente in questa risorsa.<br />
+					&Egrave; comunque possibile stabilire un altro percorso a propria scelta.
+				</p>
+				<p><b>Nota</b>: &egrave; importante che la directory principale delle condivisioni sia fuori da <tt><?php print getcwd() . "/"; ?></tt> altrimenti sar&agrave; tutto raggiungibile in chiaro!</p>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="form-group">
+				<label for="nas_name" class="required">Nome di questo NAS:</label>&nbsp;
+				<input type="text" name="nas_name" id="nas_name" class="input-lg" value="<?php print $config["NAS"]["nas_name"]; ?>" tabindex="10" />
+			</div>
+			<div class="form-group row">
+				<span class="col-lg-8">
+					<label for="nas_description" class="required">Descrizione (titolo della pagina):</label>
+					<input type="text" name="nas_description" id="nas_description" class="form-control" value="<?php print $config["NAS"]["nas_description"]; ?>" tabindex="15" />
+				</span>
+			</div>
+			<div class="form-group">
+				<label for="root_share_dir" class="required">Directory principale dei files in condivisione:</label>
+				<div class="input-group col-lg-5">
+					<input type="text" name="root_share_dir" id="root_share_dir" class="form-control" value="<?php print $config["NAS"]["root_share_dir"]; ?>" placeholder="/mnt/NAS/" tabindex="20" />
+					<span class="input-group-btn">
+						<button type="button" id="root_share_dir_refresh_btn" class="btn btn-default" title="Carica il contenuto di questa directory"><span class="glyphicon glyphicon-repeat"></span></button>
+					</span>
+				</div>
+			</div>
+			<div class="form-group row">
+				<span class="col-lg-4">
+					<label for="shared_paths" class="required">Directories che si desidera siano scansionate e condivise:</label>
+				</span>
+				<span class="col-lg-12">
+					<span id="selected_shared_dirs" style="display: none;"><?php print implode(",", str_replace("/", "", explode("\n", file_get_contents(str_replace("//", "/", $config["NAS"]["root_dir"] . "/") . "common/include/conf/scan_shares")))); ?></span>
+					<select data-placeholder="Scegli una directory" name="shared_paths" id="shared_paths" multiple tabindex="13" style="width: 350px;"></select>
+				</span>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-warning right" id="show_nas_advanced_options">Avanzate&nbsp;&nbsp;&nbsp;<span class="fa fa-caret-down"></button>
+			</div>
+		</div>
+		<div id="nas_advanced_options" style="display: none;">
+			<div class="panel-heading advanced">
+				<span class="lead text-primary"><span class="fa fa-wrench"></span>&nbsp;&nbsp;Impostazioni <acronym title="Network Attached Storage">NAS</acronym> avanzate</span>
+			</div>
+			<div class="panel-footer advanced">
+				<div class="form-group">
+					<label for="uri_address">Indirizzo <acronym title="Uniform Resource Identifier">URI</acronym>:</label>
+					<input type="text" name="uri_address" id="uri_address" class="input-lg" value="<?php print (($_SERVER["HTTPS"]) ? "https//" : "http://") . $_SERVER["SERVER_ADDR"]; ?>" tabindex="10" />
+				</div>
+				<div class="form-group">
+					<label for="server_root">Directory root del Server:</label>
+					<input type="text" name="server_root" id="server_root" class="input-lg" value="<?php print getcwd() . "/"; ?>" placeholder="/var/www/" tabindex="14" />
+				</div>
+				<div class="form-group">
+					<label for="api_dir">Directory per le API:</label>
+					<input type="text" name="api_dir" id="api_dir" class="input-lg" value="<?php print getcwd(); ?>/API/" placeholder="/var/www/API/" tabindex="15" />
+				</div>
+			</div>
+		</div>
+	</div>
 	<br />
 	<div class="panel panel-default clearfix">
 		<div class="panel-heading"><span class="lead text-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Ricerche <a name="Ricerche" id="Ricerche"></a><small class="help-block">Impostazioni relative ai risultati delle ricerche</small></span></div>
@@ -69,7 +144,7 @@ $crypted = base64_encode($rsa->simple_private_encrypt($token));
 			</div>
 			<div class="form-group">
 				<label for="research_type">Tipo di ricerca predefinita: </label>
-				<select name="research_type" id="research_type" tabindex="3">
+				<select name="research_type" id="research_type" tabindex="3" style="width: 200px;">
 					<?php
 					$research_types = array("query" => "Tutti i risultati possibili", "exactquery" => "Per frase esatta", "orquery" => "Per singola parola", "likequery" => "Per parole simili", "whatsnew" => "Sull'ultima scansione");
 					foreach($research_types as $value => $txt) {

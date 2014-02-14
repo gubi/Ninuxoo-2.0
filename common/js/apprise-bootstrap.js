@@ -22,14 +22,15 @@ function apprise(string, args, callback) {
 		"icon": "",
 		"fa_icon": "",
 		"title": "",
-		"progress": false
+		"progress": false,
+		"allowExit": false
 	}
 	if (args) {
 		for (var index in default_args) {
 			if (typeof(args[index]) == "undefined") args[index] = default_args[index];
 		}
 	}
-	var modal = $('<div class="modal fade" id="apprise" tabindex="-1" role="dialog" aria-labelledby="appriseLabel" aria-hidden="true"></div>'),
+	var modal = $('<div class="modal fade" id="apprise" tabindex="-1" role="dialog" aria-labelledby="appriseLabel" aria-hidden="true"' + ((!args["allowExit"]) ? ' data-backdrop="static"' : '') + '></div>'),
 	dialog = $('<div class="modal-dialog">'),
 	content = $('<div class="modal-content">'),
 	header = $('<div class="modal-header">'),
@@ -38,7 +39,7 @@ function apprise(string, args, callback) {
 	body = $('<div class="modal-body">'),
 	row = $('<div class="row">'),
 	panel = $('<div>'),
-	footer = $('<div class="modal-footer">');
+	footer = $('<div class="modal-footer" style="margin-top: 0;">');
 	
 	if (args) {
 		if (args["title"]) {
@@ -73,7 +74,9 @@ function apprise(string, args, callback) {
 			}
 		}
 		header.appendTo(content);
-		close.appendTo(header);
+		if(args["allowExit"]) {
+			close.appendTo(header);
+		}
 		title.appendTo(header);
 	}
 	if(string != undefined) {
@@ -83,9 +86,11 @@ function apprise(string, args, callback) {
 			} else {
 				panel.addClass("col-sm-12");
 			}
-			row.appendTo(body);
-			panel.append(string).appendTo(row);
-			body.appendTo(content);
+			if(string.length > 0) {
+				row.appendTo(body);
+				panel.append(string).appendTo(row);
+				body.appendTo(content);
+			}
 		}
 	}
 	
@@ -124,7 +129,7 @@ function apprise(string, args, callback) {
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-primary right">' + args["textYes"] + '</button>');
 			btn_group.appendTo(footer);
 		} else if(args["progress"]) {
-			footer.append('<div class="progress progress-striped active"><div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div>');
+			footer.append('<div class="progress progress-striped active" style="margin: 0;"><div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div>');
 		} else {
 			footer.append('<button value="ok" data-dismiss="modal" class="btn btn-default right">' + args["textOk"] + '</button>');
 		}
@@ -154,7 +159,9 @@ function apprise(string, args, callback) {
 					$('button[value="ok"]').click();
 				}
 			}
-			if (e.keyCode == 27) { $('button[value="cancel"]').click(); }
+			if(args["allowExit"]) {
+				if (e.keyCode == 27) { $("#apprise").modal("hide"); }
+			}
 		});
 	});
 }

@@ -5,6 +5,7 @@ class scan {
 	function __construct() {
 		$this->class_dir = __DIR__;
 		$this->dir = str_replace("classes", "conf", $this->class_dir);
+		$this->nas_shares = explode("\n", file_get_contents(str_replace("//", "/", $this->dir . "/") . "scan_shares"));
 	}
 	private function parse_ini($file) {
 		return parse_ini_file($this->dir . "/" . $file, true);
@@ -94,7 +95,7 @@ class scan {
 	}
 	private function scan() {
 		$get_config = $this->get_config();
-		foreach($get_config["NAS"]["nas_shares"] as $scan_dir){
+		foreach($this->nas_shares as $scan_dir){
 			$share_ = array();
 			
 			$splitted_dir = array_values(array_filter(explode("/", trim(str_replace("./", "", str_replace("//", "/", $get_config["NAS"]["root_share_dir"] . "/" . $scan_dir))))));
@@ -112,8 +113,8 @@ class scan {
 		$get_config = $this->get_config();
 		
 		$scan = $this->scan();
-		sort($get_config["NAS"]["nas_shares"]);
-		foreach($get_config["NAS"]["nas_shares"] as $f) {
+		sort($this->nas_shares);
+		foreach($this->nas_shares as $f) {
 			$info = pathinfo($f);
 			$shares[] = $info["basename"];
 			$scans = str_replace(array("///", "//"), "/", str_replace($get_config["NAS"]["root_share_dir"], "", $scan));

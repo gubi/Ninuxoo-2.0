@@ -102,7 +102,7 @@ if(isset($_GET["getPublicKey"])) {
 			require_once("get_dir_data.php");
 			break;
 		case "get_shares":
-			require_once("install.get_shares.php");
+			require_once("get_shares.php");
 			break;
 		case "install":
 			require_once("install.generate_smb_conf.php");
