@@ -22,7 +22,7 @@ $.get_user_pages = function(id) {
 						$("#users_pages").html('<span class="info">Non ci sono utenti con pagine condivise</span>').addClass("text-center");
 					} else {
 						$.each(response.users, function(item, user) {
-							$("#users_pages").html('<div class="col-sm-3 panel"><div class="media"><a href="./Pagine/' + user.id + '" class="pull-left"><img src="' + user.gravatar + '" style="width: 50px; height: 50px; border: #ccc 1px solid;" class="media-object"></a><div class="media-body"><h5 class="media-heading"><a href="./Pagine/' + user.id + '">' + user.nick + '</a></h5><small class="text-muted">' + user.personal_message + '</small></div></div></div>');
+							$("#users_pages").html('<div class="col-sm-3 panel"><div class="media"><a href="./Pagine/' + user.id + '" class="pull-left"><img src="' + user.gravatar + '" style="width: 50px; height: 50px; border: #ccc 1px solid;" class="media-object"></a><div class="media-body"><h5 class="media-heading"><a href="./Pagine/' + user.id + '">' + user.nick + '</a></h5><small class="text-muted">' + user.personal_message + '</small></div></div></div>').removeClass("text-center");
 						});
 					}
 				} else {
