@@ -65,6 +65,9 @@
 					case "elenco_voip":
 						include("common/tpl/elenco_voip.tpl");
 						break;
+					case "pagine":
+						include("common/tpl/get_pages.tpl");
+						break;
 					case "ricerca_avanzata":
 						include("common/tpl/advanced_search.tpl");
 						break;

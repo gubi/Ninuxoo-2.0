@@ -104,6 +104,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "get_shares":
 			require_once("get_shares.php");
 			break;
+		case "get_user_pages":
+			require_once("get_user_pages.php");
+			break;
 		case "install":
 			require_once("install.generate_smb_conf.php");
 			break;

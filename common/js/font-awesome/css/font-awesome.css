@@ -45,10 +45,13 @@
 .fa-ul {
   padding-left: 0;
   margin-left: 2.142857142857143em;
-  list-style-type: none;
 }
 .fa-ul > li {
   position: relative;
+}
+.fa-ul li {
+  list-style-type: none !important;
+  list-style-image: none;
 }
 .fa-li {
   position: absolute;

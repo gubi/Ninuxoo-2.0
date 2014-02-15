@@ -78,7 +78,11 @@ if(file_exists($file)) {
 				// that you want to view on browser
 			}
 			$text = file_get_contents($file);
-			print utf8_encode($text);
+			if($mime_type[$info["extension"]]["type"] == "text" || $mime_type[$info["extension"]]["type"] == "ebook") {
+				print utf8_encode($text);
+			} else {
+				print $text;
+			}
 		} else {
 			header("Pragma: public"); // required
 			header("Expires: 0"); // no cache

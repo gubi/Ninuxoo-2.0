@@ -1,4 +1,12 @@
 <?php
+function check_user($str) {
+	if(file_exists("common/include/conf/user/" . $str)) {
+		$user_conf = parse_ini_file("common/include/conf/user/" . $str . "/user.conf", true);
+		return $user_conf["Chat"]["nick"];
+	} else {
+		return $str;
+	}
+}
 function truncate($text, $length) {
 	$length = abs((int)$length);
 	if(strlen($text) > $length) {
@@ -28,7 +36,7 @@ function optimize($string) {
 		$string = $info["basename"];
 	}
 	
-	return truncate($string, 120);
+	return check_user(truncate($string, 120));
 }
 if(isset($_GET["s"]) && trim($_GET["s"]) !== "" && !in_array(strtolower($page_name), $advanced_pages)) {
 	?>
