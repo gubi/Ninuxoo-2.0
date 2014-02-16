@@ -26,7 +26,8 @@ function login() {
 								}
 							});
 						} else {
-							$(window.location).attr("href", "./Admin");
+							//$(window.location).attr("href", document.referrer);
+							window.location.reload();
 						}
 					}
 				});

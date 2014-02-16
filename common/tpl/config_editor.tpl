@@ -44,8 +44,8 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 				?>
 			</tbody>
 		</table>
+		<a class="btn btn-primary right" href="./Admin/Config_editor/Nuova_configurazione">Nuova config&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-plus"></a>
 	</div>
-	<a class="btn btn-primary right" href="./Admin/Config_editor/Nuova_configurazione">Nuova config&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-plus"></a>
 	<?php
 } else {
 	$user_config = parse_ini_file("common/include/conf/user/" . sha1($username) . "/user.conf", true);
@@ -56,7 +56,7 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 	} else {
 		$filename = base64_decode($_GET["id"]);
 		$info = pathinfo($filename);
-		$file_name = (strpos($filename, "/user/") ? '<div class="col-md-3"><label for="config_name">Nome del file:</label> <input type="text" value="' . $info["basename"] . '" id="config_name" name="config_name" autofocus tabindex="1" /></div><div class="col-md-5"><span class="info" id="rename_suggestion" style="display: none;">Sar&agrave; rinominato in "<span></span>"</span><input type="hidden" value="' . $info["basename"] . '" name="original_name" id="original_name" /></span></div>' : '<b>Nome del file:</b> <input type="hidden" value="' . $info["basename"] . '" name="config_name" id="config_name" /><span class="info">' . $info["basename"] . '</span></div>');
+		$file_name = (strpos($filename, "/user/") ? '<div class="col-md-3"><label for="config_name">Nome del file:</label> <input type="text" value="' . $info["basename"] . '" id="config_name" name="config_name" autofocus tabindex="1" /></div><div class="col-md-5"><span class="info" id="rename_suggestion" style="display: none;">Sar&agrave; rinominato in "<span></span>"</span><input type="hidden" value="' . $info["basename"] . '" name="original_name" id="original_name" /></span></div>' : '<div class="col-md-8"><label>Nome del file:</label> <input type="hidden" value="' . $info["basename"] . '" name="config_name" id="config_name" /><span class="info">' . $info["basename"] . '</span></div>');
 		$file = file_get_contents($filename);
 		$script_name = '"' . $info["basename"] . '"';
 		$dir_name = $info["dirname"];
@@ -105,12 +105,16 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 	<hr />
 	<br />
 	<form method="post" action="" class="editor_frm" id="editor_frm">
-		<div class="row">
-			<?php print $file_name . $themes_select; ?></td>
+		<div class="form-group">
+			<div class="row">
+				<?php print $file_name . $themes_select; ?></td>
+			</div>
 		</div>
-		<input type="hidden" value="<?php print $username; ?>" name="user_username" id="user_username" />
-		<input type="hidden" value="<?php print $dir_name; ?>" name="script_dir" />
-		<textarea name="script" id="script" style="width: 100%; height: 450px;"><?php print $file; ?></textarea>
+		<div class="form-group">
+			<input type="hidden" value="<?php print $username; ?>" name="user_username" id="user_username" />
+			<input type="hidden" value="<?php print $dir_name; ?>" name="script_dir" />
+			<textarea name="script" id="script" style="width: 100%; height: 450px;"><?php print $file; ?></textarea>
+		</div>
 	</form>
 	<hr />
 	<?php print $remove_btn; ?>

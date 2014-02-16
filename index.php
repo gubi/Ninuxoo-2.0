@@ -163,6 +163,7 @@ $logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (
 	<script type="text/javascript" src="common/js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="common/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="common/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="common/js/jquery.input-ip-address-control-1.0.min.js"></script>
 	<script type="text/javascript" src="common/js/apprise-bootstrap.js"></script>
 	<?php
 	if($has_config && trim(strtolower($_GET["s"])) !== "admin") {

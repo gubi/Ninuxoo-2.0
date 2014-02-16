@@ -12,9 +12,10 @@ function apprise(string, args, callback) {
 	var default_args = {
 		"confirm": false, 			// Ok and Cancel buttons
 		"verify": false, 			// Yes and No buttons
-		"input": false, 			// Text input (can be true or string for default text)
+		"input": false,
+		"inputIp": false,
 		"message": false, 			// Textarea (can be true or string for default text)
-		"inverted": false,
+		"invertedVerify": false,
 		"textOk": "Ok", 			// Ok button default text
 		"textCancel": "Annulla",		// Cancel button default text
 		"textYes": "Si", 			// Yes button default text
@@ -88,7 +89,7 @@ function apprise(string, args, callback) {
 			}
 			if(string.length > 0) {
 				row.appendTo(body);
-				panel.append(string).appendTo(row);
+				panel.append('<p>' + string + '</p>').appendTo(row);
 				body.appendTo(content);
 			}
 		}
@@ -97,19 +98,39 @@ function apprise(string, args, callback) {
 	if (args) {
 		if (args["input"]) {
 			if (typeof(args["input"]) == 'string') {
-				row.append('<input type="text" class="form-control" value="' + args["input"] + '" />');
+				row.find("div.col-sm-12").append('<input type="text" class="form-control" value="' + args["input"] + '" /></div>');
 			} else {
-				row.append('<input type="text" class="form-control" />');
+				if(args["fa_icon"]) {
+					row.find("div.col-sm-10").append('<input type="text" class="form-control" /></div>');
+				} else {
+					row.find("div.col-sm-12").append('<input type="text" class="form-control" /></div>');
+				}
 			}
+		}
+		if (args["inputIp"]) {
+			row.prepend('<div class="form-group col-sm-5"><p>Tipo di indirizzo:</p><label><input type="radio" id="ipv4" name="ipaddr" class="ipaddr" checked /> <acronym title="Internet Protocol versione 4">IPv4</acronym></label><br /><label><input type="radio" id="ipv6" name="ipaddr" class="ipaddr" /> <acronym title="Internet Protocol versione 6">IPv6</acronym></label><br /><label><input type="radio" id="dns" name="ipaddr" class="ipaddr" /> <acronym title="Domain Name System">DNS</acronym></label></div>');
+			
+			$.add_input = function(args) {
+				if (typeof(args["inputIp"]) == 'string') {
+					row.find("div.col-sm-12").append('<input type="text" class="form-control" value="' + args["inputIp"] + '" /></div>');
+				} else {
+					if(args["fa_icon"]) {
+						row.find("div.col-sm-10").append('<input type="text" class="form-control" /></div>');
+					} else {
+						row.find("div.col-sm-12").append('<input type="text" class="form-control" /></div>');
+					}
+				}
+			};
+			$.add_input(args);
 		}
 		if (args["message"]) {
 			if (typeof(args["message"]) == 'string') {
-				row.append('<textarea rows="5" class="form-control">' + args["message"] + '</textarea></div>');
+				row.find("div.col-sm-12").append('<textarea rows="5" class="form-control">' + args["message"] + '</textarea></div>');
 			} else {
 				if(args["fa_icon"]) {
 					row.find("div.col-sm-10").append('<textarea rows="5" class="form-control"></textarea></div>');
 				} else {
-					row.append('<textarea rows="5" class="form-control"></textarea></div>');
+					row.find("div.col-sm-12").append('<textarea rows="5" class="form-control"></textarea></div>');
 				}
 			}
 		}
@@ -120,7 +141,7 @@ function apprise(string, args, callback) {
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-default">' + args["textCancel"] + '</button>');
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-primary right">' + args["textOk"] + '</button>');
 			btn_group.appendTo(footer);
-		} else if (args["inverted"]) {
+		} else if (args["invertedVerify"]) {
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-default">' + args["textOk"] + '</button>');
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-primary right">' + args["textCancel"] + '</button>');
 			btn_group.appendTo(footer);
@@ -152,7 +173,11 @@ function apprise(string, args, callback) {
 		}
 	});
 	$("#apprise").modal(modal).on("shown.bs.modal", function() {
-		$(this).find(".form-control").focus();
+		if(args["inputIp"]) {
+			$(this).find(".form-control").ipAddress().focus();
+		} else if(args["input"]) {
+			$(this).find(".form-control").focus();
+		}
 		$(document).keydown(function (e) {
 			if (e.keyCode == 13) {
 				if(!args["input"] && !args["message"]) {
@@ -163,5 +188,24 @@ function apprise(string, args, callback) {
 				if (e.keyCode == 27) { $("#apprise").modal("hide"); }
 			}
 		});
+		$(".ipaddr").change(function() {
+			var $form_control = row.find(".form-control");
+			if($("#ipv4").is(":checked")) {
+				$form_control.remove();
+				$.add_input(args);
+				$("#apprise .form-control").ipAddress({v: 4}).focus();
+			} else if($("#ipv6").is(":checked")) {
+				console.log("ok");
+				$form_control.remove();
+				$.add_input(args);
+				$("#apprise .form-control").ipAddress({v: 6}).focus();
+			} else if($("#dns").is(":checked")) {
+				$form_control.remove();
+				$.add_input(args);
+				$("#apprise .form-control").focus();
+			}
+		});
+		$("*[title]:not(acronym)").tooltip();
+		$("acronym[title]").tooltip({placement: "right"});
 	});
 }

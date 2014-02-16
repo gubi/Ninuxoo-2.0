@@ -214,7 +214,7 @@ $(document).ready(function() {
 	$.check_nas(1);
 	
 	$("#add_nas_ip").click(function() {
-		apprise("Inserisci l'indirizzo IP del NAS", {"input": true}, function(r){
+		apprise("Inserisci l'indirizzo IP del NAS:", {"inputIp": true, "icon": "fa-tasks", "allowExit": true, title: 'Aggiungi un <acronym title="Network Attached Storage">NAS</acronym> conosciuto'}, function(r){
 			if(r) {
 				$("#page_loader").fadeIn(300);
 				$.get("API/index.php", {action: "make_friend", ip: r}, function(response) {
