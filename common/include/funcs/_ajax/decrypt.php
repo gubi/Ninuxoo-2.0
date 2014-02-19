@@ -95,6 +95,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "check_personal_page":
 			require_once("personal_page.detect.php");
 			break;
+		case "create_dir":
+			require_once("editor.create_dir.php");
+			break;
 		case "download_data":
 			require_once("editor.download_data.php");
 			break;
@@ -122,6 +125,9 @@ if(isset($_GET["getPublicKey"])) {
 		case "remove_notify":
 			require_once("notifications.remove.php");
 			break;
+		case "remove_config":
+			require_once("editor.remove_config.php");
+			break;
 		case "remove_page":
 			require_once("local_site.remove_page.php");
 			break;
@@ -130,6 +136,9 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "remove_script":
 			require_once("editor.remove_script.php");
+			break;
+		case "rename_dir":
+			require_once("editor.rename_dir.php");
 			break;
 		case "reset_password.send_mail":
 			require_once("reset_password.send_mail.php");
@@ -178,6 +187,9 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "set_socket":
 			require_once("chat.set_socket.php");
+			break;
+		case "get_personal_configs":
+			require_once("editor.get_personal_configs.php");
 			break;
 		case "start_scan":
 			require_once("local_scan.php");

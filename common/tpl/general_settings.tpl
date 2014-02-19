@@ -16,6 +16,7 @@
 				<div class="input-group">
 					<label for="session_length">Durata generale di una sessione: </label>
 					<input type="number" class="input-lg" size="5" maxlength="7" min="0" step="10" id="session_length" name="session_length" value="<?php print $GLOBALS["general_settings"]["login"]["session_length"]; ?>" autofocus tabindex="1" />
+					<span class="help-block" style="display: none;">Le modifiche avranno effetto sugli accessi successivi al salvataggio.<br />Nel tuo caso dal prossimo accesso</span>
 				</div>
 			</div>
 			<div class="form-group">
@@ -33,7 +34,9 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<span class="lead text-primary">
-				<span class="fa fa-building-o"></span>&nbsp;&nbsp;Schede e dettagli sui files <sup><a data-toggle="collapse" href="#file_data_info" class="text-muted"><span class="fa fa-info"></span></a></sup><a name="Gestione_schede" id="Gestione_schede"></a><small class="help-block">Criterio di acquisizione dei contenuti dal nome del file</small>
+				<span class="fa fa-building-o"></span>&nbsp;&nbsp;Schede e dettagli sui files <sup><a data-toggle="collapse" href="#file_data_info" class="text-muted"><span class="fa fa-info"></span></a></sup>
+				<a name="Gestione_schede" id="Gestione_schede"></a>
+				<small class="help-block">Criterio di acquisizione dei contenuti dal nome del file</small>
 			</span>
 			
 			<div id="file_data_info" class="info panel-body panel-collapse collapse">

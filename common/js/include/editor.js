@@ -4,7 +4,7 @@ $(document).ready(function(){
 		window.onbeforeunload = null;
 		return false;
 	});
-	$("#save_editor_btn, #export_btn, #remove_btn").click(function() {
+	$("#save_editor_btn, #export_btn, #remove_btn, #cancel_btn").click(function() {
 		switch($(this).attr("id")) {
 			case "save_editor_btn":
 				$("#page_loader").fadeIn(300);
@@ -30,6 +30,13 @@ $(document).ready(function(){
 								$("#page_loader").fadeOut(300);
 								$("#original_name").val($("#config_name").val());
 								$("#remove_btn").attr("disabled", false);
+								
+								apprise('La config "' + $("#config_name").val() + '" &egrave; stata salvata con successo', {title: "Config salvata!", confirm: true, textCancel: '<span class="fa fa-angle-left">&nbsp;&nbsp;Torna al riepilogo', textOk: 'Continua la modifica&nbsp;&nbsp;<span class="fa fa-edit"></span>', icon: "success", allowExit: true}, function(r) {
+									if(!r) {
+										window.onbeforeunload = null;
+										window.location.replace(document.referrer);
+									}
+								});
 							}
 						}
 					});
@@ -75,7 +82,9 @@ $(document).ready(function(){
 					});
 				});
 				break;
-			
+			case "cancel_btn":
+				window.location.replace(document.referrer);
+				break;
 		}
 		return false;
 	});

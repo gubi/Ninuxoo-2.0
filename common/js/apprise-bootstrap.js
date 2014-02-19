@@ -65,7 +65,8 @@ function apprise(string, args, callback) {
 					}
 					var title_icon = '<span class="fa ' + args["icon"] + '"></span>&nbsp;&nbsp;';
 				} else {
-					var title_icon = "";
+					var title_icon = "",
+					title_class = " text-primary";
 				}
 				title.addClass(title_class).append(title_icon + args["title"]);
 				

@@ -1,11 +1,11 @@
 <?php
 $mime_type[""] = array(
-	"text" => "File di testo",
-	"icon" => "fa fa-file-text-o",
+	"text" => "<i>Sconosciuto</i>",
+	"icon" => "fa fa-file-o",
 	"owl" => "",
 	"semantic" => "",
 	"mime" => "text/plain",
-	"type" => "text"
+	"type" => "undefined"
 );
 $mime_type["txt"] = array(
 	"text" => "File di testo",
@@ -55,6 +55,14 @@ $mime_type["coffee"] = array(
 	"mime" => "text/x-coffeescript",
 	"type" => "text"
 );
+$mime_type["cfg"] = array(
+	"text" => "File di configurazione",
+	"icon" => "fa fa-tasks",
+	"owl" => "Work",
+	"semantic" => "File INI",
+	"mime" => "text/plain",
+	"type" => "text"
+);
 $mime_type["conf"] = array(
 	"text" => "File di configurazione",
 	"icon" => "fa fa-tasks",
@@ -89,7 +97,7 @@ $mime_type["html"] = array(
 );
 $mime_type["ini"] = array(
 	"text" => "File di configurazione",
-	"icon" => "fa fa-tasks",
+	"icon" => "fa fa-gears",
 	"owl" => "Work",
 	"semantic" => "File INI",
 	"mime" => "text/x-ini",

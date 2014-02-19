@@ -3,22 +3,14 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<span class="lead text-primary">
-			<span class="fa fa-comments-o"></span>&nbsp;&nbsp;Notifiche di gruppo 
+			<span class="fa fa-comments-o"></span>&nbsp;&nbsp;Notifiche di gruppo <sup><a data-toggle="collapse" href="#notifications_info" class="text-muted"><span class="fa fa-info"></span></a></sup>
 				<span id="check_loader" class="right info"><img src="common/media/img/loader.gif" /></span>
 				<small class="help-block">Messaggistica in multicast</small>
 			</span>
-			<div class="text-right">
-				<a data-toggle="collapse" href="#collapseOne" class="text-info">
-					Informazioni sulla chat di gruppo&nbsp;&nbsp;<span class="fa fa-info"></span>
-				</a>
-			</div>
-			<div class="panel panel-info">
-				<div id="collapseOne" class="panel-collapse collapse">
-					<div class="panel-body text-info text-right">
-						<p>Comunica con tutti gli utenti degli altri NAS: scrivi un messaggio da diffondere nell'etere o per iniziare una chiacchierata pubblica.</p>
-						<p>Per i pi&ugrave; esperti, si tratta di messaggi inviati via <acronym title="Transmission Control Protocol">TCP</acronym> in <acronym title="Multicast DNS">MDNS</acronym>, nella porta 64689.</p>
-					</div>
-				</div>
+			
+			<div id="notifications_info" class="panel-body panel-collapse collapse">
+				<p>Comunica con tutti gli utenti degli altri NAS: scrivi un messaggio da diffondere nell'etere o per informare gli altri.</p>
+				<p>Per i pi&ugrave; esperti, si tratta di messaggi inviati via <acronym title="Transmission Control Protocol">TCP</acronym> in <acronym title="Multicast DNS">MDNS</acronym>, nella porta 64689.</p>
 			</div>
 		</span>
 	</div>

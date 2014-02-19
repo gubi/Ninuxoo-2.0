@@ -121,6 +121,10 @@ if(!$has_config) {
 	$GLOBALS["search_filetype"] = "";
 }
 if(isset($_COOKIE["n"])) {
+	if($page_name == "Accedi") {
+		header("Location: ./");
+		exit();
+	}
 	$c = explode("~", PMA_blowfish_decrypt($_COOKIE["n"], "ninuxoo_cookie"));
 		$user["name"] = strstr($c[0], " ", true);
 		$user["email"] = $c[1];
