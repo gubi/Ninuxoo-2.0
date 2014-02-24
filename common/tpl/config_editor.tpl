@@ -33,26 +33,21 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 			if($(this).hasClass("remove_item")) {
 				apprise("Si &egrave; sicuri di voler rimuovere la directory \"" + dirname.replace("./", "") + "\" e tutto il suo contenuto?<br />Questo rimover&agrave; anche tutti i files al suo interno.", {title: "Rimozione dell'elemento", icon: "warning", confirm: "true"}, function(r) {
 					if(r) {
-						var password = makeid();
-						$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-							var encryptedString = $.jCryption.encrypt("dir_name=" + dirname + "&username=" + $("#user_username").text(), password);
-							
-							$.ajax({
-								url: "common/include/funcs/_ajax/decrypt.php",
-								dataType: "json",
-								type: "POST",
-								data: {
-									jCryption: encryptedString,
-									type: "remove_config"
-								},
-								success: function(response) {
-									if(response.error) {
-										alert("Si &egrave; verificato un errore durante il salvataggio:<br />" + response.error_msg, {icon: response.icon, title: "Ouch!"});
-									} else {
-										$.update_list();
-									}
+						$.ajax({
+							url: "common/include/funcs/_ajax/decrypt.php",
+							dataType: "json",
+							type: "POST",
+							data: {
+								jCryption: $.jCryption.encrypt("dir_name=" + dirname + "&username=" + $("#user_username").text(), password),
+								type: "remove_config"
+							},
+							success: function(response) {
+								if(response.error) {
+									alert("Si &egrave; verificato un errore durante il salvataggio:<br />" + response.error_msg, {icon: response.icon, title: "Ouch!"});
+								} else {
+									$.update_list();
 								}
-							});
+							}
 						});
 					}
 				});
@@ -60,26 +55,21 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 			if($(this).hasClass("edit_item")) {
 				apprise("Inserire il nuovo nome della directory:", {title: "Rinomina la directory", icon: "fa-edit", input: dirname.replace("./", ""), textOk: "Rinomina"}, function(r) {
 					if(r) {
-						var password = makeid();
-						$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-							var encryptedString = $.jCryption.encrypt("dir_name=" + dirname + "&username=" + $("#user_username").text() + "&new_name=" + r, password);
-							
-							$.ajax({
-								url: "common/include/funcs/_ajax/decrypt.php",
-								dataType: "json",
-								type: "POST",
-								data: {
-									jCryption: encryptedString,
-									type: "rename_dir"
-								},
-								success: function(response) {
-									if(response.error) {
-										alert("Si &egrave; verificato un errore durante il salvataggio:<br />" + response.error_msg, {icon: response.icon, title: "Ouch!"});
-									} else {
-										$.update_list();
-									}
+						$.ajax({
+							url: "common/include/funcs/_ajax/decrypt.php",
+							dataType: "json",
+							type: "POST",
+							data: {
+								jCryption: $.jCryption.encrypt("dir_name=" + dirname + "&username=" + $("#user_username").text() + "&new_name=" + r, password),
+								type: "rename_dir"
+							},
+							success: function(response) {
+								if(response.error) {
+									alert("Si &egrave; verificato un errore durante il salvataggio:<br />" + response.error_msg, {icon: response.icon, title: "Ouch!"});
+								} else {
+									$.update_list();
 								}
-							});
+							}
 						});
 					}
 				});
@@ -87,27 +77,22 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 		});
 	};
 	$.update_list = function() {
-		var password = makeid();
-		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-			var encryptedString = $.jCryption.encrypt("username=" + $("#user_username").text(), password);
-			
-			$.ajax({
-				url: "common/include/funcs/_ajax/decrypt.php",
-				dataType: "text",
-				type: "POST",
-				data: {
-					jCryption: encryptedString,
-					type: "get_personal_configs"
-				},
-				success: function(response) {
-					$("#personal_configs tbody").remove();
-					$("#personal_configs").append(response).slideDown();
-					$("#page_loader").fadeOut(300);
-					$(".new_dir_btn").attr("disabled", false);
-					
-					$.btn_collapse();
-				}
-			});
+		$.ajax({
+			url: "common/include/funcs/_ajax/decrypt.php",
+			dataType: "text",
+			type: "POST",
+			data: {
+				jCryption: $.jCryption.encrypt("username=" + $("#user_username").text(), password),
+				type: "get_personal_configs"
+			},
+			success: function(response) {
+				$("#personal_configs tbody").remove();
+				$("#personal_configs").append(response).slideDown();
+				$("#page_loader").fadeOut(300);
+				$(".new_dir_btn").attr("disabled", false);
+				
+				$.btn_collapse();
+			}
 		});
 	}
 	$(document).ready(function(){
@@ -119,29 +104,21 @@ if(!isset($_GET["id"]) || trim($_GET["id"]) == "") {
 						$("#page_loader").fadeIn(300);
 						$(".new_dir_btn").attr("disabled", "disabled");
 						
-						var password = makeid();
-						$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-							var encryptedString = $.jCryption.encrypt("dir_name=" + r + "&user_conf_dir=" + $("#user_conf_dir").text(), password);
-							
-							$.ajax({
-								url: "common/include/funcs/_ajax/decrypt.php",
-								dataType: "json",
-								type: "POST",
-								data: {
-									jCryption: encryptedString,
-									type: "create_dir"
-								},
-								success: function(response) {
-									if (response.error) {
-										alert("Si &egrave; verificato un errore durante il salvataggio:<br />" + response.error_msg, {icon: response.icon, title: "Ouch!"});
-									} else {
-										$.update_list();
-									}
+						$.ajax({
+							url: "common/include/funcs/_ajax/decrypt.php",
+							dataType: "json",
+							type: "POST",
+							data: {
+								jCryption: $.jCryption.encrypt("dir_name=" + r + "&user_conf_dir=" + $("#user_conf_dir").text(), password),
+								type: "create_dir"
+							},
+							success: function(response) {
+								if (response.error) {
+									alert("Si &egrave; verificato un errore durante il salvataggio:<br />" + response.error_msg, {icon: response.icon, title: "Ouch!"});
+								} else {
+									$.update_list();
 								}
-							});
-						}, function() {
-							$("#page_loader").fadeOut(300);
-							alert("Si &egrave; verificato un errore durante il salvataggio.", {icon: "error", title: "Ouch!"});
+							}
 						});
 					}
 				});

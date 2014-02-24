@@ -6,8 +6,7 @@ $.set_smiley = function(smiley, $obj) {
 	$(".smiley_btn").popover("hide");
 	$(".popover").css("display", "none");
 	$obj.closest("form").find("input.form-control").focus();
-}
-
+};
 $.toggle_send_notice_btn = function() {
 	$("#send_notice_area > .input-group").removeClass("has-success");
 	$("#send_notice_btn").removeClass("btn-success").addClass("btn-primary").html('Invia&nbsp;&nbsp;<span class="glyphicon glyphicon-share-alt"></span>');
@@ -17,7 +16,7 @@ $.toggle_send_notice_btn = function() {
 	} else {
 		$("#send_notice_btn").addClass("disabled");
 	}
-}
+};
 function filter(that) {
 	var tableBody = $("#dash_notifications"),
 	tableRowsClass = $("#dash_notifications tr"),
@@ -61,76 +60,63 @@ function mark_id_as_read() {
 function remove_notice() {
 	$("#send_notice_area").attr("disabled", "disabled");
 	
-	if(password == undefined) {
-		var password = makeid();
-	}
-	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt("host=" + $("#user_data").val(), password);
-		
-		$.ajax({
-			url: "common/include/funcs/_ajax/decrypt.php",
-			dataType: "text",
-			type: "POST",
-			data: {
-				jCryption: encryptedString,
-				type: "remove_notify"
-			},
-			success: function(response) {
-				$(".remove_notice_btn").addClass("disabled").closest("tr").fadeOut(600, function() { $(this).remove(); });
-				$("#send_previous_notice").val("");
-				if($("#send_notice_area .input-group-addon").length > 0) {
-					$("#send_notice_area .input-group-addon").remove();
-				}
-				$("#send_notice_area").attr("disabled", false);
-				$.toggle_send_notice_btn();
-				$("#check_loader").fadeIn(600);
-				setTimeout(function() {
-					check_notify("true");
-				}, 3000);
+	$.ajax({
+		url: "common/include/funcs/_ajax/decrypt.php",
+		dataType: "text",
+		type: "POST",
+		data: {
+			jCryption: $.jCryption.encrypt("host=" + $("#user_data").val(), password),
+			type: "remove_notify"
+		},
+		success: function(response) {
+			$(".remove_notice_btn").addClass("disabled").closest("tr").fadeOut(600, function() { $(this).remove(); });
+			$("#send_previous_notice").val("");
+			if($("#send_notice_area .input-group-addon").length > 0) {
+				$("#send_notice_area .input-group-addon").remove();
 			}
-		});
+			$("#send_notice_area").attr("disabled", false);
+			$.toggle_send_notice_btn();
+			$("#check_loader").fadeIn(600);
+			$(".knob").setKnobTimeout(knob_options, function() {
+				check_notify("true");
+			}, 3000);
+		}
 	});
 }
 function send_notice() {
 	$("#send_notice_area").attr("disabled", "disabled");
 	
-	if(password == undefined) {
-		var password = makeid();
-	}
-	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt("message=" + $.utf8_to_b64($("#send_notice").val()) + "&host=" + $("#user_data").val() + "&user_name=" + $("#user_name").val(), password);
-		
-		$.ajax({
-			url: "common/include/funcs/_ajax/decrypt.php",
-			dataType: "text",
-			type: "POST",
-			data: {
-				jCryption: encryptedString,
-				type: "send_notify"
-			},
-			success: function(response) {
-				$("#send_notice_area > .input-group").addClass("has-success");
-				if($("#send_notice_area .input-group-addon").length == 0) {
-					$("#send_notice").before('<span class="input-group-addon">#' + response + '</span>');
-				} else {
-					$("#send_notice_area .input-group-addon").text("#" + response);
-				}
-				$("#send_notice_btn").removeClass("btn-primary").addClass("btn-success disabled").html('Inviato&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span>');
-				setTimeout(function() {
-					$("#send_notice_area > .input-group").switchClass("has-success", "", 1000);
-				}, 2000);
-				$("#send_notice_area").attr("disabled", false);
-				$("#check_loader").fadeIn(600);
-				setTimeout(function() {
-					check_notify("true");
-				}, 1000);
+	$.ajax({
+		url: "common/include/funcs/_ajax/decrypt.php",
+		dataType: "text",
+		type: "POST",
+		data: {
+			jCryption: $.jCryption.encrypt("message=" + $.utf8_to_b64($("#send_notice").val()) + "&host=" + $("#user_data").val() + "&user_name=" + $("#user_name").val(), password),
+			type: "send_notify"
+		},
+		success: function(response) {
+			$("#send_notice_area > .input-group").addClass("has-success");
+			if($("#send_notice_area .input-group-addon").length == 0) {
+				$("#send_notice").before('<span class="input-group-addon">#' + response + '</span>');
+			} else {
+				$("#send_notice_area .input-group-addon").text("#" + response);
 			}
-		});
+			$("#send_notice_btn").removeClass("btn-primary").addClass("btn-success disabled").html('Inviato&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span>');
+			setTimeout(function() {
+				$("#send_notice_area > .input-group").switchClass("has-success", "", 1000);
+			}, 2000);
+			$("#send_notice_area").attr("disabled", false);
+			$("#check_loader").fadeIn(600);
+			$(".knob").setKnobTimeout(knob_options, function() {
+				check_notify("true");
+			}, 1000);
+			
+		}
 	});
 }
 $(document).ready(function() {
 	var activeSystemClass = $(".list-group-item.active");
-
+	
 	$("#system-search").bind("keyup change", function() {
 		filter(this);
 	});

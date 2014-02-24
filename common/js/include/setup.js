@@ -123,46 +123,7 @@ $.get_nodes = function() {
 		});
 	}
 };
-$.get_shares = function(remote_nas) {
-	if (remote_nas == undefined) {
-		var remote_nas = "";
-	}
-	var password = $.makeid();	
-	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt("file=" + remote_nas, password);
-		$("#root_share_dir_refresh_btn > span").addClass("fa-spin");
-		$.ajax({
-			url: "common/include/funcs/_ajax/decrypt.php",
-			dataType: "json",
-			type: "POST",
-			data: {
-				jCryption: encryptedString,
-				type: "get_shares"
-			},
-			success: function(result) {
-				$("#root_share_dir_refresh_btn > span").removeClass("fa-spin");
-				if(!result["alert"]) {
-					var paths = "";
-					$.each(result["shares"], function(item, data) {
-						paths += '<option value="' + data + '" selected>' + data + "</option>\n";
-						$("#shared_paths").html(paths).attr("disabled", false).multiselect("rebuild");
-						if($("#root_share_dir_error").length > 0) {
-							$("#root_share_dir").removeClass("text-block");
-						}
-						$("#root_share_dir_error").remove();
-						$("#root_share_dir").closest(".form-group").removeClass("has-error");
-					});
-				} else {
-					if($("#root_share_dir_error").length == 0) {
-						$("#root_share_dir").closest(".form-group").addClass("has-error").after('<span id="root_share_dir_error" class="text-block"><span class="text-danger">' + result["alert"] + '</span></span>');
-					}
-					$("#shared_paths").val("").attr("disabled", "disabled").multiselect("rebuild");
-					apprise(result["alert"], {icon: "warning", title: "Mmmm..."});
-				}
-			}
-		});
-	});
-};
+
 $.calculate_meteo_data = function(latitude, longitude) {
 	String.prototype.multi_replace = function (hash) {
 		var str = this, key;
@@ -200,15 +161,6 @@ $.calculate_meteo_data = function(latitude, longitude) {
 		});
 	}, "json");
 };
-$.makeid = function() {
-	var text = "",
-	possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	
-	for(var i = 0; i <= 16; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return text;
-};
 $.install = function() {
 	if($("#pgp_pubkey").val() != "") {
 		$("#pgp_pubkey").removeClass("error");
@@ -224,50 +176,40 @@ $.install = function() {
 				$("#setup_loader > h1").text("Installazione di Ninuxoo...");
 				$("#setup_loader").fadeIn(450, function() {
 					$("#setup_loader > span").text("Creazione del file di config...");
-					var password = $.makeid();
 					
-					$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-						var encryptedString = $.jCryption.encrypt($("#install_frm").serialize() + "&shared_paths=" + $("#shared_paths").val().join(","), password);
-						
-						$.ajax({
-							url: "common/include/funcs/_ajax/decrypt.php",
-							dataType: "json",
-							type: "POST",
-							data: {
-								jCryption: encryptedString,
-								type: "install"
-							},
-							success: function(response) {
-								if (response["data"] !== "ok") {
-									var risp = response["data"].split("::");
-									if(risp[0] == "error") {
-										apprise("Si &egrave; verificato un errore durante l'installazione:<br />" + risp[1].replace("\n", "<br />"), {icon: "error", title: "Ouch!"}, function(r) {
-											if(r) {
-												$("#setup_loader").hide();
-											}
-										});
-									}
-								} else {
-									$("#setup_loader > span").text("Scansione dei files...");
-									$.get("scan.php", {ajax: "true"}, function(scan_return) {
-										if($.trim(scan_return) == "done.") {
-											alert("Ho creato il file \"config.ini\".<br />Ho salvato i tuoi parametri di accesso e la chiave pubblica PGP.<br />Ho creato il file di connessione al database.<br />Ho configurato il cronjob e fatto una scansione dei files...<br /><br />Non resta che ricaricare la pagina e Ninuxoo &egrave; pronto per l'uso...<br />Grazie per la pazienza <tt>:)</tt>", {icon: "success", title: "Installazione avvenuta con successo!", textOk: "Prego"}, function(r) {
-												if(r) {
-													location.reload();
-												}
-											});
-										} else {
-											alert("Si &egrave; verificato un errore durante l'installazione:\n" + scan_return, {icon: "error", title: "Ouch!"});
+					$.ajax({
+						url: "common/include/funcs/_ajax/decrypt.php",
+						dataType: "json",
+						type: "POST",
+						data: {
+							jCryption: $.jCryption.encrypt($("#install_frm").serialize() + "&shared_paths=" + $("#shared_paths").val().join(","), password),
+							type: "install"
+						},
+						success: function(response) {
+							if (response["data"] !== "ok") {
+								var risp = response["data"].split("::");
+								if(risp[0] == "error") {
+									apprise("Si &egrave; verificato un errore durante l'installazione:<br />" + risp[1].replace("\n", "<br />"), {icon: "error", title: "Ouch!"}, function(r) {
+										if(r) {
+											$("#setup_loader").hide();
 										}
 									});
 								}
+							} else {
+								$("#setup_loader > span").text("Scansione dei files...");
+								$.get("scan.php", {ajax: "true"}, function(scan_return) {
+									if($.trim(scan_return) == "done.") {
+										alert("Ho creato il file \"config.ini\".<br />Ho salvato i tuoi parametri di accesso e la chiave pubblica PGP.<br />Ho creato il file di connessione al database.<br />Ho configurato il cronjob e fatto una scansione dei files...<br /><br />Non resta che ricaricare la pagina e Ninuxoo &egrave; pronto per l'uso...<br />Grazie per la pazienza <tt>:)</tt>", {icon: "success", title: "Installazione avvenuta con successo!", textOk: "Prego"}, function(r) {
+											if(r) {
+												location.reload();
+											}
+										});
+									} else {
+										alert("Si &egrave; verificato un errore durante l'installazione:\n" + scan_return, {icon: "error", title: "Ouch!"});
+									}
+								});
 							}
-						});
-					}, function() {
-						$("#setup_loader").fadeOut(300);
-						$("#setup_loader > h1").text("");
-						$("#setup_loader > span").text("");
-						alert("Si &egrave; verificato un errore durante l'installazione:\nErrore di autenticazione.", {icon: "error", title: "Ouch!"});
+						}
 					});
 				});
 			} else {

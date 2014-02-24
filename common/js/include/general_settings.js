@@ -1,4 +1,4 @@
-function switch_caching() {
+$.switch_caching = function() {
 	if($("#allow_caching > span").hasClass("fa-check-square-o")) {
 		$(".caching_active").animate({opacity: "1"}, 300);
 		$(".caching_active input, #caching_active label, #caching_active a").attr("disabled", false);
@@ -8,8 +8,14 @@ function switch_caching() {
 	}
 }
 $(document).ready(function() {
+	var current_session_length = $("#session_length").val();
 	$("#session_length").on("keyup change", function() {
 		$(this).get_duration({timetype: "seconds"});
+		if($(this).val() != current_session_length) {
+			$(this).closest("div").find(".help-block").fadeIn(300);
+		} else {
+			$(this).closest("div").find(".help-block").delay(1000).fadeOut(900);
+		}
 	});
 	$("#meteo_refresh").on("keyup change", function() {
 		$(this).get_duration();
@@ -27,32 +33,25 @@ $(document).ready(function() {
 	
 	$("#save_settings_btn").click(function() {
 		$("#page_loader").fadeIn(300);
-		var password = makeid();
-		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-			var encryptedString = $.jCryption.encrypt($("#settings_frm").serialize(), password);
-			
-			$.ajax({
-				url: "common/include/funcs/_ajax/decrypt.php",
-				dataType: "json",
-				type: "POST",
-				data: {
-					jCryption: encryptedString,
-					type: "save_settings"
-				},
-				success: function(response) {
-					if (response["data"] !== "ok") {
-						var risp = response["data"].split("::");
-						if(risp[0] == "error") {
-							alert("Si &egrave; verificato un errore durante il salvataggio:\n" + risp[1], {icon: "error", title: "Ouch!"});
-						}
-					} else {
-						window.location.href = "./Admin";
+		
+		$.ajax({
+			url: "common/include/funcs/_ajax/decrypt.php",
+			dataType: "json",
+			type: "POST",
+			data: {
+				jCryption: $.jCryption.encrypt($("#settings_frm").serialize(), password),
+				type: "save_settings"
+			},
+			success: function(response) {
+				if (response["data"] !== "ok") {
+					var risp = response["data"].split("::");
+					if(risp[0] == "error") {
+						alert("Si &egrave; verificato un errore durante il salvataggio:\n" + risp[1], {icon: "error", title: "Ouch!"});
 					}
+				} else {
+					window.location.href = "./Admin";
 				}
-			});
-		}, function() {
-			$("#page_loader").fadeOut(300);
-			alert("Si &egrave; verificato un errore durante il salvataggio.", {icon: "error", title: "Ouch!"});
+			}
 		});
 		return false;
 	});
@@ -80,7 +79,7 @@ $(document).ready(function() {
 			$("#allow_caching_checkbox").attr("checked", "checked");
 		}
 		$(this).tooltip("hide");
-		switch_caching();
+		$.switch_caching();
 	});
-	switch_caching();
+	$.switch_caching();
 });

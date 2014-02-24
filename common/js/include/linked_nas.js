@@ -25,34 +25,30 @@ $.check_nas = function(time) {
 		$("#counter").html(timer + " secondi");
 	}, 1000);
 	
-	var password = makeid();
-	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt("check=true", password);
-		$.ajax({
-			url: "common/include/funcs/_ajax/decrypt.php",
-			dataType: "json",
-			type: "POST",
-			data: {
-				jCryption: encryptedString,
-				type: "check_neighbor"
-			},
-			success: function(response) {
-				if(response.data["finded"] > 0) {
-					$.each(response.data, function(item, finded) {
-						if(item !== "finded") {
-							if($("tr#nas_" + item).length == 0) {
-								$("#finded_nas tr#no_nas").remove();
-								$("#finded_nas > tbody").append('<tr id="nas_' + item + '"><td class="status">' + finded["img"] + '</td><td class="hostname"><i>' + finded["hostname"] + '</i><input type="hidden" class="token" value="' + finded["token"] + '" /></td><td class="owner"><a title="Contatta il proprietario di questo NAS" href="mailto:' + finded["owner"]["email"] + '">' + finded["owner"]["key"] + '</a></td><td style="color: #999;">' + finded["geo_zone"] + '</td><td style="color: #999;">' + finded["reachability"] + '</td><td class="mark_btns" style="color: #999;"><table cellpadding="0" cellspacing="0" class="mark"><tr><td class="' + finded["status_t"] + '"></td><td class="' + finded["status_u"] + '"></td></tr></table></td></tr>');
-								$.linked_nas_functions();
-							}
+	$.ajax({
+		url: "common/include/funcs/_ajax/decrypt.php",
+		dataType: "json",
+		type: "POST",
+		data: {
+			jCryption: $.jCryption.encrypt("check=true", password),
+			type: "check_neighbor"
+		},
+		success: function(response) {
+			if(response.data["finded"] > 0) {
+				$.each(response.data, function(item, finded) {
+					if(item !== "finded") {
+						if($("tr#nas_" + item).length == 0) {
+							$("#finded_nas tr#no_nas").remove();
+							$("#finded_nas > tbody").append('<tr id="nas_' + item + '"><td class="status">' + finded["img"] + '</td><td class="hostname"><i>' + finded["hostname"] + '</i><input type="hidden" class="token" value="' + finded["token"] + '" /></td><td class="owner"><a title="Contatta il proprietario di questo NAS" href="mailto:' + finded["owner"]["email"] + '">' + finded["owner"]["key"] + '</a></td><td style="color: #999;">' + finded["geo_zone"] + '</td><td style="color: #999;">' + finded["reachability"] + '</td><td class="mark_btns" style="color: #999;"><table cellpadding="0" cellspacing="0" class="mark"><tr><td class="' + finded["status_t"] + '"></td><td class="' + finded["status_u"] + '"></td></tr></table></td></tr>');
+							$.linked_nas_functions();
 						}
-					});
-				} else {
-					$("tr#no_nas span").text("Ancora nessun NAS rilevato nelle vicinanze");
-					$("tr#no_nas img").remove();
-				}
+					}
+				});
+			} else {
+				$("tr#no_nas span").text("Ancora nessun NAS rilevato nelle vicinanze");
+				$("tr#no_nas img").remove();
 			}
-		});
+		}
 	});
 }
 $.linked_nas_functions = function() {
@@ -77,33 +73,26 @@ $.linked_nas_functions = function() {
 				apprise('<p>Il <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b> appartiene a "' + owner + '", lo conosci?<br />Mandagli un messaggio per farti riconoscere!</p><p>Gli verr&agrave; inviata un\'e-mail e se accetter&agrave; i vostri NAS si collegheranno.</p>', {title: "Heylà invia un messaggio", icon: "success", fa_icon: "fa-sign-in", textCancel: "Annulla", confirm: "true", textOk: "Invia &rsaquo;", message: true}, function(r) {
 					if(r) {
 						$("#page_loader").fadeIn(300);
-						var password = makeid();
-						$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-							var encryptedString = $.jCryption.encrypt("message=" + r + "&token=" + token, password);
-							
-							$.ajax({
-								url: "common/include/funcs/_ajax/decrypt.php",
-								dataType: "json",
-								type: "POST",
-								data: {
-									jCryption: encryptedString,
-									type: "trust_nas"
-								},
-								success: function(response) {
-									if (response["data"] !== "ok") {
-										var risp = response["data"].split("::");
-										if(risp[0] == "error") {
-											alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
-										}
-									} else {
-										$("#page_loader").fadeOut(300);
-										$("#apprise").modal("hide");
+						
+						$.ajax({
+							url: "common/include/funcs/_ajax/decrypt.php",
+							dataType: "json",
+							type: "POST",
+							data: {
+								jCryption: $.jCryption.encrypt("message=" + r + "&token=" + token, password),
+								type: "trust_nas"
+							},
+							success: function(response) {
+								if (response["data"] !== "ok") {
+									var risp = response["data"].split("::");
+									if(risp[0] == "error") {
+										alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
 									}
+								} else {
+									$("#page_loader").fadeOut(300);
+									$("#apprise").modal("hide");
 								}
-							});
-						}, function() {
-							$("#page_loader").fadeOut(300);
-							alert("Si &egrave; verificato un errore durante il processo.", {icon: "error", title: "Ouch!"});
+							}
 						});
 					} else {
 						$("#page_loader").fadeOut(300);
@@ -122,37 +111,28 @@ $.linked_nas_functions = function() {
 						apprise('Rimuovo la fiducia al <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b>...', {title: "Rimozione della fiducia", icon: "warning", progress: "true"});
 						
 						$("#page_loader").fadeIn(300);
-						var password = makeid();
-						$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-							var encryptedString = $.jCryption.encrypt("token=" + token, password);
-							
-							$.ajax({
-								url: "common/include/funcs/_ajax/decrypt.php",
-								dataType: "json",
-								type: "POST",
-								data: {
-									jCryption: encryptedString,
-									type: "untrust_nas"
-								},
-								success: function(response) {
-									if (response["data"] !== "ok") {
-										var risp = response["data"].split("::");
-										if(risp[0] == "error") {
-											$("#page_loader").fadeOut(300);
-											$("#apprise").modal("hide");
-											alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
-										}
-									} else {
+						
+						$.ajax({
+							url: "common/include/funcs/_ajax/decrypt.php",
+							dataType: "json",
+							type: "POST",
+							data: {
+								jCryption: $.jCryption.encrypt("token=" + token, password),
+								type: "untrust_nas"
+							},
+							success: function(response) {
+								if (response["data"] !== "ok") {
+									var risp = response["data"].split("::");
+									if(risp[0] == "error") {
 										$("#page_loader").fadeOut(300);
 										$("#apprise").modal("hide");
+										alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
 									}
+								} else {
+									$("#page_loader").fadeOut(300);
+									$("#apprise").modal("hide");
 								}
-							});
-						}, function() {
-							$("#page_loader").fadeOut(300);
-							$("#aOverlay").fadeOut(300);
-							$(".appriseOuter").fadeOut(300);
-							alert("Si &egrave; verificato un errore durante il processo.", {icon: "error", title: "Ouch!"});
+							}
 						});
 					} else {
 						main.find(".selected").removeClass("selected");
@@ -168,36 +148,28 @@ $.linked_nas_functions = function() {
 				apprise('Si &egrave; sicuri di voler demarcare il <acronym title="Network Attachewd Storage">NAS</acronym> <b>' + hostname + '</b>?', {confirm: "true", textOk: "Si", textCancel: "Annulla"}, function(r) {
 					if(r) {
 						$("#page_loader").fadeIn(300);
-						var password = makeid();
-						$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-							var encryptedString = $.jCryption.encrypt("token=" + token, password);
-							
-							$.ajax({
-								url: "common/include/funcs/_ajax/decrypt.php",
-								dataType: "json",
-								type: "POST",
-								data: {
-									jCryption: encryptedString,
-									type: "unmark_nas"
-								},
-								success: function(response) {
-									if (response["data"] !== "ok") {
-										var risp = response["data"].split("::");
-										if(risp[0] == "error") {
-											$("#page_loader").fadeOut(300);
-											$("#apprise").modal("hide");
-											alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
-										}
-									} else {
+						
+						$.ajax({
+							url: "common/include/funcs/_ajax/decrypt.php",
+							dataType: "json",
+							type: "POST",
+							data: {
+								jCryption: $.jCryption.encrypt("token=" + token, password),
+								type: "unmark_nas"
+							},
+							success: function(response) {
+								if (response["data"] !== "ok") {
+									var risp = response["data"].split("::");
+									if(risp[0] == "error") {
 										$("#page_loader").fadeOut(300);
 										$("#apprise").modal("hide");
+										alert("Si &egrave; verificato un errore durante il processo:\n" + risp[1], {icon: "error", title: "Ouch!"});
 									}
+								} else {
+									$("#page_loader").fadeOut(300);
+									$("#apprise").modal("hide");
 								}
-							});
-						}, function() {
-							$("#page_loader").fadeOut(300);
-							$("#apprise").modal("hide");
-							alert("Si &egrave; verificato un errore durante il processo.", {icon: "error", title: "Ouch!"});
+							}
 						});
 					} else {
 						main.find(".selected").removeClass("selected");

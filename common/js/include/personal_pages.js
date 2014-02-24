@@ -1,38 +1,31 @@
 function save_page() {
 	$("#page_loader").fadeIn(300);
-	var password = makeid();
-	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt($("#editor_frm").serialize(), password);
-		
-		$.ajax({
-			url: "common/include/funcs/_ajax/decrypt.php",
-			dataType: "json",
-			type: "POST",
-			data: {
-				jCryption: encryptedString,
-				type: "save_personal_page"
-			},
-			success: function(response) {
-				if (response["data"] !== "new" && response["data"] !== "edit") {
-					var risp = response["data"].split("::");
-					alert("Si &egrave; verificato un errore durante il salvataggio:\n" + risp[1], {icon: "error", title: "Ouch!"});
+	
+	$.ajax({
+		url: "common/include/funcs/_ajax/decrypt.php",
+		dataType: "json",
+		type: "POST",
+		data: {
+			jCryption: $.jCryption.encrypt($("#editor_frm").serialize(), password),
+			type: "save_personal_page"
+		},
+		success: function(response) {
+			if (response["data"] !== "new" && response["data"] !== "edit") {
+				var risp = response["data"].split("::");
+				alert("Si &egrave; verificato un errore durante il salvataggio:\n" + risp[1], {icon: "error", title: "Ouch!"});
+			} else {
+				$("#save_editor_btn").addClass("disabled");
+				$("#page_loader").fadeOut(300);
+				$("#remove_btn").attr("disabled", false);
+				if($("#response .alert").length > 0) {
+					$("#response .alert").switchClass("alert-info", "alert-success").find(".fa").switchClass("fa-info", "fa-check");
+					$("#response .alert span:not(.fa)").html('Il file &egrave; stato ' + ((response["data"] == "new") ? 'creato' : 'salvato') + ' correttamente');
 				} else {
-					$("#save_editor_btn").addClass("disabled");
-					$("#page_loader").fadeOut(300);
-					$("#remove_btn").attr("disabled", false);
-					if($("#response .alert").length > 0) {
-						$("#response .alert").switchClass("alert-info", "alert-success").find(".fa").switchClass("fa-info", "fa-check");
-						$("#response .alert span:not(.fa)").html('Il file &egrave; stato ' + ((response["data"] == "new") ? 'creato' : 'salvato') + ' correttamente');
-					} else {
-						$("#response").html('<div class="alert alert-success"><span class="fa fa-check"></span>&nbsp;&nbsp;<span>Il file &egrave; stato ' + ((response["data"] == "new") ? 'creato' : 'salvato') + ' correttamente</span></div>').slideDown(300);
-					}
-					window.onbeforeunload = null;
+					$("#response").html('<div class="alert alert-success"><span class="fa fa-check"></span>&nbsp;&nbsp;<span>Il file &egrave; stato ' + ((response["data"] == "new") ? 'creato' : 'salvato') + ' correttamente</span></div>').slideDown(300);
 				}
+				window.onbeforeunload = null;
 			}
-		});
-	}, function() {
-		$("#page_loader").fadeOut(300);
-		alert("Si &egrave; verificato un errore durante il salvataggio.", {icon: "error", title: "Ouch!"});
+		}
 	});
 }
 $(document).ready(function() {
@@ -88,49 +81,40 @@ $(document).ready(function() {
 		
 		apprise("Si &egrave; sicuri di voler rimuovere questa pagina?", {title: "Conferma della rimozione", icon: "warning", inverted: true}, function(r) {
 			if(r) {
-				var password = makeid();
-				$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-					var encryptedString = $.jCryption.encrypt("script_dir=" + script_dir + "&page_name=" + page_name, password);
-					
-					$.ajax({
-						url: "common/include/funcs/_ajax/decrypt.php",
-						dataType: "json",
-						type: "POST",
-						data: {
-							jCryption: encryptedString,
-							type: "remove_personal_page"
-						},
-						success: function(response) {
-							if (response["data"] !== "ok") {
-								var risp = response["data"].split("::");
-								if(risp[0] == "error") {
-									alert("Si &egrave; verificato un errore durante la rimozione:\n" + risp[1], {icon: "error", title: "Ouch!"});
-								}
-							} else {
-								alert({icon: "success", title: "File rimosso"}, function(r) {
-									if(r) {
-										$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-											var encryptedString = $.jCryption.encrypt("script_dir=" + script_dir, password);
-											
-											$.ajax({
-												url: "common/include/funcs/_ajax/decrypt.php",
-												dataType: "text",
-												type: "POST",
-												data: {
-													jCryption: encryptedString,
-													type: "check_personal_page"
-												},
-												success: function(response) {
-													$("#pages_dash").html(response);
-												}
-											});
-										});
-									}
-								});
-								$("#remove_btn").attr("disabled", "disabled");
+				$.ajax({
+					url: "common/include/funcs/_ajax/decrypt.php",
+					dataType: "json",
+					type: "POST",
+					data: {
+						jCryption: $.jCryption.encrypt("script_dir=" + script_dir + "&page_name=" + page_name, password),
+						type: "remove_personal_page"
+					},
+					success: function(response) {
+						if (response["data"] !== "ok") {
+							var risp = response["data"].split("::");
+							if(risp[0] == "error") {
+								alert("Si &egrave; verificato un errore durante la rimozione:\n" + risp[1], {icon: "error", title: "Ouch!"});
 							}
+						} else {
+							alert({icon: "success", title: "File rimosso"}, function(r) {
+								if(r) {
+									$.ajax({
+										url: "common/include/funcs/_ajax/decrypt.php",
+										dataType: "text",
+										type: "POST",
+										data: {
+											jCryption: $.jCryption.encrypt("script_dir=" + script_dir, password),
+											type: "check_personal_page"
+										},
+										success: function(response) {
+											$("#pages_dash").html(response);
+										}
+									});
+								}
+							});
+							$("#remove_btn").attr("disabled", "disabled");
 						}
-					});
+					}
 				});
 			}
 		});

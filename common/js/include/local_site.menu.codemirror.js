@@ -17,32 +17,25 @@ function load_editor(id) {
 			},
 			"Ctrl-S": function(cm){
 				$("#page_loader").fadeIn(300);
-				var password = makeid();
-				$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-					var encryptedString = $.jCryption.encrypt($("#editor_frm").serialize(), password);
-					
-					$.ajax({
-						url: "common/include/funcs/_ajax/decrypt.php",
-						dataType: "json",
-						type: "POST",
-						data: {
-							jCryption: encryptedString,
-							type: "save_menu"
-						},
-						success: function(response) {
-							if (response["data"] !== "ok") {
-								var risp = response["data"].split("::");
-								if(risp[0] == "error") {
-									alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
-								}
-							} else {
-								$("#page_loader").fadeOut(300);
+				
+				$.ajax({
+					url: "common/include/funcs/_ajax/decrypt.php",
+					dataType: "json",
+					type: "POST",
+					data: {
+						jCryption: $.jCryption.encrypt($("#editor_frm").serialize(), password),
+						type: "save_menu"
+					},
+					success: function(response) {
+						if (response["data"] !== "ok") {
+							var risp = response["data"].split("::");
+							if(risp[0] == "error") {
+								alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
 							}
+						} else {
+							$("#page_loader").fadeOut(300);
 						}
-					});
-				}, function() {
-					$("#page_loader").fadeOut(300);
-					alert("Si &egrave; verificato un errore durante il salvataggio.", {icon: "error", title: "Ouch!"});
+					}
 				});
 				return false;
 			},
@@ -68,29 +61,24 @@ $(document).ready(function() {
 		allow_single_deselect: true
 	});
 	$("#code_theme").bind("change", function(){
-		var password = makeid();
-		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-			var encryptedString = $.jCryption.encrypt("code_theme=" + $("#code_theme").chosen().val() + "&user_username=" + $("#user_username").val(), password);
-			
-			$.ajax({
-				url: "common/include/funcs/_ajax/decrypt.php",
-				dataType: "json",
-				type: "POST",
-				data: {
-					jCryption: encryptedString,
-					type: "save_editor_theme"
-				},
-				success: function(response) {
-					if (response["data"] !== "ok") {
-						var risp = response["data"].split("::");
-						if(risp[0] == "error") {
-							alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
-						}
-					} else {
-						$("#page_loader").fadeOut(300);
+		$.ajax({
+			url: "common/include/funcs/_ajax/decrypt.php",
+			dataType: "json",
+			type: "POST",
+			data: {
+				jCryption: $.jCryption.encrypt("code_theme=" + $("#code_theme").chosen().val() + "&user_username=" + $("#user_username").val(), password),
+				type: "save_editor_theme"
+			},
+			success: function(response) {
+				if (response["data"] !== "ok") {
+					var risp = response["data"].split("::");
+					if(risp[0] == "error") {
+						alert("Si &egrave; verificato un errore durante l'installazione:\n" + risp[1], {icon: "error", title: "Ouch!"});
 					}
+				} else {
+					$("#page_loader").fadeOut(300);
 				}
-			});
+			}
 		});
 	});
 	load_editor("logged_menu");

@@ -99,7 +99,6 @@ $.decount = function(time, callback) {
 }
 $(document).ready(function() {
 	var s = "",
-	password = makeid();
 	switch($("#result_type").text()) {
 		case "Search":
 			$("#breadcrumb").hide();
@@ -321,90 +320,83 @@ $(document).ready(function() {
 			$("html, body").animate({ scrollTop: $("#container").offset().top }, 300);
 			break;
 	}
-	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
-		var encryptedString = $.jCryption.encrypt("q=" + $("#search_term").text() + "&op=" + $("#search_type").text() + "&nresults=" + $("#search_num_results").text() + "&path=" + $("#search_path").text() + "&filetype=" + $("#search_filetype").text(), password);
-		
-		$.ajax({
-			url: "common/include/funcs/_ajax/decrypt.php",
-			dataType: "json",
-			type: "POST",
-			data: {
-				jCryption: encryptedString,
-				type: "local_search"
-			},
-			success: function(data) {
-				if(data.nresults > 0){
-					$("#nlabels").text(data.nlabels);
-					$("#nresults").text(($("#result_type").text() == "View" ? (data.nresults - 1) : data.nresults));
-					$("#searchtime").text(Math.round(data.searchtime*1000)/1000 + " secondi");
+	$.ajax({
+		url: "common/include/funcs/_ajax/decrypt.php",
+		dataType: "json",
+		type: "POST",
+		data: {
+			jCryption: $.jCryption.encrypt("q=" + $("#search_term").text() + "&op=" + $("#search_type").text() + "&nresults=" + $("#search_num_results").text() + "&path=" + $("#search_path").text() + "&filetype=" + $("#search_filetype").text(), password),
+			type: "local_search"
+		},
+		success: function(data) {
+			if(data.nresults > 0){
+				$("#nlabels").text(data.nlabels);
+				$("#nresults").text(($("#result_type").text() == "View" ? (data.nresults - 1) : data.nresults));
+				$("#searchtime").text(Math.round(data.searchtime*1000)/1000 + " secondi");
+				
+				index_count = 0;
+				$.each(data.results, function(index, value) {
+					index_count++;
 					
-					index_count = 0;
-					$.each(data.results, function(index, value) {
-						index_count++;
-						
-						if(index == 0) {
-							if($("#result_type").text() == "Search" || ($("#result_type").text() == "View" && (data.nresults - 1) > 0)) {
-								$("#search_results").html('<div class="search_results"><ul id="treeview_' + index + '" class="exactresults filetree treeview"></ul><div id="otherresults"></div></div>');
-							} else {
-								$("#search_results").html('<p class="alert alert-success text-centered"><span class="fa fa-check"></span>&nbsp;&nbsp;Non sono stati trovati duplicati per questo file</p>');
-							}
-							var start_collapsed = false;
-							
-							$(".filetree a[title]").tooltip();
-							$(".treecontrol a[title]").tooltip();
+					if(index == 0) {
+						if($("#result_type").text() == "Search" || ($("#result_type").text() == "View" && (data.nresults - 1) > 0)) {
+							$("#search_results").html('<div class="search_results"><ul id="treeview_' + index + '" class="exactresults filetree treeview"></ul><div id="otherresults"></div></div>');
 						} else {
-							$("#otherresults").append('<ul id="treeview_' + index + '" class="otherresults filetree treeview"></ul>')
-							var start_collapsed = true;
+							$("#search_results").html('<p class="alert alert-success text-centered"><span class="fa fa-check"></span>&nbsp;&nbsp;Non sono stati trovati duplicati per questo file</p>');
 						}
-						s = $.ultrie(value.resourcetrie);
-						var li = "";
-						li += $.explode_ultrie(s);
-						var ul = '<ul>' + li + '</ul>';
-						$(".filetree").append(ul);
+						var start_collapsed = false;
 						
-						$(".filetree").treeview({
-							control: "",
-							animated: "fast",
-							collapsed: true
-						});
-						$("#search_content li > span").click();
-					});
-					$("#search_loader").fadeOut(600);
-					$("#breadcrumb").fadeIn(600);
-					$("#search_content").fadeIn(600);
-					$("#search_results").removeHighlight().highlight($("#search_term").text()).find("#right_menu").removeHighlight();
-				} else {
-					if(data.responsen == 503) {
-						$("#breadcrumb").remove();
-						$("#search_loader .progress-bar-warning").switchClass("progress-bar-warning", "progress-bar-danger");
-						$("#search_loader .help-block").switchClass("help-block", "help-block text-danger").html('<p><span class="fa fa-times"></span>&nbsp;&nbsp;Non &egrave; stato possibile proseguire con la ricerca perch&eacute; alcune risorse locali non risultano montate.<br />Questo pu&ograve; essere dovuto a un riavvio del server.</p><br /><p><span class="fa fa-clock-o"></span>&nbsp;&nbsp;Prossimo tentativo tra <b class="counter">1 minuto</b>...</p>');
-						$("#top_menu_right > form").remove();
-						$.decount(1, function() {
-							location.reload();
-						});
+						$(".filetree a[title]").tooltip();
+						$(".treecontrol a[title]").tooltip();
 					} else {
-					// No results
-						$.ajax({
-							url: "common/tpl/content.tpl",
-							dataType: "text",
-							type: "GET",
-							success: function(content) {
-								if($("#result_type").text() == "Search") {
-									var search_term = $("#search_term").text();
-									$("#breadcrumb").remove();
-									$("#content").html(content);
-									$("#top_menu_right > form").remove();
-									$("#search_input").val(search_term);
-									$("#resstats").addClass("text-danger").text('Nessun risultato trovato con la ricerca per \"' + search_term + '\"');
-								}
-							}
-						});
+						$("#otherresults").append('<ul id="treeview_' + index + '" class="otherresults filetree treeview"></ul>')
+						var start_collapsed = true;
 					}
+					s = $.ultrie(value.resourcetrie);
+					var li = "";
+					li += $.explode_ultrie(s);
+					var ul = '<ul>' + li + '</ul>';
+					$(".filetree").append(ul);
+					
+					$(".filetree").treeview({
+						control: "",
+						animated: "fast",
+						collapsed: true
+					});
+					$("#search_content li > span").click();
+				});
+				$("#search_loader").fadeOut(600);
+				$("#breadcrumb").fadeIn(600);
+				$("#search_content").fadeIn(600);
+				$("#search_results").removeHighlight().highlight($("#search_term").text()).find("#right_menu").removeHighlight();
+			} else {
+				if(data.responsen == 503) {
+					$("#breadcrumb").remove();
+					$("#search_loader .progress-bar-warning").switchClass("progress-bar-warning", "progress-bar-danger");
+					$("#search_loader .help-block").switchClass("help-block", "help-block text-danger").html('<p><span class="fa fa-times"></span>&nbsp;&nbsp;Non &egrave; stato possibile proseguire con la ricerca perch&eacute; alcune risorse locali non risultano montate.<br />Questo pu&ograve; essere dovuto a un riavvio del server.</p><br /><p><span class="fa fa-clock-o"></span>&nbsp;&nbsp;Prossimo tentativo tra <b class="counter">1 minuto</b>...</p>');
+					$("#top_menu_right > form").remove();
+					$.decount(1, function() {
+						location.reload();
+					});
+				} else {
+				// No results
+					$.ajax({
+						url: "common/tpl/content.tpl",
+						dataType: "text",
+						type: "GET",
+						success: function(content) {
+							if($("#result_type").text() == "Search") {
+								var search_term = $("#search_term").text();
+								$("#breadcrumb").remove();
+								$("#content").html(content);
+								$("#top_menu_right > form").remove();
+								$("#search_input").val(search_term);
+								$("#resstats").addClass("text-danger").text('Nessun risultato trovato con la ricerca per \"' + search_term + '\"');
+							}
+						}
+					});
 				}
 			}
-		});
-	}, function() {
-		$("#page_loader").fadeOut(300);
-		alert("Si &egrave; verificato un errore durante la ricerca :(", {icon: "error", title: "Ouch!"});
+		}
 	});
 });

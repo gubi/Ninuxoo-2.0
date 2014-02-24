@@ -182,6 +182,7 @@ $logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (
 		<script type="text/javascript" src="common/js/jquery.easing.1.3.js"></script>
 		<script type="text/javascript">
 		$(document).ready(function() {
+			$.makeCryption();
 			check_notify();
 		});
 		</script>
