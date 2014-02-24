@@ -1,40 +1,45 @@
 <?php
 header("Content-type: text/plain");
-require_once("../../classes/manage_conf_file.class.php");
+require_once("Config/Lite.php");
 
-$conf = new manage_conf_file();
-$conf->conf_replace("session_length", $output["session_length"], "../../conf/general_settings.ini");
-$conf->conf_replace("allow_user_registration", ($output["allow_user_registration"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
-$conf->conf_replace("allow_browser_save", ($output["allow_browser_save"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
+$general_settings = new Config_Lite();
+$general_settings->read("../../conf/general_settings.ini");
+$general_settings->set("login", "session_length", $output["session_length"]);
+$general_settings->set("login", "allow_user_registration",  ($output["allow_user_registration"] == "on") ? "true" : "false");
+$general_settings->set("login", "allow_browser_save",  ($output["allow_browser_save"] == "on") ? "true" : "false");
 
-$conf->conf_replace("scan_ebook_name_order", $output["data_scan_ebook"], "../../conf/general_settings.ini");
-$conf->conf_replace("scan_ebook_name_regex", $output["data_scan_ebook_personalized"], "../../conf/general_settings.ini");
-$conf->conf_replace("scan_audio_name_order", $output["data_scan_audio"], "../../conf/general_settings.ini");
-$conf->conf_replace("scan_audio_name_regex", $output["data_scan_audio_personalized"], "../../conf/general_settings.ini");
-$conf->conf_replace("scan_video_name_order", $output["data_scan_video"], "../../conf/general_settings.ini");
-$conf->conf_replace("scan_video_name_regex", $output["data_scan_video_personalized"], "../../conf/general_settings.ini");
+$general_settings->set("file data", "scan_ebook_name_order", $output["data_scan_ebook"]);
+$general_settings->set("file data", "scan_ebook_name_regex", $output["data_scan_ebook_personalized"]);
+$general_settings->set("file data", "scan_audio_name_order", $output["data_scan_audio"]);
+$general_settings->set("file data", "scan_audio_name_regex", $output["data_scan_audio_personalized"]);
+$general_settings->set("file data", "scan_video_name_order", $output["data_scan_video"]);
+$general_settings->set("file data", "scan_video_name_regex", $output["data_scan_video_personalized"]);
 
-$conf->conf_replace("allow_caching", ($output["allow_caching"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
-$conf->conf_replace("save_semantic_data", ($output["save_semantic_data"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
-$conf->conf_replace("semantic_caching_refresh", $output["semantic_caching_refresh"], "../../conf/general_settings.ini");
-$conf->conf_replace("save_audio_spectum", ($output["save_audio_spectum"] == "on") ? "true" : "false", "../../conf/general_settings.ini");
+$general_settings->set("caching", "allow_caching", ($output["allow_caching"] == "on") ? "true" : "false");
+$general_settings->set("caching", "save_semantic_data", ($output["save_semantic_data"] == "on") ? "true" : "false");
+$general_settings->set("caching", "semantic_caching_refresh", $output["semantic_caching_refresh"]);
+$general_settings->set("caching", "save_audio_spectum", ($output["save_audio_spectum"] == "on") ? "true" : "false");
+$general_settings->save();
 
-$conf->conf_replace("station_active", $output["station_active"], "../../conf/config.ini");
-$conf->conf_replace("station_name", $output["station_name"], "../../conf/config.ini");
-$conf->conf_replace("show_ninux_nodes", ($output["show_ninux_nodes"] == "on") ? "true" : "false", "../../conf/config.ini");
-$conf->conf_replace("show_region_area", ($output["show_region_area"] == "on") ? "true" : "false", "../../conf/config.ini");
-$conf->conf_replace("refresh_interval", ($output["meteo_refresh"]), "../../conf/config.ini");
+$conf = new Config_Lite();
+$conf->read("../../conf/config.ini");
+$conf->set("Meteo", "station_active", $output["station_active"]);
+$conf->set("Meteo", "station_name", $output["station_name"]);
+$conf->set("Meteo", "show_ninux_nodes", ($output["show_ninux_nodes"] == "on") ? "true" : "false");
+$conf->set("Meteo", "show_region_area", ($output["show_region_area"] == "on") ? "true" : "false");
+$conf->set("Meteo", "refresh_interval", $output["meteo_refresh"]);
 
-$conf->conf_replace("station_city", $output["meteo_city"], "../../conf/config.ini");
-$conf->conf_replace("station_region", $output["meteo_region"], "../../conf/config.ini");
-$conf->conf_replace("station_country", $output["meteo_country"], "../../conf/config.ini");
+$conf->set("Meteo", "station_city", $output["meteo_city"]);
+$conf->set("Meteo", "station_region", $output["meteo_region"]);
+$conf->set("Meteo", "station_country", $output["meteo_country"]);
 
-$conf->conf_replace("OpenWeatherID", $output["meteo_owid"], "../../conf/config.ini");
-$conf->conf_replace("altitude_mt", $output["meteo_altitude_mt"], "../../conf/config.ini");
-$conf->conf_replace("altitude_ft", $output["meteo_altitude_ft"], "../../conf/config.ini");
-$conf->conf_replace("default_altitude_unit", $output["meteo_altitude_unit"], "../../conf/config.ini");
-$conf->conf_replace("latitude", $output["meteo_lat"], "../../conf/config.ini");
-$conf->conf_replace("longitude", $output["meteo_lng"], "../../conf/config.ini");
+$conf->set("Meteo", "OpenWeatherID", $output["meteo_owid"]);
+$conf->set("Meteo", "altitude_mt", $output["meteo_altitude_mt"]);
+$conf->set("Meteo", "altitude_ft", $output["meteo_altitude_ft"]);
+$conf->set("Meteo", "default_altitude_unit", $output["meteo_altitude_unit"]);
+$conf->set("Meteo", "latitude", $output["meteo_lat"]);
+$conf->set("Meteo", "longitude", $output["meteo_lng"]);
+$conf->save();
 
 print json_encode(array("data" => "ok"));
 ?>

@@ -1,18 +1,23 @@
 <?php
 header("Content-type: text/plain");
+require_once("Config/Lite.php");
 
-require_once("../../classes/manage_conf_file.class.php");
+$config = new Config_Lite();
+$config->read("../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
 
-$conf = new manage_conf_file();
-$conf->conf_replace("name", $output["name"], "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-$conf->conf_replace("new_files", ($output["new_files"] == "on") ? "true" : "false", "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-$conf->conf_replace("new_chat_messages", ($output["new_chat_messages"] == "on") ? "true" : "false", "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-$conf->conf_replace("nick", $output["nick"], "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-$conf->conf_replace("personal_message", $output["personal_message"], "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-$conf->conf_replace("chat_status", $output["chat_status"], "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-$conf->conf_replace("show_ip", ($output["show_ip"] == "on") ? "true" : "false", "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-$conf->conf_replace("refresh_interval", $output["refresh_interval"], "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-$conf->conf_replace("use_editor_always", ($output["allow_editor_always"] == "on") ? "true" : "false", "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
+$config->set("User", "name", $output["name"]);
+$config->set("Notification", "new_files", ($output["new_files"] == "on") ? "true" : "false");
+$config->set("Notification", "new_chat_messages", ($output["new_chat_messages"] == "on") ? "true" : "false");
+$config->set("Chat", "nick", $output["nick"]);
+$config->set("Chat", "personal_message", $output["personal_message"]);
+$config->set("Chat", "chat_status", $output["chat_status"]);
+$config->set("Chat", "show_ip", ($output["show_ip"] == "on") ? "true" : "false");
+$config->set("Chat", "refresh_interval", $output["refresh_interval"]);
 
-print json_encode(array("data" => "ok"));
+if($config->save()) {
+	$resp["data"] = "ok";
+} else {
+	$resp["data"] = "no";
+}
+print json_encode($resp);
 ?>

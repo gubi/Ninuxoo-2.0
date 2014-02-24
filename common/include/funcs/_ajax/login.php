@@ -7,7 +7,7 @@ if(file_exists("../../conf/user/" . sha1($output["username"]))) {
 		
 		require_once("../../funcs/_blowfish.php");
 		if(trim($user_conf["User"]["name"]) == "" || trim($user_conf["User"]["key"]) == "") {
-			require_once("../../classes/manage_conf_file.class.php");
+			require_once("Config/Lite.php");
 			require_once("../../lib/simplehtmldom_1_5/simple_html_dom.php");
 			
 			$mit = "http://pgp.mit.edu:11371";
@@ -22,10 +22,13 @@ if(file_exists("../../conf/user/" . sha1($output["username"]))) {
 				}
 			}
 			
-			$uconf = new manage_conf_file();
-			$uconf->conf_replace("name", trim(preg_replace("/&lt;(.*?)&gt;/i", "", $data[1])), "../../conf/user/" . sha1($output["username"]) . "/user.conf");
-			$uconf->conf_replace("username", $output["username"], "../../conf/user/" . sha1($output["username"]) . "/user.conf");
-			$uconf->conf_replace("key", $data[0], "../../conf/user/" . sha1($output["username"]) . "/user.conf");
+			$uconf = new Config_Lite();
+			$uconf->read("../../conf/user/" . sha1($output["username"]) . "/user.conf");
+			
+			$config->set("User", "name", trim(preg_replace("/&lt;(.*?)&gt;/i", "", $data[1])));
+			$config->set("User", "username", $output["username"]);
+			$config->set("User", "key", $data[0]);
+			$config->save();
 		} else {
 			require_once("../../classes/chat.class.php");
 			$data = array();

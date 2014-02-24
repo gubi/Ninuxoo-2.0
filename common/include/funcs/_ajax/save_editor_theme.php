@@ -1,10 +1,17 @@
 <?php
 header("Content-type: text/plain");
+require_once("Config/Lite.php");
 
-require_once("../../classes/manage_conf_file.class.php");
+$config = new Config_Lite();
+$config->read("../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
+$config->set("User", "editor_theme", $output["code_theme"]);
 
-$conf = new manage_conf_file();
-$conf->conf_replace("editor_theme", $output["code_theme"], "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
-
-print json_encode(array("data" => "ok"));
+$config->save();
+$saved_config = parse_ini_string($config, 1);
+if($saved_config["User"]["editor_theme"] == $output["code_theme"]) {
+	$resp["data"] = "ok";
+} else {
+	$resp["data"] = "no";
+}
+print json_encode($resp);
 ?>

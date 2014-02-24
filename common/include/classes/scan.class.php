@@ -82,14 +82,16 @@ class scan {
 		return $conf->parse($this->smb_conf_file());
 	}
 	private function update_config($startime) {
-		if (!class_exists("manage_conf_file", false)) {
-			require($this->class_dir . "/manage_conf_file.class.php");
+		if (!class_exists("Config_Lite", false)) {
+			require_once("Config/Lite.php");
 		}
 		$end_time = $this->end_time($startime);
-		$conf = new manage_conf_file();
-		$conf->conf_replace("last_scan_date", date("Y-m-d"), $this->dir . "/config.ini");
-		$conf->conf_replace("last_items_count", count(explode("\n", $this->listing)), $this->dir . "/config.ini");
-		$conf->conf_replace("last_scanning_time", $end_time, $this->dir . "/config.ini");
+		$config = new Config_Lite();
+		$config->read($this->dir . "/config.ini");
+		
+		$config->set("NAS", "last_scan_date", date("Y-m-d"));
+		$config->set("NAS", "last_items_count", count(explode("\n", $this->listing)));
+		$config->set("NAS", "last_scanning_time", $end_time);
 		
 		return $end_time;
 	}

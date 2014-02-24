@@ -1,9 +1,18 @@
 <?php
 header("Content-type: text/plain");
-require_once("../../classes/manage_conf_file.class.php");
+require_once("Config/Lite.php");
 
-$conf = new manage_conf_file();
-$conf->conf_replace("panel_status", trim($output["status"]), "../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
+$config = new Config_Lite();
+$config->read("../../conf/user/" . sha1($output["user_username"]) . "/user.conf");
+	$panel_status = trim($output["status"]);
+$config->set("Chat", "panel_status", $panel_status);
 
-print json_encode(array("data" => "ok"));
+$config->save();
+$saved_config = parse_ini_string($config, 1);
+if($saved_config["Chat"]["panel_status"] == $panel_status) {
+	$resp["data"] = "ok";
+} else {
+	$resp["data"] = "no";
+}
+print json_encode($resp);
 ?>
