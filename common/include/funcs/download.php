@@ -1,6 +1,29 @@
 <?php
 header("Content-type:text/plain; charset=utf-8");
 require_once("common/include/classes/rsa.class.php");
+function readfile_chunked($filename, $retbytes = true) { 
+	$chunksize = 1*(1024*1024); // how many bytes per chunk 
+	$buffer = ''; 
+	$cnt =0; 
+	$handle = fopen($filename, 'rb'); 
+	if ($handle === false) { 
+		return false; 
+	} 
+	while (!feof($handle)) { 
+		$buffer = fread($handle, $chunksize); 
+		echo $buffer; 
+		ob_flush(); 
+		flush(); 
+		if ($retbytes) { 
+			$cnt += strlen($buffer); 
+		} 
+	} 
+	$status = fclose($handle); 
+	if ($retbytes && $status) { 
+		return $cnt; // return num. bytes delivered like readfile() does. 
+	} 
+	return $status; 
+} 
 
 $rsa = new rsa();
 $url = parse_url($_SERVER["REQUEST_URI"]);
@@ -95,7 +118,7 @@ if(file_exists($file)) {
 			header("Content-Length: " . $file_size); // provide file size
 			header("Connection: close");
 			
-			@readfile($file);
+			@readfile_chunked($file);
 		}
 		exit();
 	}
