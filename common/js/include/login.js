@@ -4,7 +4,7 @@ function login() {
 			
 			$("#page_loader").fadeIn(150);
 			
-			$.ajax({
+			$.cryptAjax({
 				url: "common/include/funcs/_ajax/decrypt.php",
 				dataType: "json",
 				type: "POST",

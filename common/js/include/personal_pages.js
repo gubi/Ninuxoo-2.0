@@ -1,7 +1,7 @@
 function save_page() {
 	$("#page_loader").fadeIn(300);
 	
-	$.ajax({
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "json",
 		type: "POST",
@@ -81,7 +81,7 @@ $(document).ready(function() {
 		
 		apprise("Si &egrave; sicuri di voler rimuovere questa pagina?", {title: "Conferma della rimozione", icon: "warning", inverted: true}, function(r) {
 			if(r) {
-				$.ajax({
+				$.cryptAjax({
 					url: "common/include/funcs/_ajax/decrypt.php",
 					dataType: "json",
 					type: "POST",
@@ -98,7 +98,7 @@ $(document).ready(function() {
 						} else {
 							alert({icon: "success", title: "File rimosso"}, function(r) {
 								if(r) {
-									$.ajax({
+									$.cryptAjax({
 										url: "common/include/funcs/_ajax/decrypt.php",
 										dataType: "text",
 										type: "POST",

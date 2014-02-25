@@ -34,7 +34,7 @@ $(document).ready(function() {
 	$("#save_settings_btn").click(function() {
 		$("#page_loader").fadeIn(300);
 		
-		$.ajax({
+		$.cryptAjax({
 			url: "common/include/funcs/_ajax/decrypt.php",
 			dataType: "json",
 			type: "POST",

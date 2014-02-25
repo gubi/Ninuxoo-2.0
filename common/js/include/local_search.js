@@ -98,7 +98,8 @@ $.decount = function(time, callback) {
 	}, 1000);
 }
 $(document).ready(function() {
-	var s = "",
+	var s = "";
+	
 	switch($("#result_type").text()) {
 		case "Search":
 			$("#breadcrumb").hide();
@@ -320,7 +321,8 @@ $(document).ready(function() {
 			$("html, body").animate({ scrollTop: $("#container").offset().top }, 300);
 			break;
 	}
-	$.ajax({
+	
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "json",
 		type: "POST",
@@ -380,7 +382,7 @@ $(document).ready(function() {
 					});
 				} else {
 				// No results
-					$.ajax({
+					$.cryptAjax({
 						url: "common/tpl/content.tpl",
 						dataType: "text",
 						type: "GET",

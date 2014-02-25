@@ -60,7 +60,7 @@ function mark_id_as_read() {
 function remove_notice() {
 	$("#send_notice_area").attr("disabled", "disabled");
 	
-	$.ajax({
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "text",
 		type: "POST",
@@ -86,7 +86,7 @@ function remove_notice() {
 function send_notice() {
 	$("#send_notice_area").attr("disabled", "disabled");
 	
-	$.ajax({
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "text",
 		type: "POST",

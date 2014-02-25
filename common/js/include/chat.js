@@ -1,5 +1,5 @@
 $.chat_me = function(id, username) {
-	$.ajax({
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "json",
 		type: "POST",
@@ -17,7 +17,7 @@ $.chat_me = function(id, username) {
 $.check_connected = function() {
 	var text_class = "", a_disabled = "false", icon= "", op = "", peoples_list = "";
 	
-	$.ajax({
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "json",
 		type: "POST",
@@ -66,7 +66,7 @@ $(document).ready(function() {
 	$(".chat_status").click(function() {
 		var status = $(this).attr("id").replace("chat_", "");
 		
-		$.ajax({
+		$.cryptAjax({
 			url: "common/include/funcs/_ajax/decrypt.php",
 			dataType: "json",
 			type: "POST",

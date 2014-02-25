@@ -3,7 +3,7 @@ function save() {
 	if($("#user_password").val() == $("#user_password2").val()) {
 		var nodename = $("#node_name").val().toLowerCase();
 		
-		$.ajax({
+		$.cryptAjax({
 			url: "common/include/funcs/_ajax/decrypt.php",
 			dataType: "json",
 			type: "POST",
@@ -41,7 +41,7 @@ function get_nodes() {
 	if($("#checking_nodes").length == 0 || $("checking_nodes").text() == "false") {
 		$("body").prepend('<div id="checking_nodes" style="display: none;">true</div>');
 		
-		$.ajax({
+		$.cryptAjax({
 			url: "common/include/funcs/_ajax/install.get_nodes.php",
 			dataType: 'json'
 		}).done(function(source) {

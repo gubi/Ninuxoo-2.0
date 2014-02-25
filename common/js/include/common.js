@@ -7,6 +7,20 @@ function makeid() {
 	}
 	return text;
 }
+var password = makeid(),
+auth = false;
+$.cryptAjax = function(url, options) {
+	if(!auth) {
+		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+			auth = true;
+			
+			$.ajax(url, options);
+		});
+	} else {
+		$.ajax(url, options);
+	}
+};
+
 function isFullScreen(cm) {
 	return /\bCodeMirror-fullscreen\b/.test(cm.getWrapperElement().className);
 }
@@ -214,18 +228,13 @@ function setDeceleratingTimeout(callback, factor, times) {
 	window.setTimeout(internalCallback, factor);
 };
 
-var password = makeid();
-$.makeCryption = function() {
-	$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {});
-};
-
 function check_notify(active, autoupdate) {
 	$("#check_loader").fadeIn(600);
 	$("#dash_notifications").addClass("disabled");
 	$("#check_notify_btn").addClass("disabled");
 	$("#check_notify_btn span").addClass("fa-spin");
 	
-	$.ajax({
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "json",
 		type: "POST",
@@ -381,7 +390,7 @@ function check_notify(active, autoupdate) {
 			$("#chat_panel_width").text(ui.size.width + "px");
 		},
 		stop: function() {
-			$.ajax({
+			$.cryptAjax({
 				url: "common/include/funcs/_ajax/decrypt.php",
 				dataType: "json",
 				type: "POST",
@@ -412,7 +421,7 @@ function check_notify(active, autoupdate) {
 			$("#chat").switchClass("fixed", "floating");
 			$("body").animate({"left": "-" + $("#chat").css("width")}, 50);
 		}
-		$.ajax({
+		$.cryptAjax({
 			url: "common/include/funcs/_ajax/decrypt.php",
 			dataType: "json",
 			type: "POST",
@@ -431,7 +440,7 @@ function check_notify(active, autoupdate) {
 		} else {
 			var panel_status = $.chat_panel("open");
 		}
-		$.ajax({
+		$.cryptAjax({
 			url: "common/include/funcs/_ajax/decrypt.php",
 			dataType: "json",
 			type: "POST",

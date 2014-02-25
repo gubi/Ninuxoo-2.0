@@ -5,7 +5,7 @@ $(document).ready(function() {
 		if($("#password").val() == $("#password2").val()) {
 			$("#page_loader").fadeIn(150);
 			
-			$.ajax({
+			$.cryptAjax({
 				url: "common/include/funcs/_ajax/decrypt.php",
 				dataType: "json",
 				type: "POST",

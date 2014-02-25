@@ -14,7 +14,7 @@ $.get_shares = function(remote_nas) {
 		var remote_nas = "";
 	}
 	
-	$.ajax({
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "json",
 		type: "POST",

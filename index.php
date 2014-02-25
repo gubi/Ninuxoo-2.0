@@ -166,9 +166,12 @@ $logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (
 	
 	<script type="text/javascript" src="common/js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="common/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script type="text/javascript" src="common/js/jquery.easing.1.3.js"></script>
 	<script src="common/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="common/js/jquery.input-ip-address-control-1.0.min.js"></script>
 	<script type="text/javascript" src="common/js/apprise-bootstrap.js"></script>
+	<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
+	<script type="text/javascript" src="common/js/include/common.js"></script>
 	<?php
 	if($has_config && trim(strtolower($_GET["s"])) !== "admin") {
 		require_once("common/tpl/has_config.tpl");
@@ -177,13 +180,16 @@ $logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (
 	<?php
 	if(isset($_COOKIE["n"])) {
 		?>
-		<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
-		<script type="text/javascript" src="common/js/include/common.js"></script>
-		<script type="text/javascript" src="common/js/jquery.easing.1.3.js"></script>
 		<script type="text/javascript">
 		$(document).ready(function() {
-			$.makeCryption();
 			check_notify();
+		});
+		</script>
+		<?php
+	} else {
+		?>
+		<script type="text/javascript">
+		$(document).ready(function() {
 		});
 		</script>
 		<?php

@@ -9,7 +9,7 @@ $(document).ready(function(){
 			case "save_page_btn":
 				$("#page_loader").fadeIn(300);
 				
-				$.ajax({
+				$.cryptAjax({
 					url: "common/include/funcs/_ajax/decrypt.php",
 					dataType: "json",
 					type: "POST",
@@ -33,7 +33,7 @@ $(document).ready(function(){
 				});
 				break;
 			case "remove_btn":
-				$.ajax({
+				$.cryptAjax({
 					url: "common/include/funcs/_ajax/decrypt.php",
 					dataType: "json",
 					type: "POST",
@@ -59,7 +59,7 @@ $(document).ready(function(){
 		return false;
 	});
 	$("#code_theme").bind("change", function(){
-		$.ajax({
+		$.cryptAjax({
 			url: "common/include/funcs/_ajax/decrypt.php",
 			dataType: "json",
 			type: "POST",

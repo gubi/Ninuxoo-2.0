@@ -4,7 +4,7 @@ $.get_user_pages = function(id) {
 		var id = "";
 	}
 	
-	$.ajax({
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "json",
 		type: "POST",

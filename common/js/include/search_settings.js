@@ -42,7 +42,7 @@ $(document).ready(function() {
 		apprise("", {title: 'Scansione del <acronym title="Network Attached Storage">NAS</acronym> in corso...', icon: "fa-magic fa-bounce", progress: "true"});
 		$(this).removeClass("btn-success").addClass("btn-warning").addClass("disabled").find("span").addClass("fa-spin");
 		
-		$.ajax({
+		$.cryptAjax({
 			url: "common/include/funcs/_ajax/decrypt.php",
 			dataType: "json",
 			type: "POST",
@@ -75,7 +75,7 @@ $(document).ready(function() {
 			}
 		}
 		
-		$.ajax({
+		$.cryptAjax({
 			url: "common/include/funcs/_ajax/decrypt.php",
 			dataType: "json",
 			type: "POST",

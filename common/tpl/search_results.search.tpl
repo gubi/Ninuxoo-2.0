@@ -1,10 +1,3 @@
-<link rel="stylesheet" href="common/js/jquery.treeview/jquery.treeview.css" type="text/css" media="screen" />
-<script type="text/javascript" src="common/js/jquery.treeview/jquery.treeview.js"></script>
-<script type="text/javascript" src="common/js/jquery.highlight-4.js"></script>
-<script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
-<script type="text/javascript" src="common/js/include/common.js"></script>
-<script type="text/javascript" src="common/js/include/local_search.js"></script>
-<script type="text/javascript" src="common/js/include/check_cookie.js"></script>
 <?php
 parse_str($_SERVER["QUERY_STRING"], $out);
 unset($out["s"]);
@@ -57,3 +50,8 @@ unset($out["s"]);
 		</div>
 	</div>
 </div>
+<link rel="stylesheet" href="common/js/jquery.treeview/jquery.treeview.css" type="text/css" media="screen" />
+<script type="text/javascript" src="common/js/jquery.treeview/jquery.treeview.js"></script>
+<script type="text/javascript" src="common/js/jquery.highlight-4.js"></script>
+<script type="text/javascript" src="common/js/include/local_search.js"></script>
+<script type="text/javascript" src="common/js/include/check_cookie.js"></script>

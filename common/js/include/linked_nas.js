@@ -25,7 +25,7 @@ $.check_nas = function(time) {
 		$("#counter").html(timer + " secondi");
 	}, 1000);
 	
-	$.ajax({
+	$.cryptAjax({
 		url: "common/include/funcs/_ajax/decrypt.php",
 		dataType: "json",
 		type: "POST",
@@ -74,7 +74,7 @@ $.linked_nas_functions = function() {
 					if(r) {
 						$("#page_loader").fadeIn(300);
 						
-						$.ajax({
+						$.cryptAjax({
 							url: "common/include/funcs/_ajax/decrypt.php",
 							dataType: "json",
 							type: "POST",
@@ -112,7 +112,7 @@ $.linked_nas_functions = function() {
 						
 						$("#page_loader").fadeIn(300);
 						
-						$.ajax({
+						$.cryptAjax({
 							url: "common/include/funcs/_ajax/decrypt.php",
 							dataType: "json",
 							type: "POST",
@@ -149,7 +149,7 @@ $.linked_nas_functions = function() {
 					if(r) {
 						$("#page_loader").fadeIn(300);
 						
-						$.ajax({
+						$.cryptAjax({
 							url: "common/include/funcs/_ajax/decrypt.php",
 							dataType: "json",
 							type: "POST",
