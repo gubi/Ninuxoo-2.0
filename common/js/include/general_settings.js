@@ -7,8 +7,17 @@ $.switch_caching = function() {
 		$(".caching_active input, #caching_active label, #caching_active a").attr("disabled", "disabled");
 	}
 }
+$.setTitle = function(title) {
+	var current_title = $("title").text().split("|");
+	$("#logo > a > h1").text(title);
+	$("title").text("Ninuxoo " + title + " | " + current_title[1]);
+};
 $(document).ready(function() {
 	var current_session_length = $("#session_length").val();
+	$("#nas_name").bind("keyup blur", function() {
+		$.setTitle($(this).val());
+	});
+	$.setTitle($("#nas_name").val());
 	$("#session_length").on("keyup change", function() {
 		$(this).get_duration({timetype: "seconds"});
 		if($(this).val() != current_session_length) {

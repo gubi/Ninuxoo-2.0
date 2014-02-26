@@ -1,5 +1,6 @@
 $(document).ready(function(){
-	var saved = "";
+	var saved = "",
+	original_dir = $("#save_script_dir").val();
 	$(".left").click(function() {
 		window.onbeforeunload = null;
 		return false;
@@ -25,15 +26,27 @@ $(document).ready(function(){
 							}
 						} else {
 							$("#page_loader").fadeOut(300);
-							$("#original_name").val($("#config_name").val());
-							$("#remove_btn").attr("disabled", false);
-							
-							apprise('La config "' + $("#config_name").val() + '" &egrave; stata salvata con successo', {title: "Config salvata!", confirm: true, textCancel: '<span class="fa fa-angle-left">&nbsp;&nbsp;Torna al riepilogo', textOk: 'Continua la modifica&nbsp;&nbsp;<span class="fa fa-edit"></span>', icon: "success", allowExit: true}, function(r) {
-								if(!r) {
-									window.onbeforeunload = null;
-									window.location.replace(document.referrer);
-								}
-							});
+							if($("#config_name").val() != $("#original_name").val() || $("#save_script_dir").val() != original_dir) {
+								$("#original_name").val($("#config_name").val());
+								$("#remove_btn").attr("disabled", false);
+								
+								apprise('La config "' + $("#config_name").val() + '" &egrave; stata salvata con successo', {title: "Config salvata!", textOk: '<span class="fa fa-angle-left">&nbsp;&nbsp;Torna al riepilogo', icon: "success", allowExit: true}, function(r) {
+									if(r) {
+										window.onbeforeunload = null;
+										window.location.replace(document.referrer);
+									}
+								});
+							} else {
+								$("#original_name").val($("#config_name").val());
+								$("#remove_btn").attr("disabled", false);
+								
+								apprise('La config "' + $("#config_name").val() + '" &egrave; stata salvata con successo', {title: "Config salvata!", confirm: true, textCancel: '<span class="fa fa-angle-left">&nbsp;&nbsp;Torna al riepilogo', textOk: 'Continua la modifica&nbsp;&nbsp;<span class="fa fa-edit"></span>', icon: "success", allowExit: true}, function(r) {
+									if(!r) {
+										window.onbeforeunload = null;
+										window.location.replace(document.referrer);
+									}
+								});
+							}
 						}
 					}
 				});

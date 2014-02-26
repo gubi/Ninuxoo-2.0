@@ -23,6 +23,10 @@ $general_settings->save();
 
 $conf = new Config_Lite();
 $conf->read("../../conf/config.ini");
+$conf->set("NAS", "nas_name", $output["nas_name"]);
+$conf->set("NAS", "nas_description", $output["nas_description"]);
+$conf->set("NAS", "http_root", $output["http_root"]);
+
 $conf->set("Meteo", "station_active", $output["station_active"]);
 $conf->set("Meteo", "station_name", $output["station_name"]);
 $conf->set("Meteo", "show_ninux_nodes", ($output["show_ninux_nodes"] == "on") ? "true" : "false");
