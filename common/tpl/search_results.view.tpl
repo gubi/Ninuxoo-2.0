@@ -255,17 +255,18 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 <div id="result_content">
 	<div class="row">
 		<div class="panel right col-lg-4" id="affix">
-			<div class="panel list-group">
-				<a class="list-group-item active" style="text-decoration: none;" href="<?php print (isset($_COOKIE["n"]) ? "./Scarica:?" . $dhash : "javascript:void(0);"); ?>">
+			<div class="list-group">
+				<a class="list-group-item active" style="text-decoration: none;" href="<?php print (isset($_COOKIE["n"]) ? "./Scarica:?" . $dhash : "./Accedi"); ?>">
 					<span class="right lead" style="font-weight: bold; opacity: 0.5;"><?php print $file_size; ?></span>
 					<h4 class="list-group-item-heading"><span class="fa fa-cloud-download"></span>&nbsp;&nbsp;Scarica</h4>
 					<p class="list-group-item-text">
 						<strong><?php print $filename; ?></strong><br />
 						<small>File <span id="file_ext"><?php print strtoupper($info["extension"]); ?></span> (<span id="file_mime"><?php print $mime_type[strtolower($info["extension"])]["mime"]; ?></span>)</small>
 					</p>
-					<?php print (!isset($_COOKIE["n"]) ? '<div class="text-center"><br /><small><strong>NOTA: per scaricare questo file devi effettuare l\'accesso</strong></small> <span class="fa fa-sign-in"></span></div>' : ""); ?>
+					<?php print (!isset($_COOKIE["n"]) ? '<br /><div class="text-center"><span class="fa fa-warning"></span>&nbsp;&nbsp;&nbsp;<small><strong>NOTA: per scaricare questo file devi effettuare l\'accesso</strong></small>&nbsp;&nbsp;&nbsp;<span class="fa fa-warning"></span></div>' : ""); ?>
 				</a>
 			</div>
+			<br />
 			<div class="panel">
 				<big class="lead text-primary"><span class="fa fa-tasks"></span>&nbsp;&nbsp;STATISTICHE</big>
 			</div>

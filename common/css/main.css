@@ -992,7 +992,7 @@ td.trusted.selected:after, td.untrusted.selected:after {
 
 
 #affix > .list-group {
-	margin: 10px 0;
+	/*margin: 10px 0;*/
 }
 #explore_content .thumbnail {
 	margin-bottom: 20px;
