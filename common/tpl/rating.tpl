@@ -1,0 +1,1 @@
+<small class="help-block right" id="rating"></small>

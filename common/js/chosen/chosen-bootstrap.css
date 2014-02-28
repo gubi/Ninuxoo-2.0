@@ -1,3 +1,5 @@
+@import url("chosen.css");
+
 select{
     width: 80%;/* Only for example */
 }

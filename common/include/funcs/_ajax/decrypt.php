@@ -104,6 +104,12 @@ if(isset($_GET["getPublicKey"])) {
 		case "get_dir_data":
 			require_once("get_dir_data.php");
 			break;
+		case "get_page_url":
+			require_once("get_permalink.php");
+			break;
+		case "get_rating":
+			require_once("get_file_rating.php");
+			break;
 		case "get_shares":
 			require_once("get_shares.php");
 			break;
@@ -187,6 +193,9 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "set_socket":
 			require_once("chat.set_socket.php");
+			break;
+		case "set_rating":
+			require_once("set_file_rating.php");
 			break;
 		case "get_personal_configs":
 			require_once("editor.get_personal_configs.php");

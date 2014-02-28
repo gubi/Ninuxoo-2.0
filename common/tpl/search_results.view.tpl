@@ -239,6 +239,7 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 <script type="text/javascript" src="common/js/jquery.treeview/jquery.treeview.js"></script>
 <script type="text/javascript" src="common/js/jquery.highlight-4.js"></script>
 <script type="text/javascript" src="common/js/jCryption/jquery.jcryption.3.0.js"></script>
+<script type="text/javascript" src="common/js/bootstrap-fa-star-rating.js"></script>
 <script type="text/javascript" src="common/js/include/common.js"></script>
 <script type="text/javascript" src="common/js/include/local_search.js"></script>
 
@@ -255,10 +256,14 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 	<div class="row">
 		<div class="panel right col-lg-4" id="affix">
 			<div class="panel list-group">
-				<a class="list-group-item active" style="text-decoration: none;" href="./Scarica:?<?php print $dhash; ?>">
+				<a class="list-group-item active" style="text-decoration: none;" href="<?php print (isset($_COOKIE["n"]) ? "./Scarica:?" . $dhash : "javascript:void(0);"); ?>">
 					<span class="right lead" style="font-weight: bold; opacity: 0.5;"><?php print $file_size; ?></span>
 					<h4 class="list-group-item-heading"><span class="fa fa-cloud-download"></span>&nbsp;&nbsp;Scarica</h4>
-					<p class="list-group-item-text"><strong><?php print $filename; ?></strong><br /><small>File <span id="file_ext"><?php print strtoupper($info["extension"]); ?></span> (<span id="file_mime"><?php print $mime_type[strtolower($info["extension"])]["mime"]; ?></span>)</small></p>
+					<p class="list-group-item-text">
+						<strong><?php print $filename; ?></strong><br />
+						<small>File <span id="file_ext"><?php print strtoupper($info["extension"]); ?></span> (<span id="file_mime"><?php print $mime_type[strtolower($info["extension"])]["mime"]; ?></span>)</small>
+					</p>
+					<?php print (!isset($_COOKIE["n"]) ? '<div class="text-center"><br /><small><strong>NOTA: per scaricare questo file devi effettuare l\'accesso</strong></small> <span class="fa fa-sign-in"></span></div>' : ""); ?>
 				</a>
 			</div>
 			<div class="panel">
@@ -376,8 +381,10 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 		</div>
 		<div class="panel col-lg-8">
 			<div class="panel">
+				<?php require_once("common/tpl/share_btns.tpl"); ?>
 				<span class="lead text-primary">
-					<span class="fa fa-file-o"></span>&nbsp;&nbsp;<span id="search_term"><?php print $filename; ?></span><small class="help-block">Scheda del file</small>
+					<span class="fa fa-file-o"></span>&nbsp;&nbsp;<span id="search_term"><?php print $filename; ?></span>
+					<small class="help-block">Scheda del file <?php require_once("common/tpl/rating.tpl"); ?></small>
 				</span>
 			</div>
 			<div class="panel" id="search_view">

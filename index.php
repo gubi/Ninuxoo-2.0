@@ -120,6 +120,7 @@ if(!$has_config) {
 	$GLOBALS["search_path"] = "";
 	$GLOBALS["search_filetype"] = "";
 }
+$page_url = "http://" . $_SERVER["HTTP_HOST"] . "" . $_SERVER["REQUEST_URI"];
 if(isset($_COOKIE["n"])) {
 	if($page_name == "Accedi") {
 		header("Location: ./");
@@ -132,6 +133,7 @@ if(isset($_COOKIE["n"])) {
 	$username = trim($c[1]);
 	$GLOBALS["user_settings"] = parse_ini_file("common/include/conf/user/" . sha1($username) . "/user.conf", true);
 	@chmod("common/include/conf/user/" . sha1($username) . "/user.conf", 0777);
+	$user["nick"] = $GLOBALS["user_settings"]["Chat"]["nick"];
 	
 	if(in_array(sha1($username), $GLOBALS["general_settings"]["login"]["admin"])) {
 		$GLOBALS["is_admin"] = true;
@@ -141,6 +143,7 @@ if(isset($_COOKIE["n"])) {
 			header("Location: ./Dashboard");
 		}
 	}
+} else {
 }
 $logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (($has_config) ? $GLOBALS["config"]["NAS"]["nas_name"] : "Setup") .'</h1>';
 ?>
@@ -219,6 +222,7 @@ $logo_img = '<img src="common/media/img/logo.png" alt="Logo Ninuxoo" /><h1>' . (
 </head>
 <body>
 	<span style="display: none;" id="notification_refresh"><?php print $GLOBALS["user_settings"]["Chat"]["refresh_interval"]; ?></span>
+	<span style="display: none;" id="user"><?php print $user["nick"]; ?></span>
 	<div id="page_loader"></div>
 	<header>
 		<?php

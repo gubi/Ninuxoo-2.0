@@ -495,6 +495,12 @@ a.text-info:hover {
 a.text-warning:hover {
   color: #66512c;
 }
+.text-star {
+  color: #ed9c28;
+}
+a.text-star:hover {
+  color: #ea8c09;
+}
 .text-danger {
   color: #a94442;
 }

@@ -118,6 +118,7 @@
             success.call(this, AESEncryptionKey);
           } else {
             failure.call(this);
+		  console.log("jCryption failure!");
           }
         });
       });

@@ -59,6 +59,22 @@ $.explode_a_ultrie = function(resourcetrie) {
 	}
 	return path_link;
 };
+$.get_rating = function(params, callback) {
+	$.cryptAjax({
+		url: "common/include/funcs/_ajax/decrypt.php",
+		dataType: "json",
+		type: "POST",
+		data: {
+			jCryption: $.jCryption.encrypt($.param(params), password),
+			type: "get_rating"
+		},
+		success: function(data) {
+			if (callback) {
+				callback(data);
+			}
+		}
+	});
+}
 $.get_semantic_data = function(params, callback) {
 	$.get("common/include/funcs/_ajax/get_semantic_data.php", params, function(semantic_data) {
 		if (callback) {
@@ -123,16 +139,74 @@ $(document).ready(function() {
 						web_optimized: (($("#ebook_optimized").length > 0) ? $("#ebook_optimized").text() : "")
 					};
 					// Get title data
-					$.get("common/include/funcs/_ajax/get_semantic_data.php", {title: info.title, type: "book"}, function(semantic_data) {
+					var readonly = (($("#user").text().length > 0) ? false : true);
+					$.get_rating(info, function(rates) {
+						$("#rating").rating({
+							startRate: rates.medium_rates,
+							total: rates.total,
+							readOnly: readonly
+						}, function(selected) {
+							var infoo = info;
+							infoo.rate = selected;
+							infoo.user = $("#user").text();
+							
+							$.cryptAjax({
+								url: "common/include/funcs/_ajax/decrypt.php",
+								dataType: "json",
+								type: "POST",
+								data: {
+									jCryption: $.jCryption.encrypt($.param(infoo), password),
+									type: "set_rating"
+								},
+								success: function(data) {
+									$("#rating").html("").rating({
+										startRate: data.medium_rates,
+										total: data.total,
+										readOnly: readonly
+									});
+								}
+							});
+						});
+					});
+					$.get_semantic_data(info, function(semantic_data) {
 						if(semantic_data !== null) {
 						}
-					}, "json");
+					});
 					break;
 				case "image":
 					info = {
 						title: (($("#media_title").length > 0) ? $("#media_title").text() : ""),
 						artist: (($("#media_artist").length > 0) ? $("#media_artist").text() : "")
 					};
+					var readonly = (($("#user").text().length > 0) ? false : true);
+					$.get_rating(info, function(rates) {
+						$("#rating").rating({
+							startRate: rates.medium_rates,
+							total: rates.total,
+							readOnly: readonly
+						}, function(selected) {
+							var infoo = info;
+							infoo.rate = selected;
+							infoo.user = $("#user").text();
+							
+							$.cryptAjax({
+								url: "common/include/funcs/_ajax/decrypt.php",
+								dataType: "json",
+								type: "POST",
+								data: {
+									jCryption: $.jCryption.encrypt($.param(infoo), password),
+									type: "set_rating"
+								},
+								success: function(data) {
+									$("#rating").html("").rating({
+										startRate: data.medium_rates,
+										total: data.total,
+										readOnly: readonly
+									});
+								}
+							});
+						});
+					});
 					break;
 				case "audio":
 					info = {
@@ -157,6 +231,36 @@ $(document).ready(function() {
 					if(info.album.length > 0) {
 						info.type = "album";
 						$("#semantic_album").prev(".well.text-muted").fadeIn(300);
+						
+						var readonly = (($("#user").text().length > 0) ? false : true);
+						$.get_rating(info, function(rates) {
+							$("#rating").rating({
+								startRate: rates.medium_rates,
+								total: rates.total,
+								readOnly: readonly
+							}, function(selected) {
+								var infoo = info;
+								infoo.rate = selected;
+								infoo.user = $("#user").text();
+								
+								$.cryptAjax({
+									url: "common/include/funcs/_ajax/decrypt.php",
+									dataType: "json",
+									type: "POST",
+									data: {
+										jCryption: $.jCryption.encrypt($.param(infoo), password),
+										type: "set_rating"
+									},
+									success: function(data) {
+										$("#rating").html("").rating({
+											startRate: data.medium_rates,
+											total: data.total,
+											readOnly: readonly
+										});
+									}
+								});
+							});
+						});
 						$.get_semantic_data(info, function(semantic_data) {
 							if(semantic_data !== null) {
 								var album_data = "",
@@ -228,12 +332,43 @@ $(document).ready(function() {
 					info.type = "film";
 					if(info.title.length > 0) {
 						$("#semantic_film").prev(".well.text-muted").fadeIn(300);
+						
+						var readonly = (($("#user").text().length > 0) ? false : true);
+						$.get_rating(info, function(rates) {
+							$("#rating").rating({
+								startRate: rates.medium_rates,
+								total: rates.total,
+								readOnly: readonly
+							}, function(selected) {
+								var infoo = info;
+								infoo.rate = selected;
+								infoo.user = $("#user").text();
+								
+								$.cryptAjax({
+									url: "common/include/funcs/_ajax/decrypt.php",
+									dataType: "json",
+									type: "POST",
+									data: {
+										jCryption: $.jCryption.encrypt($.param(infoo), password),
+										type: "set_rating"
+									},
+									success: function(data) {
+										$("#rating").html("").rating({
+											startRate: data.medium_rates,
+											total: data.total,
+											readOnly: readonly
+										});
+									}
+								});
+							});
+						});
 						$.get_semantic_data(info, function(semantic_data) {
 							if(semantic_data !== null) {
 								var film_data = "",
 								obj_size = $.map(semantic_data, function(n, i) { return i; }).length,
 								i = 0;
 								$("#film_name").text(semantic_data.label);
+								
 								$.each(semantic_data, function(key, val) {
 									if(key != "titolo" && key != "label" && key != "abstract"  && key != "commento" && key != "immagine" && key !== "durata") {
 										i++;
