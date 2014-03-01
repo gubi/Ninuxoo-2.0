@@ -1,27 +1,77 @@
 <?php
-header("Content-type: text/plain; charset=utf-8");
+/**
+* Ninuxoo 2.0
+*
+* PHP Version 5.3
+*
+* @copyright 2013-2014 Alessandro Gubitosi / Gubi (http://iod.io)
+* @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @link https://github.com/gubi/Ninuxoo-2.0
+*/
 
+/**
+* A class for scan files in NAS device and store the listing in defined directory
+*
+* _
+*
+* @package	Ninuxoo 2.0
+* @author		Alessandro Gubitosi <gubi.ale@iod.io>
+* @license 	http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @access		public
+* @link		https://github.com/gubi/Ninuxoo-2.0/blob/master/common/include/classes/scan.class.php
+* @uses		rsa.class.php Rsa class
+* @todo		Clean deprecated functions
+*/
 class scan {
+	/**
+	* Construct
+	*
+	* Initialize the class
+	*
+	* @global string $this->class_dir Current class directory
+	* @global string $this->dir Conf directory, based on $this->class_dir
+	* @global string $this->nas_shares Shared directories as set in the scan_shares file
+	* @subpackage PEAR/Config/Lite.php
+	* @return void
+	*/
 	function __construct() {
 		$this->class_dir = __DIR__;
 		$this->dir = str_replace("classes", "conf", $this->class_dir);
 		$this->nas_shares = explode("\n", file_get_contents(str_replace("//", "/", $this->dir . "/") . "scan_shares"));
 	}
-	private function parse_ini($file) {
-		return parse_ini_file($this->dir . "/" . $file, true);
-	}
+	/**
+	* Start calculating execution time
+	*
+	* @return int $mtime The start of execution time
+	* @access  private
+	*/
 	public function start_time() {
 		$mtime = microtime();
 		$mtime = explode(" ", $mtime);
 		$mtime = $mtime[1] + $mtime[0];
 		return $mtime;
 	}
+	
+	/**
+	* End calculating execution time
+	*
+	* @param int $startime The time start of execution
+	* @return int The end of execution time
+	* @access private
+	*/
 	public function end_time($startime) {
 		$mtime = microtime();
 		$mtime = explode(" ", $mtime);
 		$mtime = $mtime[1] + $mtime[0];
 		return round($mtime - $startime, 5);
 	}
+	
+	/**
+	* Set the header for text output
+	*
+	* @return string The text output header
+	* @access public
+	*/
 	public function text_header() {
 		$header = str_repeat("-", 100) . "\n";
 		$header .= "# NinuXoo Local scanning \n";
@@ -31,6 +81,14 @@ class scan {
 		
 		return $header;
 	}
+	
+	/**
+	* Generates output statistics for a given directory array
+	*
+	* @param array $curr_dir Directory tree
+	* @return string Directory statistics output text
+	* @access private
+	*/
 	private function statistics($curr_dir) {
 		$curr = implode("\n -> ", $curr_dir);
 		$stats = "\n" . count($curr_dir) . " directories in shares:\n";
@@ -38,6 +96,19 @@ class scan {
 		
 		return $stats;
 	}
+	
+	/**
+	* Generates output
+	*
+	* @param string $type Output format
+	* @param string $stats statistics output text
+	* @param string $end_time Elapsed time
+	* @param array $share_dir Shared directories
+	* @see scan::get_config() Parse configuration file
+	* @see scan::text_header() Text_header
+	* @return string $output
+	* @access private
+	*/
 	private function output($type = "", $stats = "", $end_time = "", $share_dir) {
 		$config = $this->get_config();
 		
@@ -62,25 +133,32 @@ class scan {
 		}
 	}
 	
+	/**
+	* Parse the config.ini file
+	*
+	* @see scan::__construct() Construct
+	* @return void|array Error or the config.ini parsed array
+	* @access private
+	*/
 	private function get_config() {
 		if (!file_exists($this->dir . "/config.ini")) {
 			return "error: no `config.ini` file.\nPlease, run setup before.\n\nNothing to scan.\nExit";
 			exit();
 		} else {
-			return $this->parse_ini("config.ini");
+			return parse_ini_file($this->dir . "/config.ini", true);
 		}
 	}
-	private function smb_conf_file() {
-		$get_config = $this->get_config();
-		return trim(preg_replace("/;(.*?)$/i", "", $get_config["NAS"]["root_share_dir"])) . "smb.conf";
-	}
-	private function parse_smb_conf() {
-		if (!class_exists("manage_conf_file", false)) {
-			require($this->class_dir . "/manage_conf_file.class.php");
-		}
-		$conf = new manage_conf_file();
-		return $conf->parse($this->smb_conf_file());
-	}
+	
+	/**
+	* Update the config file with the la scan date
+	*
+	* @param int $startime The time to insert in config
+	* @see scan::__construct() Construct
+	* @see scan::end_time() End_time
+	* @uses PEAR/Config.php PEAR/Config
+	* @return int The time of script execution
+	* @access private
+	*/
 	private function update_config($startime) {
 		if (!class_exists("Config_Lite", false)) {
 			require_once("Config/Lite.php");
@@ -95,6 +173,16 @@ class scan {
 		
 		return $end_time;
 	}
+	
+	/**
+	* Scan a directory in search of files
+	*
+	* @param int startime The time to insert in config
+	* @see scan::__construct() Construct
+	* @see scan::get_config() Get_config
+	* @return string The file listing
+	* @access private
+	*/
 	private function scan() {
 		$get_config = $this->get_config();
 		foreach($this->nas_shares as $scan_dir){
@@ -105,6 +193,22 @@ class scan {
 		}
 		return $this->listing;
 	}
+	
+	/**
+	* Launch the session
+	*
+	* @param string $type Output format
+	* @see scan::__construct() Construct
+	* @see scan::start_time() Start_time
+	* @see scan::get_config() Get_config
+	* @see scan::scan() Scan
+	* @see scan::update_config() Update_config
+	* @see scan::statistics() Statistics
+	* @see scan::output() Output
+	* @uses rsa.class.php RSA Class
+	* @return void The output defined in output() function
+	* @access public
+	*/
 	public function save($type = "") {
 		if (!class_exists("rsa", false)) {
 			require($this->class_dir . "/rsa.class.php");

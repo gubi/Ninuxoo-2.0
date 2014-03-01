@@ -1,23 +1,59 @@
 <?php
-if(!function_exists("json_encode")) {
-	function json_encode($data) {
-		$json = new Services_JSON();
-		return $json->encode($data);
-	}
-}
-if(!function_exists("json_decode")) {
-	function json_decode($data) {
-		$json = new Services_JSON();
-		return $json->decode($data);
-	}
-}
-	
+/**
+* Ninuxoo 2.0
+*
+* PHP Version 5.3
+*
+* @copyright 2013 Alessandro Gubitosi / Gubi (http://iod.io)
+* @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @link https://github.com/gubi/Ninuxoo-2.0
+*/
+
+/**
+* A class for search file in NAS device
+*
+* Example usage:
+* ...
+*
+* @package	Ninuxoo 2.0
+* @author		Alessandro Gubitosi <gubi.ale@iod.io>
+* @license 	http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @access		public
+* @link		https://github.com/gubi/Ninuxoo-2.0/blob/master/common/include/classes/local_search.class.php
+* @todo		Clean deprecated functions
+*/
 class local_search {
-	private $debug;
+	/**
+	* Global variable
+	* @var string
+	*/
 	private $response;
+	/**
+	* Global variable
+	* @var array
+	*/
 	private $resourcetry;
+	/**
+	* Global variable
+	* @var array
+	*/
 	private $params;
 	
+	/**
+	* Construct
+	*
+	* Initialize the class
+	*
+	* @global string $this->class_dir Current class directory
+	* @global string $this->dir Conf directory, based on $this->class_dir
+	* @global array $this->conf config.ini file parsed
+	* @global string $this->root_dir Server root directory as set in the config.ini
+	* @global string $this->root_share_dir Shared directory as set in the config.ini
+	* @global string $this->listing_file_dir Listing file directory as set in the config.ini
+	* @global string $this->nas_shares Shared directories as set in the scan_shares file
+	* @global string $this->root_path Shared directories as set in the scan_shares file
+	* @return void
+	*/
 	public function __construct() {
 		$this->class_dir = __DIR__;
 		$this->dir = str_replace("classes", "conf", $this->class_dir);
@@ -26,16 +62,36 @@ class local_search {
 		$this->root_share_dir = $this->conf["NAS"]["root_share_dir"];
 		$this->listing_file_dir = $this->conf["NAS"]["listing_file_dir"];
 		$this->nas_shares = explode("\n", file_get_contents(str_replace("//", "/", $this->dir . "/") . "scan_shares"));
+		
+		/**
+		* @deprecated
+		*/
 		$this->root_path = ($root_path == null) ? $this->listing_file_dir : $this->root_share_dir . $root_path;
 	}
-	private function start_time(){
+	
+	/**
+	* Start calculating execution time
+	*
+	* @global int $GLOBALS["starttime"] The start time
+	* @return int The start of execution time
+	* @access  private
+	*/
+	private function start_time() {
 		// Start execution time statistics
 		$mtime = microtime();
 		$mtime = explode(" ", $mtime);
 		$mtime = $mtime[1] + $mtime[0];
 		$GLOBALS["starttime"] = $mtime;
 	}
-	private function end_time(){
+	
+	/**
+	* End calculating execution time
+	*
+	* @param int $GLOBALS["starttime"] The time start of execution
+	* @return int The end of execution time
+	* @access private
+	*/
+	private function end_time() {
 		// End execution time statistics
 		$mtime = microtime();
 		$mtime = explode(" ", $mtime);
@@ -43,8 +99,16 @@ class local_search {
 		$endtime = $mtime;
 		return round($endtime - $GLOBALS["starttime"], 6);
 	}
-	private function http_resp($code = NULL) {
-		if ($code !== NULL) {
+	
+	/**
+	* String value of http status code
+	*
+	* @param int $code the http status code
+	* @return string A textual explanation of given status code
+	* @access private
+	*/
+	private function http_resp($code = null) {
+		if ($code !== null) {
 			switch ($code) {
 				case 100: $text = "Continue"; break;
 				case 101: $text = "Switching Protocols"; break;
@@ -95,6 +159,15 @@ class local_search {
 			return $code;
 		}
 	}
+	
+	/**
+	* Order associative array of directories
+	*
+	* @param array $array the array to order
+	* @param string $key the key which must be ordered
+	* @return array
+	* @access private
+	*/
 	private function aasort(&$array, $key) {
 		$sorter = array();
 		$ret = array();
@@ -114,6 +187,17 @@ class local_search {
 		'));
 
 	}
+	
+	/**
+	* Explode a directory tree array
+	*
+	* @param array $array The array to explode
+	* @param string $delimiter The delimiter of dir
+	* @param bool $baseval Is root dir
+	* @return array
+	* @access private
+	* @see http://kvz.io/blog/2007/10/03/convert-anything-to-tree-structures-in-php/
+	*/
 	private function explodeTree($array, $delimiter = "_", $baseval = false) {
 		require_once($this->root_dir . "common/include/lib/mime_types.php");
 		
@@ -171,6 +255,14 @@ class local_search {
 		}
 		return $returnArr;
 	}
+	
+	/**
+	* Check if array have sub-array
+	*
+	* @param array $array The array to check
+	* @return bool
+	* @access private
+	*/
 	private function have_resource($array) {
 		foreach($array as $k => $v){
 			if (is_array($v)) {
@@ -180,6 +272,16 @@ class local_search {
 			}
 		}
 	}
+	
+	/**
+	* Search an array key recursively
+	*
+	* @param array $input The array to search
+	* @param string $search_value The key to search
+	* @return array
+	* @access private
+	* @see http://www.php.net/manual/ru/function.array-keys.php#105890
+	*/
 	private function recursive_keys($input, $search_value = null){
 		$output = ($search_value !== null ? array_keys($input, $search_value) : array_keys($input)) ;
 		foreach($input as $sub){
@@ -191,6 +293,16 @@ class local_search {
 		}
 		return $output ;
 	}
+	
+	/**
+	* Search an array key recursively
+	*
+	* @param string $needle_key The key to search
+	* @param array $array The array to search
+	* @return array
+	* @access private
+	* @see http://www.php.net/manual/ru/function.array-keys.php#105890
+	*/
 	private function array_search_key($needle_key, $array ) {
 		foreach($array AS $key=>$value){
 			if($key == $needle_key) { return $value; }
@@ -201,7 +313,17 @@ class local_search {
 			}
 		}
 		return false;
-	} 
+	}
+	
+	/**
+	* Traverse and output tree structure
+	*
+	* @param array $arr The array to traverse
+	* @param int $indent The level of indentation
+	* @return array
+	* @access private
+	* @see http://kvz.io/blog/2007/10/03/convert-anything-to-tree-structures-in-php/
+	*/
 	private function plotTree($arr, $indent = 0){
 		if (!class_exists("rsa", false)) {
 			require($this->class_dir . "/rsa.class.php");
@@ -260,6 +382,14 @@ class local_search {
 		}
 		return $plot;
 	}
+	
+	/**
+	* Iterate the array
+	*
+	* @param array $array The array to iterate
+	* @return array
+	* @access private
+	*/
 	private function iterate_array($array){
 		$resourcetry = $this->explodeTree($array, "/");
 		
@@ -273,12 +403,18 @@ class local_search {
 		$results_array["resourcetrie"] = $this->plotTree($resourcetry);
 		
 		$response = $results_array;
-		
-		$results_array["resourcetrie"];
 		return $response;
 	}
 	
-	/* class functions */
+	/* PUBLIC FUNCTIONS */
+	
+	/**
+	* Get the response code depending of the selected type
+	*
+	* @param string $type type: "array", "code", "text"
+	* @return string
+	* @access public
+	*/
 	public function get_response_code($type){
 		$response_code = $this->http_resp();
 		switch($type) {
@@ -295,6 +431,13 @@ class local_search {
 				break;
 		}
 	}
+	
+	/**
+	* Scan a directory
+	*
+	* @param string $type type: nothing or "count"
+	* @access public
+	*/
 	public function scan($type) {
 		if (!class_exists("rsa", false)) {
 			require($this->class_dir . "/rsa.class.php");
@@ -315,6 +458,13 @@ class local_search {
 			break;
 		}
 	}
+	
+	/**
+	* Get a function to execute
+	*
+	* @param string
+	* @access public
+	*/
 	public function get() {
 		if(strlen($this->params["op"]) > 0 && trim($this->params["op"]) !== "") {
 			switch($this->params["op"]){
@@ -343,6 +493,12 @@ class local_search {
 		return json_encode($this->response);
 	}
 	
+	/**
+	* Set the class params
+	*
+	* @param array $params Parameters that want to set
+	* @access public
+	*/
 	public function set_params($params){
 		if(!is_array($params)){
 			return "No valid params";
@@ -364,7 +520,13 @@ class local_search {
 		}
 	}
 	
-	private function resourcestats(){
+	/**
+	* Return statistics about scanned files
+	*
+	* @return array
+	* @access private
+	*/
+	private function resourcestats() {
 		$this->start_time();
 		// Retrieve current response header
 		$response = $this->get_response_code("array");
@@ -374,7 +536,14 @@ class local_search {
 		$response["searchtime"] = $this->end_time();
 		return $response;
 	}
-	private function browse(){
+	
+	/**
+	* Browse a directory in search of files
+	*
+	* @return array
+	* @access private
+	*/
+	private function browse() {
 		$this->start_time();
 		// Retrieve current response header
 		$response = $this->get_response_code("array");
@@ -409,7 +578,15 @@ class local_search {
 		$response["searchtime"] = $this->end_time();
 		return $response;
 	}
-	private function get_last_news($days = 0){
+	
+	/**
+	* Return last changes in NAS
+	*
+	* @param int $days days back from today
+	* @return string
+	* @access private
+	*/
+	private function get_last_news($days = 0) {
 		$whatsnew = shell_exec("find " . escapeshellcmd($this->params["replace_path"]) . " -type f -mtime -" . $days . " | sort -n");
 		if(strlen($whatsnew) == 0){
 			return $this->get_last_news($days+1);
@@ -417,7 +594,15 @@ class local_search {
 			return $whatsnew;
 		}
 	}
-	private function whatsnew(){
+	
+	/**
+	* Return last changes in NAS
+	*
+	* @param int days back from today
+	* @return array
+	* @access private
+	*/
+	private function whatsnew() {
 		$this->start_time();
 		// Retrieve current response header
 		$response = $this->get_response_code("array");
@@ -436,7 +621,14 @@ class local_search {
 		//print $response;
 		return $response;
 	}
-	private function query(){
+	
+	/**
+	* Search a file in previous scan
+	*
+	* @return array
+	* @access private
+	*/
+	private function query() {
 		ob_end_flush();
 		$this->start_time();
 		$config = $this->conf;

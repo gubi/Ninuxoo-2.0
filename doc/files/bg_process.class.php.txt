@@ -1,0 +1,101 @@
+<?php
+/**
+* Ninuxoo 2.0
+*
+* PHP Version 5.3
+*
+* @copyright 2013 Alessandro Gubitosi / Gubi (http://iod.io)
+* @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @link https://github.com/gubi/Ninuxoo-2.0
+*/
+
+/**
+* A class for manage background shell commands
+*
+* This class allow to execute and manage background instances of shell commands.<br>
+* Example usage:
+* <pre>
+* $cmd = "your shell command";
+* $bg_process = new bg_process($cmd);
+* $pid = $bg_process->run();
+* if($bg_process->isRunning()) {
+* 	print $pid . " process is running";
+* } else {
+* 	print "Something wrong :(";
+* }
+* </pre>
+*
+* @package	Ninuxoo 2.0
+* @author		Alessandro Gubitosi <gubi.ale@iod.io>
+* @license 	http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @link		https://github.com/gubi/Ninuxoo-2.0/blob/master/common/include/classes/bg_process.class.php
+* @todo		Stop process function
+*/
+
+class bg_process {
+	/**
+	* @var string The shell command passed to the class
+	*/
+	private $command;
+	
+	/**
+	* Construct
+	*
+	* Initialize the class
+	*
+	* @param string $command The shell command to execute
+	* @global string $this->command Command to execute
+	* @return void
+	*/
+	public function __construct($command) {
+		$this->command = $command;
+	}
+	
+	/**
+	* Run command
+	*
+	* @param string $this->command The command defined in Construct
+	* @access public
+	* @see bg_process::__construct()
+	* @return string $this->pid The process PID
+	*/
+	public function run() {
+		$this->pid = shell_exec(sprintf('%s > /dev/null 2>&1 & echo $!', $this->command));
+		return $this->pid;
+	}
+	
+	/**
+	* Check if command is running
+	*
+	* @access public
+	* @param int $pid The PID of desired process
+	* @return bool
+	*/
+	public function isRunning($pid = "") {
+		if(strlen(trim($pid)) > 0) {
+			$this->pid = $pid;
+		}
+		try {
+			$result = shell_exec(sprintf('ps %d', $this->pid));
+			if(count(preg_split("/\n/", $result)) > 2) {
+				return true;
+			}
+		} catch(Exception $e) {}
+		
+		return false;
+	}
+	
+	/**
+	* Return the command PID
+	*
+	* @return int The PID of desired process
+	* @access public
+	* @deprecated No longer used
+	* @see bg_process::run()
+	*/
+	public function getPid() {
+		return $this->pid;
+	}
+}
+?>
+

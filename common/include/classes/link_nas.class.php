@@ -1,11 +1,55 @@
 <?php
+/**
+* Ninuxoo 2.0
+*
+* PHP Version 5.3
+*
+* @copyright 2013 Alessandro Gubitosi / Gubi (http://iod.io)
+* @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @link https://github.com/gubi/Ninuxoo-2.0
+*/
+
+/**
+* A class for link NAS devices
+*
+* This class links NAS devices as described in [Tokens and key exchange process between devices (it)](https://github.com/gubi/Ninuxoo-2.0/wiki/Tokens-e-processo-di-scambio-chiavi-tra-device).<br>
+* The mechanism of acquisition of trust between Ninuxoo NAS is based on the mutual exchange of RSA public keys, automatically generated at installation time.<br>
+* We can compare two people who share each other for the first time its own mobile number: the first makes a phone call to the second, which then saves the number.<br><br>
+* Therefore the exchange takes 3 step:<br>
+* ![Graphic of system work](https://raw.github.com/gubi/Ninuxoo-2.0/master/common/media/img/ninuxoo_token_system.png)
+*
+* @package	Ninuxoo 2.0
+* @author		Alessandro Gubitosi <gubi.ale@iod.io>
+* @license 	http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @access		public
+* @link		https://github.com/gubi/Ninuxoo-2.0/blob/master/common/include/classes/link_nas.class.php
+* @uses		logging Logging class
+* @uses		rsa.class.php RSA class
+* @uses		sendmail.class.php Sendmail class
+*/
 
 class link_nas {
+	/**
+	* Construct
+	*
+	* Initialize the class
+	*
+	* @global string $this->class_dir Current class directory
+	* @global string $this->conf_dir Conf directory, based on $this->class_dir
+	* @global string $this->trusted_dir Trusted directory, based on $this->conf_dir
+	* @global string $this->log_dir Log directory, based on $this->class_dir
+	* @global string $this->general_settings Parsed general_settings.ini, based on $this->conf_dir
+	* @subpackage logging.class.php
+	* @subpackage rsa.class.php
+	* @subpackage sendmail.class.php
+	* @return void
+	*/
 	public function __construct() {
 		$this->class_dir = __DIR__;
 		$this->conf_dir = str_replace("classes", "conf", $this->class_dir);
 		$this->trusted_dir = $this->conf_dir . "/trusted/";
 		$this->log_dir = str_replace("classes", "log", $this->class_dir);
+		$this->general_settings = parse_ini_file($this->conf_dir . "/general_settings.ini", true);
 		
 		require_once($this->class_dir . "/logging.class.php");
 		require_once($this->class_dir . "/rsa.class.php");
@@ -22,14 +66,35 @@ class link_nas {
 		$this->rsa = new rsa();
 	}
 	
+	/**
+	* Get user admin data
+	*
+	* @param string $this->command The command defined in Construct
+	* @access private
+	* @see link_nas::__construct() Construct
+	* @return array $admins User admin data
+	*/
 	private function get_admins() {
-		$general_settings = parse_ini_file($this->conf_dir . "/general_settings.ini", true);
-		foreach($general_settings["login"]["admin"] as $admin) {
+		foreach($this->general_settings["login"]["admin"] as $admin) {
 			$adm = parse_ini_file($this->conf_dir . "/user/" . $admin . "/user.conf", true);
 			$admins[] = $adm["User"];
 		}
 		return $admins;
 	}
+	
+	/**
+	* Mail message
+	*
+	* Set the mail message depending of device type
+	*
+	* @param string $type The device type.<br>Options: `a1` or `b1`
+	* @param string $name The name of `b1` device owner
+	* @param string $token The name of `b1` device token
+	* @access private
+	* @see link_nas::__construct() Construct
+	* @see link_nas::get_admins() Get user admin data
+	* @return string Email message
+	*/
 	private function mail_message($type, $name, $token) {
 		switch($type) {
 			case "a1":
@@ -42,8 +107,24 @@ class link_nas {
 		}
 	}
 	
+	/**
+	* Start the request
+	*
+	* ####DEVICE <big><big><samp>B</samp></big></big>, STEP <big><big><samp>1</samp></big></big>
+	* Starts the mechanism of RSA key exchange, sending to target (`A1`) its own public key.<br>
+	* Graphical representation follows:
+	* ![Graphic of B1 job](https://raw.github.com/gubi/Ninuxoo-2.0/master/common/media/img/ninuxoo_token_system_1.png)
+	*
+	* @param string $ip The IP address of target `A1` device
+	* @uses rsa_2048_pub.pem
+	* @uses rsa::get_time_limit() RSA -> get_time_limit()
+	* @uses log::write() Log -> write()
+	* @see link_nas::__construct() Construct
+	* @see link_nas::second_response() Second response for B1
+	* @access public
+	* @return string Ask `A1` directly whit the same common API
+	*/
 	public function start_request($ip) {
-		// B1 request
 		$fb = fopen($this->conf_dir . "/rsa_2048_pub.pem", "r");
 		$Bkey = fread($fb, 8192);
 		fclose($fb);
@@ -63,8 +144,29 @@ class link_nas {
 		return file_get_contents("http://" . $ip . "/API/index.php?action=friend_request&request=" . rawurlencode($Brequest));
 		$this->log->close();
 	}
+	
+	/**
+	* First response
+	*
+	* ####DEVICE <big><big><samp>A</samp></big></big>, STEP <big><big><samp>1</samp></big></big>
+	* Replies to the request of `B1` with its own public RSA key and token, encrypted by `B1` public RSA.<br>
+	* Graphical representation follows:
+	* ![Graphic of A1 job](https://raw.github.com/gubi/Ninuxoo-2.0/master/common/media/img/ninuxoo_token_system_2.png)
+	*
+	* @param string $request The request called by `B1` device
+	* @uses rsa_2048_pub.pem
+	* @uses rsa::get_time_limit() RSA -> get_time_limit()
+	* @uses rsa::get_token() RSA -> get_token()
+	* @uses rsa::public_encrypt() RSA -> public_encrypt()
+	* @uses log::write() Log -> write()
+	* @uses sendmail::send() Sendmail -> send()
+	* @see link_nas::__construct() Construct
+	* @see link_nas::get_admins() Get data about its own owner
+	* @see link_nas::mail_message() Get mail message
+	* @access public
+	* @return string|void Ask `B1` directly whit the same common API or exit because is already KNOWER/TRUSTED
+	*/
 	public function first_response($request) {
-		// A1 parse
 		$ctokens = null;
 		
 		$friendship_request = explode("::::", base64_decode(rawurldecode($request)));
@@ -74,22 +176,32 @@ class link_nas {
 		$resp = base64_decode(trim($friendship_request[0]));
 		$Bkey = $resp;
 		
-		// A response
+		/**
+		* Read its own RSA public key
+		*/
 		$fb = fopen($this->conf_dir . "/rsa_2048_pub.pem", "r");
 		$Akey = fread($fb, 8192);
 		fclose($fb);
 		
+		/**
+		* Extract tokens for `A` and `B`
+		*/
 		$Atoken = $this->rsa->get_token($Akey);
 		$Btoken = $this->rsa->get_token($Bkey);
 		$this->log->write("notice", "[A1] Public key received with token " . $Btoken);
 		
-		// Check if is already trusted
+		/**
+		* Check if `B1` is already trusted
+		*/
 		foreach(glob($this->trusted_dir . "*.pem") as $filename) {
 			$ctokens[] = str_replace(array($this->trusted_dir, ".pem"), "", $filename);
 		}
 		if(is_array($ctokens)) {
 			$this->log->write("notice", "[A1] Check if '" . $Btoken . "' is already trusted...");
 			if(in_array($Btoken, $ctokens)) {
+				/**
+				* `B1` is already trusted
+				*/
 				$exists = true;
 				$this->log->write("notice", "[A1] " . $Btoken . " is already trusted");
 			} else {
@@ -100,12 +212,18 @@ class link_nas {
 			$this->log->write("error", "[A1] " . $Btoken . " is no knower and no trusted. Aborting... It will need to repeat all process");
 		}
 		if(!$exists) {
+			/**
+			* Add `B1` as KNOWER
+			*/
 			$knower = fopen($this->trusted_dir . $Btoken . ".pem~", "wb");
 			$this->log->write("notice", "[A1] NAS " . $Btoken . " added to '" . $this->trusted_dir . $Btoken . ".pem~' as KNOWER");
 			fwrite($knower, $Bkey);
 			fclose($knower);
 			chmod($this->trusted_dir . $Btoken . ".pem~", 0777);
 			
+			/**
+			* Send email to `B1` owner
+			*/
 			foreach($this->get_admins() as $k => $user_data) {
 				$this->sendmail->send(ucwords($user_data["name"]) . " <" . $user_data["email"] . ">", "Richiesta di connessione fra NAS", $this->mail_message("a1", $user_data["name"], $Btoken));
 			}
@@ -121,6 +239,30 @@ class link_nas {
 		return file_get_contents("http://" . $_SERVER["REMOTE_ADDR"] . "/API/index.php?action=confirm_friend&request=" . rawurlencode($encrypted_A_response));
 		$this->log->close();
 	}
+	
+	/**
+	* Second response
+	*
+	* ####DEVICE <big><big><samp>B</samp></big></big>, STEP <big><big><samp>2</samp></big></big>
+	* Replies to the request of `A1` with its own public RSA key again, encrypted by `A1` public RSA.<br>
+	* Graphical representation follows:
+	* ![Graphic of B2 job](https://raw.github.com/gubi/Ninuxoo-2.0/master/common/media/img/ninuxoo_token_system_3.png)
+	*
+	* @param string $first_response The request called by `A1` device
+	* @uses rsa_2048_priv.pem
+	* @uses rsa_2048_pub.pem
+	* @uses rsa::get_time_limit() RSA -> get_time_limit()
+	* @uses rsa::get_token() RSA -> get_token()
+	* @uses rsa::public_encrypt() RSA -> public_encrypt()
+	* @uses rsa::get_time_error() RSA -> get_time_error()
+	* @uses log::write() Log -> write()
+	* @uses sendmail::send() Sendmail -> send()
+	* @see link_nas::__construct() Construct
+	* @see link_nas::get_admins() Get data about its own owner
+	* @see link_nas::mail_message() Get mail message
+	* @access public
+	* @return string|void Ask `B1` directly whit the same common API or exit because is already KNOWER/TRUSTED
+	*/
 	public function second_response($first_response) {
 		// B2 parse
 		$key = explode("::::", rawurldecode($first_response));
@@ -165,6 +307,23 @@ class link_nas {
 		$this->log->close();
 	}
 	
+	/**
+	* Third response
+	*
+	* ####DEVICE <big><big><samp>A</samp></big></big>, STEP <big><big><samp>2</samp></big></big>
+	* Replies to the request of `B2` trasforming it from KNOWER to TRUSTED.<br>
+	* ![Graphic of A2 job](https://raw.github.com/gubi/Ninuxoo-2.0/master/common/media/img/ninuxoo_token_system_4.png)
+	*
+	* @param string $second_response The request called by `B2` device
+	* @uses rsa_2048_priv.pem
+	* @uses rsa::get_time_limit() RSA -> get_time_limit()
+	* @uses rsa::get_token() RSA -> get_token()
+	* @uses rsa::get_time_error() RSA -> get_time_error()
+	* @uses log::write() Log -> write()
+	* @see link_nas::__construct() Construct
+	* @access public
+	* @return string|void Return a fun message to `B2` for the succesful addition or exit because is already KNOWER/TRUSTED
+	*/
 	public function third_response($second_response) {
 		// A2 parse
 		$key = explode("::::", rawurldecode($second_response));
