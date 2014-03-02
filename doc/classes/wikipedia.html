@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1646176657"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-368737241"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1646176657" class="accordion-body collapse in">
+            <div id="namespace-368737241" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -174,9 +174,18 @@
                                             </nav>
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
 
-                    <h1><small>\</small>scan</h1>
-                    <p><em>A class for scan files in NAS device and store the listing in defined directory</em></p>
-                    <p>_</p>
+                    <h1><small>\</small>wikipedia</h1>
+                    <p><em>A class for search Wikipedia page using its API</em></p>
+                    <p>This class call Wikipedia search API to retrieve the page name for a given text<br>
+For more info about Wikipedia's API visit <a href="http://en.wikipedia.org/w/api.php">http://en.wikipedia.org/w/api.php</a>
+Example of usage:</p>
+<pre>
+$wikipedia = new wikipedia();
+$wikipedia->srlimit(1);
+$wikipedia->srprop("");
+$res = $wikipedia->search($search_term);
+print_r($res);
+</pre>
 
                     <section id="summary">
                         <h2>Summary</h2>
@@ -193,11 +202,18 @@
                         </section>
                         <section class="row-fluid public">
                             <section class="span4">
-                                                                    <a href="../classes/scan.html#method___construct" class="">__construct()</a><br />
-                                                                    <a href="../classes/scan.html#method_start_time" class="">start_time()</a><br />
-                                                                    <a href="../classes/scan.html#method_end_time" class="">end_time()</a><br />
-                                                                    <a href="../classes/scan.html#method_text_header" class="">text_header()</a><br />
-                                                                    <a href="../classes/scan.html#method_save" class="">save()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_srsearch" class="">srsearch()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_format" class="">format()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_srnamespace" class="">srnamespace()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_srwhat" class="">srwhat()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_srinfo" class="">srinfo()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_srprop" class="">srprop()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_srredirects" class="">srredirects()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_sroffset" class="">sroffset()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_srlimit" class="">srlimit()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_srbackend" class="">srbackend()</a><br />
+                                                                    <a href="../classes/wikipedia.html#method_search" class="">search()</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <em>No public properties found</em>
@@ -219,11 +235,7 @@
                         </section>
                         <section class="row-fluid private">
                             <section class="span4">
-                                                                    <a href="../classes/scan.html#method_statistics" class="">statistics()</a><br />
-                                                                    <a href="../classes/scan.html#method_output" class="">output()</a><br />
-                                                                    <a href="../classes/scan.html#method_get_config" class="">get_config()</a><br />
-                                                                    <a href="../classes/scan.html#method_update_config" class="">update_config()</a><br />
-                                                                    <a href="../classes/scan.html#method_scan" class="">scan()</a><br />
+                                                                    <em>No private methods found</em>
                                                             </section>
                             <section class="span4">
                                                                     <em>No private properties found</em>
@@ -239,19 +251,19 @@
                     
                     <dl>
                         <dt>File</dt>
-                            <dd><a href="../files/scan.class.php.html"><div class="path-wrapper">scan.class.php</div></a></dd>
+                            <dd><a href="../files/wikipedia.class.php.html"><div class="path-wrapper">wikipedia.class.php</div></a></dd>
                                                 <dt>Package</dt>
                             <dd><div class="namespace-wrapper">\Ninuxoo 2.0</div></dd>
                                                 <dt>Class hierarchy</dt>
                             <dd class="hierarchy">
-                                                                                                                                                                    <div class="namespace-wrapper">\scan</div>
+                                                                                                                                                                    <div class="namespace-wrapper">\wikipedia</div>
                             </dd>
 
                         
                         
                         
                                                                             <dt>See also</dt>
-                                                                                    <dd><a href="https://github.com/gubi/Ninuxoo-2.0/blob/master/common/include/classes/scan.class.php"><div class="namespace-wrapper">https://github.com/gubi/Ninuxoo-2.0/blob/master/common/include/classes/scan.class.php</div></a></dd>
+                                                                                    <dd><a href="https://github.com/gubi/Ninuxoo-2.0/blob/master/common/include/classes/wikipedia.class.php"><div class="namespace-wrapper">https://github.com/gubi/Ninuxoo-2.0/blob/master/common/include/classes/wikipedia.class.php</div></a></dd>
                                                     
                                                                         </dl>
                     <h2>Tags</h2>
@@ -282,18 +294,9 @@
                         </tr>
                                             <tr>
                             <th>
-                                uses
-                            </th>
-                            <td>
-                                                                    <p>Rsa class</p>
-                                                            </td>
-                        </tr>
-                                            <tr>
-                            <th>
                                 todo
                             </th>
                             <td>
-                                                                    <p>Clean deprecated functions</p>
                                                             </td>
                         </tr>
                                         </table>
@@ -314,10 +317,18 @@
             <article class="method">
                 <h3 class="public ">__construct()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">__construct() : void</pre>
+                <pre class="signature" style="margin-right: 54px;">__construct(string <span class="argument">$lang</span>) : void</pre>
                 <p><em>Construct</em></p>
                 <p>Initialize the class</p>
 
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$lang</td>
+                                <td></td>
+                            </tr>
+                                            </table>
                 
                 
                             </article>
@@ -333,17 +344,7 @@
                             global
                         </th>
                         <td>
-                                                                                            <p>string $this->class_dir Current class directory</p>
-                                                                                            <p>string $this->dir Conf directory, based on $this->class_dir</p>
-                                                                                            <p>string $this->nas_shares Shared directories as set in the scan_shares file</p>
-                                                    </td>
-                    </tr>
-                                    <tr>
-                        <th>
-                            subpackage
-                        </th>
-                        <td>
-                                                                                            <p>PEAR/Config/Lite.php</p>
+                                                                                            <p>string $this->api_url Base Wikipedia api url</p>
                                                     </td>
                     </tr>
                                     <tr>
@@ -359,19 +360,26 @@
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_start_time" name="method_start_time" class="anchor"></a>
+            <a id="method_srsearch" name="method_srsearch" class="anchor"></a>
             <article class="method">
-                <h3 class="public ">start_time()</h3>
+                <h3 class="public ">srsearch()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">start_time() : int</pre>
-                <p><em>Start calculating execution time</em></p>
-                
+                <pre class="signature" style="margin-right: 54px;">srsearch(string <span class="argument">$srsearch</span>) : string</pre>
+                <p><em>Search for all page titles (or content) that has this value</em></p>
+                <p>This parameter is required</p>
 
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$srsearch</td>
+                                <td><p>Search term</p></td>
+                            </tr>
+                                            </table>
                 
                 
                                     <h4>Returns</h4>
-                    int
-                                            &mdash; <p>$mtime The start of execution time</p>
+                    string
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -393,27 +401,294 @@
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_end_time" name="method_end_time" class="anchor"></a>
+            <a id="method_format" name="method_format" class="anchor"></a>
             <article class="method">
-                <h3 class="public ">end_time()</h3>
+                <h3 class="public ">format()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">end_time(int <span class="argument">$startime</span>) : int</pre>
-                <p><em>End calculating execution time</em></p>
+                <pre class="signature" style="margin-right: 54px;">format(string <span class="argument">$format</span>) : string</pre>
+                <p><em>The format of the output</em></p>
+                <p>One value: <code>json</code>, <code>jsonfm</code>, <code>php</code>, <code>phpfm</code>, <code>wddx</code>, <code>wddxfm</code>, <code>xml</code>, <code>xmlfm</code>, <code>yaml</code>, <code>yamlfm</code>, <code>rawfm</code>, <code>txt</code>, <code>txtfm</code>, <code>dbg</code>, <code>dbgfm</code>, <code>dump</code>, <code>dumpfm</code>, <code>none</code><br>
+Default: <tt>json</tt></p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$format</td>
+                                <td></td>
+                            </tr>
+                                            </table>
                 
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>$this->srformat</p>
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_srnamespace" name="method_srnamespace" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">srnamespace()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">srnamespace(int|array <span class="argument">$namespace</span>) : int</pre>
+                <p><em>The namespace(s) to enumerate</em></p>
+                <p>Values (separate with '<tt>|</tt>'): 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 100, 101, 108, 109, 118, 119, 710, 711, 446, 447, 828, 829<br>
+Maximum number of values 50 (500 for bots)<br>
+Default: <tt>0</tt></p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int|array</td>
+                                <td>$namespace</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    int
+                                            &mdash; <p>$this->namespace</p>
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_srwhat" name="method_srwhat" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">srwhat()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">srwhat(string <span class="argument">$what</span>) : null|string</pre>
+                <p><em>Search inside the text or titles</em></p>
+                <p>One value: <code>title</code>, <code>text</code>, <code>nearmatch</code></p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$what</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    null|string
+                                            &mdash; <p>$this->what</p>
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_srinfo" name="method_srinfo" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">srinfo()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">srinfo(string|array <span class="argument">$info</span>) : null|string</pre>
+                <p><em>What metadata to return</em></p>
+                <p>Values (separate with '<tt>|</tt>'): <code>totalhits</code>, <code>suggestion</code><br>
+Default: <tt>totalhits|suggestion</tt></p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string|array</td>
+                                <td>$info</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    null|string
+                                            &mdash; <p>$this->info</p>
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_srprop" name="method_srprop" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">srprop()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">srprop(string|array <span class="argument">$prop</span>) : null|string</pre>
+                <p><em>What properties to return</em></p>
+                <p><code>size</code>: Adds the size of the page in bytes<br>
+<code>wordcount</code>: Adds the word count of the page<br>
+<code>timestamp</code>: Adds the timestamp of when the page was last edited<br>
+<code>score</code>: Adds the score (if any) from the search engine<br>
+<code>snippet</code>: Adds a parsed snippet of the page<br>
+<code>titlesnippet</code>: Adds a parsed snippet of the page title<br>
+<code>redirectsnippet</code>: Adds a parsed snippet of the redirect title<br>
+<code>redirecttitle</code>: Adds the title of the matching redirect<br>
+<code>sectionsnippet</code>: Adds a parsed snippet of the matching section title<br>
+<code>sectiontitle</code>: Adds the title of the matching section<br>
+<code>hasrelated</code>: Indicates whether a related search is available</p>
+<p>Default: <tt>size|wordcount|timestamp|snippet</tt></p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string|array</td>
+                                <td>$prop</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    null|string
+                                            &mdash; <p>$this->prop</p>
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_srredirects" name="method_srredirects" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">srredirects()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">srredirects(bool <span class="argument">$redirects</span>) : null|true</pre>
+                <p><em>Include redirect pages in the search</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>bool</td>
+                                <td>$redirects</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    null|true
+                                            &mdash; <p>$this->redirects</p>
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_sroffset" name="method_sroffset" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">sroffset()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">sroffset(int <span class="argument">$offset</span>) : null|int</pre>
+                <p><em>Use this value to continue paging (return by query)</em></p>
+                <p>Default: <tt>0</tt></p>
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
                                 <td>int</td>
-                                <td>$startime</td>
-                                <td><p>The time start of execution</p></td>
+                                <td>$offset</td>
+                                <td></td>
                             </tr>
                                             </table>
                 
                 
                                     <h4>Returns</h4>
-                    int
-                                            &mdash; <p>The end of execution time</p>
+                    null|int
+                                            &mdash; <p>$this->offset</p>
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -435,259 +710,34 @@
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_text_header" name="method_text_header" class="anchor"></a>
+            <a id="method_srlimit" name="method_srlimit" class="anchor"></a>
             <article class="method">
-                <h3 class="public ">text_header()</h3>
+                <h3 class="public ">srlimit()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">text_header() : string</pre>
-                <p><em>Set the header for text output</em></p>
-                
-
-                
-                
-                                    <h4>Returns</h4>
-                    string
-                                            &mdash; <p>The text output header</p>
-                                                </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                                                            <dl>
-                                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr>
-                        <th>
-                            todo
-                        </th>
-                        <td>
-                                                    </td>
-                    </tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_save" name="method_save" class="anchor"></a>
-            <article class="method">
-                <h3 class="public ">save()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">save(string <span class="argument">$type</span>) : void</pre>
-                <p><em>Launch the session</em></p>
-                
-
-                                    <h4>Parameters</h4>
-                    <table class="table table-condensed table-hover">
-                                                    <tr>
-                                <td>string</td>
-                                <td>$type</td>
-                                <td><p>Output format</p></td>
-                            </tr>
-                                            </table>
-                
-                
-                            </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                                                            <dl>
-                                                                                            <dt>See also</dt>
-                                                                <dd><a href="../classes/scan.html#method___construct"><span class="namespace-wrapper">Construct</span></a></dd>
-                                            <dd><a href="../classes/scan.html#method_start_time"><span class="namespace-wrapper">Start_time</span></a></dd>
-                                            <dd><a href="../classes/scan.html#method_get_config"><span class="namespace-wrapper">Get_config</span></a></dd>
-                                            <dd><a href="../classes/scan.html#method_scan"><span class="namespace-wrapper">Scan</span></a></dd>
-                                            <dd><a href="../classes/scan.html#method_update_config"><span class="namespace-wrapper">Update_config</span></a></dd>
-                                            <dd><a href="../classes/scan.html#method_statistics"><span class="namespace-wrapper">Statistics</span></a></dd>
-                                            <dd><a href="../classes/scan.html#method_output"><span class="namespace-wrapper">Output</span></a></dd>
-                                                                                                <dt>Uses</dt>
-                                                                <dd>rsa.class.php</dd>
-                                                </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr>
-                        <th>
-                            todo
-                        </th>
-                        <td>
-                                                    </td>
-                    </tr>
-                            </table>
-        </aside>
-    </div>
-
-                                                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_statistics" name="method_statistics" class="anchor"></a>
-            <article class="method">
-                <h3 class="private ">statistics()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">statistics(array <span class="argument">$curr_dir</span>) : string</pre>
-                <p><em>Generates output statistics for a given directory array</em></p>
-                
-
-                                    <h4>Parameters</h4>
-                    <table class="table table-condensed table-hover">
-                                                    <tr>
-                                <td>array</td>
-                                <td>$curr_dir</td>
-                                <td><p>Directory tree</p></td>
-                            </tr>
-                                            </table>
-                
-                
-                                    <h4>Returns</h4>
-                    string
-                                            &mdash; <p>Directory statistics output text</p>
-                                                </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                                                            <dl>
-                                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr>
-                        <th>
-                            todo
-                        </th>
-                        <td>
-                                                    </td>
-                    </tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_output" name="method_output" class="anchor"></a>
-            <article class="method">
-                <h3 class="private ">output()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">output(string <span class="argument">$type</span>, string <span class="argument">$stats</span>, string <span class="argument">$end_time</span>, array <span class="argument">$share_dir</span>) : string</pre>
-                <p><em>Generates output</em></p>
-                
-
-                                    <h4>Parameters</h4>
-                    <table class="table table-condensed table-hover">
-                                                    <tr>
-                                <td>string</td>
-                                <td>$type</td>
-                                <td><p>Output format</p></td>
-                            </tr>
-                                                    <tr>
-                                <td>string</td>
-                                <td>$stats</td>
-                                <td><p>statistics output text</p></td>
-                            </tr>
-                                                    <tr>
-                                <td>string</td>
-                                <td>$end_time</td>
-                                <td><p>Elapsed time</p></td>
-                            </tr>
-                                                    <tr>
-                                <td>array</td>
-                                <td>$share_dir</td>
-                                <td><p>Shared directories</p></td>
-                            </tr>
-                                            </table>
-                
-                
-                                    <h4>Returns</h4>
-                    string
-                                            &mdash; <p>$output</p>
-                                                </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                                                            <dl>
-                                                                                            <dt>See also</dt>
-                                                                <dd><a href="../classes/scan.html#method_get_config"><span class="namespace-wrapper">Parse configuration file</span></a></dd>
-                                            <dd><a href="../classes/scan.html#method_text_header"><span class="namespace-wrapper">Text_header</span></a></dd>
-                                                                </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr>
-                        <th>
-                            todo
-                        </th>
-                        <td>
-                                                    </td>
-                    </tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_get_config" name="method_get_config" class="anchor"></a>
-            <article class="method">
-                <h3 class="private ">get_config()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get_config() : void|array</pre>
-                <p><em>Parse the config.ini file</em></p>
-                
-
-                
-                
-                                    <h4>Returns</h4>
-                    void|array
-                                            &mdash; <p>Error or the config.ini parsed array</p>
-                                                </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                                                            <dl>
-                                                                                            <dt>See also</dt>
-                                                                <dd><a href="../classes/scan.html#method___construct"><span class="namespace-wrapper">Construct</span></a></dd>
-                                                                </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr>
-                        <th>
-                            todo
-                        </th>
-                        <td>
-                                                    </td>
-                    </tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_update_config" name="method_update_config" class="anchor"></a>
-            <article class="method">
-                <h3 class="private ">update_config()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">update_config(int <span class="argument">$startime</span>) : int</pre>
-                <p><em>Update the config file with the la scan date</em></p>
-                
+                <pre class="signature" style="margin-right: 54px;">srlimit(int <span class="argument">$limit</span>) : null|int</pre>
+                <p><em>How many total pages to return</em></p>
+                <p>No more than 50 (500 for bots) allowed<br>
+Default: <tt>10</tt></p>
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
                                 <td>int</td>
-                                <td>$startime</td>
-                                <td><p>The time to insert in config</p></td>
+                                <td>$limit</td>
+                                <td></td>
                             </tr>
                                             </table>
                 
                 
                                     <h4>Returns</h4>
-                    int
-                                            &mdash; <p>The time of script execution</p>
+                    null|int
+                                            &mdash; <p>$this->limit</p>
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                                                             <dl>
-                                                                                            <dt>See also</dt>
-                                                                <dd><a href="../classes/scan.html#method___construct"><span class="namespace-wrapper">Construct</span></a></dd>
-                                            <dd><a href="../classes/scan.html#method_end_time"><span class="namespace-wrapper">End_time</span></a></dd>
-                                                                                                <dt>Uses</dt>
-                                                                <dd>PEAR/Config.php</dd>
-                                                </dl>
+                                                                            </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
                                     <tr>
@@ -703,27 +753,76 @@
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_scan" name="method_scan" class="anchor"></a>
+            <a id="method_srbackend" name="method_srbackend" class="anchor"></a>
             <article class="method">
-                <h3 class="private ">scan()</h3>
+                <h3 class="public ">srbackend()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">scan() : string</pre>
-                <p><em>Scan a directory in search of files</em></p>
-                
+                <pre class="signature" style="margin-right: 54px;">srbackend(string <span class="argument">$backend</span>) : null|string</pre>
+                <p><em>Which search backend to use, if not the default</em></p>
+                <p>One value: <code>LuceneSearch</code>, <code>CirrusSearch</code><br>
+Default: <tt>LuceneSearch</tt></p>
 
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$backend</td>
+                                <td></td>
+                            </tr>
+                                            </table>
                 
                 
                                     <h4>Returns</h4>
-                    string
-                                            &mdash; <p>The file listing</p>
+                    null|string
+                                            &mdash; <p>$this->backend</p>
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_search" name="method_search" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">search()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">search(string <span class="argument">$term</span>) : array</pre>
+                <p><em>Search with API</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$term</td>
+                                <td><p>Search term</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
                                                             <dl>
                                                                                             <dt>See also</dt>
-                                                                <dd><a href="../classes/scan.html#method___construct"><span class="namespace-wrapper">Construct</span></a></dd>
-                                            <dd><a href="../classes/scan.html#method_get_config"><span class="namespace-wrapper">Get_config</span></a></dd>
+                                                                <dd><a href="../classes/wikipedia.html#method___construct"><span class="namespace-wrapper">Construct</span></a></dd>
                                                                 </dl>
             <h2>Tags</h2>
             <table class="table table-condensed">
@@ -738,16 +837,16 @@
         </aside>
     </div>
 
-                                    </div>
+                                                                    </div>
     </section>
 
     <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="source-view-label">scan.class.php</h3>
+            <h3 id="source-view-label">wikipedia.class.php</h3>
         </div>
         <div class="modal-body">
-            <pre data-src="../files/scan.class.php.txt" class="language-php line-numbers"></pre>
+            <pre data-src="../files/wikipedia.class.php.txt" class="language-php line-numbers"></pre>
         </div>
     </div>
 
