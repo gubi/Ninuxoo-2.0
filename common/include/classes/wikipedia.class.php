@@ -241,6 +241,16 @@ class wikipedia{
 	*
 	* @param string $term Search term
 	* @see wikipedia::__construct() Construct
+	* @see wikipedia::format() Format
+	* @see wikipedia::srnamespace() Srnamespace
+	* @see wikipedia::srwhat() Srwhat
+	* @see wikipedia::srinfo() Srinfo
+	* @see wikipedia::srprop() Srprop
+	* @see wikipedia::srredirects() Srredirects
+	* @see wikipedia::sroffset() Sroffset
+	* @see wikipedia::srlimit() Srlimit
+	* @see wikipedia::srbackend() Srbackend
+	* @see wikipedia::srsearch() Srsearch
 	* @return array
 	* @access public
 	*/
