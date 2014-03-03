@@ -263,7 +263,7 @@ class wikipedia{
 		$url = $this->api_url . "?" . rawurldecode(http_build_query($obj));
 		$str = json_decode(file_get_contents($url), 1);
 		array_walk_recursive($str, function(&$value) {
-			$value = utf8_decode(html_entity_decode($value));
+			$value = html_entity_decode($value);
 		});
 		foreach($str["query"]["search"] as $k => $v) {
 			$res[$k]["title"] = str_replace(" ", "_", $v["title"]);

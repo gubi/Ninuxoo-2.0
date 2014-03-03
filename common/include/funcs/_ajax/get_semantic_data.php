@@ -15,7 +15,8 @@ function is_remote_file($url) {
 	}
 }
 function clean_text($text) {
-	$text = trim(preg_replace("/(disc)(\s+|)(\d+)|(cd)(\s+|)(\d+)/i", "", preg_replace("/\w+[^a-zA-Z0-9 .]/", "", preg_replace("/(\[.*?\])|(\(.*?\))|[0-9]{3,}/i", "", str_replace("_", " ", $text)))));
+	$text = trim(preg_replace("/(disc)(\s+|)(\d+)|(cd)(\s+|)(\d+)/i", "", preg_replace("/(\[.*?\])|(\(.*?\))|[0-9]{3,}/i", "", str_replace("_", " ", $text))));
+	
 	if(strpos($text, " ") === false) {
 		return trim($text);
 	} else {
@@ -37,41 +38,51 @@ function optimize_name($text, $unicode = true) {
 
 $config = parse_ini_file("../../conf/config.ini", true);
 $general_settings = parse_ini_file("../../conf/general_settings.ini", true);
-if(file_exists($config["NAS"]["root_share_dir"] . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json")) {
-	$json = file_get_contents($config["NAS"]["root_share_dir"] . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json");
-	print $json;
+if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json")) {
+	$json = file_get_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json");
+	if($_GET["debug"] == "true") {
+		print_r(json_decode($json));
+	} else {
+		print $json;
+	}
 	exit();
-}
-EasyRdf_Namespace::set("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-EasyRdf_Namespace::set("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-EasyRdf_Namespace::set("xs", "http://www.w3.org/2001/XMLSchema#");
-EasyRdf_Namespace::set("xsd", "http://www.w3.org/2001/XMLSchema#");
-EasyRdf_Namespace::set("mo", "http://purl.org/ontology/mo/");
-EasyRdf_Namespace::set("tl", "http://purl.org/NET/c4dm/timeline.owl#");
-EasyRdf_Namespace::set("event", "http://purl.org/NET/c4dm/event.owl#");
-EasyRdf_Namespace::set("foaf", "http://xmlns.com/foaf/0.1/");
-EasyRdf_Namespace::set("dc", "http://purl.org/dc/elements/1.1/");
-EasyRdf_Namespace::set("dcterms", "http://purl.org/dc/terms/");
-EasyRdf_Namespace::set("dbo", "http://dbpedia.org/ontology/");
-EasyRdf_Namespace::set("dbp", "http://it.dbpedia.org/property/");
-EasyRdf_Namespace::set("dbpp", "http://dbpedia.org/property/");
-EasyRdf_Namespace::set("dbr", "http://dbpedia.org/resource/");
-
-$easyrdf = new EasyRdf_Sparql_Client("http://it.dbpedia.org/sparql");
-$s = clean_text(rawurldecode($_GET["title"]));
-
-if(strpos($s, " ") === false) {
-	$filters[] = 'str(?label) = "' . $s . '"';
 } else {
-	foreach(explode(" ", $s) as $search_item) {
-		if(strlen($search_item) > 3) {
-			$filters[] = 'regex(?label, "' . $search_item . '", "i")';
+	require_once("../../classes/wikipedia.class.php");
+
+	$wikipedia = new wikipedia();
+	$wikipedia->srlimit(1);
+	$wikipedia->srprop("");
+	
+	EasyRdf_Namespace::set("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+	EasyRdf_Namespace::set("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+	EasyRdf_Namespace::set("xs", "http://www.w3.org/2001/XMLSchema#");
+	EasyRdf_Namespace::set("xsd", "http://www.w3.org/2001/XMLSchema#");
+	EasyRdf_Namespace::set("mo", "http://purl.org/ontology/mo/");
+	EasyRdf_Namespace::set("tl", "http://purl.org/NET/c4dm/timeline.owl#");
+	EasyRdf_Namespace::set("event", "http://purl.org/NET/c4dm/event.owl#");
+	EasyRdf_Namespace::set("foaf", "http://xmlns.com/foaf/0.1/");
+	EasyRdf_Namespace::set("dc", "http://purl.org/dc/elements/1.1/");
+	EasyRdf_Namespace::set("dcterms", "http://purl.org/dc/terms/");
+	EasyRdf_Namespace::set("dbo", "http://dbpedia.org/ontology/");
+	EasyRdf_Namespace::set("dbp", "http://it.dbpedia.org/property/");
+	EasyRdf_Namespace::set("dbpp", "http://dbpedia.org/property/");
+	EasyRdf_Namespace::set("dbr", "http://dbpedia.org/resource/");
+
+	$easyrdf = new EasyRdf_Sparql_Client("http://it.dbpedia.org/sparql");
+	$s = clean_text(rawurldecode($_GET["title"]));
+
+	if(strpos($s, " ") === false) {
+		$filters[] = 'str(?label) = "' . $s . '"';
+	} else {
+		foreach(explode(" ", $s) as $search_item) {
+			if(strlen($search_item) > 3) {
+				$filters[] = 'regex(?label, "' . $search_item . '", "i")';
+			}
 		}
 	}
-}
-switch(strtolower($_GET["type"])) {
-	case "book":
-		$query = <<<Select
+	switch(strtolower($_GET["type"])) {
+		case "book":
+			$query = <<<Select
 SELECT * WHERE {
 	?item a <http://dbpedia.org/ontology/Book> . 
 	?item	rdfs:label ?label .
@@ -91,15 +102,14 @@ SELECT * WHERE {
 	OPTIONAL { ?item	foaf:isPrimaryTopicOf ?pagina_Wikipedia }.
 	
 Select;
-		$query .= "	FILTER (" . implode(" && ", $filters) . ")\n";
-		$query .= "} LIMIT 1";
-		break;
-	case "album":
-		$filt[] = "bif:contains(?label, '\"" . clean_text($_GET["album"]) . "\"')";
-		if(isset($_GET["artist"]) && trim($_GET["artist"]) !== "") {
-			$filt[] = 'regex(?label, "' . clean_text($_GET["artist"]) . '", "i")';
-		}
-		$query = <<<Select
+			$query .= "	FILTER (" . implode(" && ", $filters) . ")\n";
+			$query .= "} LIMIT 1";
+			break;
+		case "album":
+			$wiki = $wikipedia->search(rawurldecode(clean_text($_GET["album"])));
+			if(count($wiki[0]) > 0) {
+				$title = str_replace("_", " ", $wiki[0]["title"]);
+				$query = <<<Select
 SELECT * WHERE {
 	?item a <http://dbpedia.org/ontology/Album> . 
 	?item	rdfs:label ?label .
@@ -122,16 +132,18 @@ SELECT * WHERE {
 	OPTIONAL { ?item	foaf:isPrimaryTopicOf ?pagina_Wikipedia }.
 	
 Select;
-		$query .= "	FILTER (" . implode(" && ", $filt) . ")\n";
-		$query .= "} LIMIT 1";
-		break;
-	case "film":
-		if(isset($_GET["title"]) && trim($_GET["title"]) !== "") {
-			$filt[] = 'regex(?label, "' . optimize_name(trim($_GET["title"]), false) . '")';
-		} else {
-			$filt = $filters;
-		}
-		$query = <<<Select
+				$query .= "	FILTER (str(?label) = \"" . $title . "\")\n";
+				$query .= "} LIMIT 1";
+			} else {
+				print "no results";
+				exit();
+			}
+			break;
+		case "film":
+			$wiki = $wikipedia->search(rawurldecode(clean_text($_GET["title"])));
+			if(count($wiki[0]) > 0) {
+				$title = str_replace("_", " ", $wiki[0]["title"]);
+				$query = <<<Select
 SELECT * WHERE {
 	?item a <http://dbpedia.org/ontology/Film> . 
 	?item	rdfs:label ?label .
@@ -162,17 +174,18 @@ SELECT * WHERE {
 	OPTIONAL { ?item	foaf:isPrimaryTopicOf ?pagina_Wikipedia }.
 	
 Select;
-		$query .= "	FILTER (" . implode(" && ", $filt) . ")\n";
-		$query .= "} LIMIT 1";
-		break;
-	case "person":
-		if(isset($_GET["artist"]) && trim($_GET["artist"]) !== "") {
-			$filt[] = 'regex(?label, "^' . optimize_name(trim($_GET["artist"])) . '$", "i")';
-			$filt[] = 'bound(?nome)';
-		} else {
-			$filt = $filters;
-		}
-		$query = <<<Select
+				$query .= "	FILTER (str(?label) = \"" . $title . "\")\n";
+				$query .= "} LIMIT 1";
+			} else {
+				print "no results";
+				exit();
+			}
+			break;
+		case "person":
+			$wiki = $wikipedia->search(rawurldecode(clean_text($_GET["artist"])));
+			if(count($wiki[0]) > 0) {
+				$title = str_replace("_", " ", $wiki[0]["title"]);
+				$query = <<<Select
 SELECT * WHERE {
 	?item a <http://dbpedia.org/ontology/Person> . 
 	?item	rdfs:label ?label .
@@ -206,13 +219,17 @@ SELECT * WHERE {
 	OPTIONAL { ?item	foaf:isPrimaryTopicOf ?pagina_Wikipedia }.
 	
 Select;
-		$query .= "	FILTER (" . implode(" && ", $filt) . ")\n";
-		$query .= "} LIMIT 1";
-		break;
-	default:
-		$owl = ucfirst(trim($_GET["type"]));
-		$item_label = ($owl == "Thing" || isset($_GET["search_type"]) && $_GET["search_type"] == "direct") ? "?item	<http://www.w3.org/2000/01/rdf-schema#label> ?label ." : "?item a <http://dbpedia.org/ontology/$owl> . ?item	rdfs:label ?label .";
-		$query = <<<Select
+				$query .= "	FILTER (str(?label) = \"" . $title . "\")\n";
+				$query .= "} LIMIT 1";
+			} else {
+				print "no results";
+				exit();
+			}
+			break;
+		default:
+			$owl = ucfirst(trim($_GET["type"]));
+			$item_label = ($owl == "Thing" || isset($_GET["search_type"]) && $_GET["search_type"] == "direct") ? "?item	<http://www.w3.org/2000/01/rdf-schema#label> ?label ." : "?item a <http://dbpedia.org/ontology/$owl> . ?item	rdfs:label ?label .";
+			$query = <<<Select
 SELECT * WHERE {
 	$item_label
 	
@@ -234,65 +251,65 @@ SELECT * WHERE {
 	OPTIONAL { ?item	foaf:isPrimaryTopicOf ?pagina_Wikipedia }.
 	
 Select;
-		$query .= "	FILTER (" . implode(" && ", $filters) . ")\n";
-		$query .= "} LIMIT 1";
-		break;
-}
-if($_GET["debug"] == "true") {
-	print "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
-	print "PREFIX dbp: <http://it.dbpedia.org/property/>\n\n";
-	print_r($query);
-	print "\n\n";
-}
-$result = $easyrdf->query($query);
-if($_GET["debug"] == "true") {
-	print_r($result);
-}
-if(count($result) > 0) {
-	foreach($result[0] as $k => $row) {
-		$reg_exUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
-		if(preg_match($reg_exUrl, $row, $url) && $k !== "immagine" && $k !== "thumbnail" && $k !== "item") {
-			$f = (pathinfo($url[0]));
-			$res[$k] = preg_replace($reg_exUrl, '<a target="_blank" href="' . str_replace("dbpedia.org/resource", "wikipedia.org/wiki", $url[0]) . '">' . str_replace(array("_", "Categoria:"), array(" ", ""), $f["basename"]) . '</a>', $row);
-		} else {
-			if(is_remote_file(trim($result[0]->immagine))) {
-				$res["immagine"] = trim($result[0]->immagine);
-			} else {
-				if(is_remote_file(trim($result[0]->thumbnail))) {
-					$res["immagine"] = trim($result[0]->thumbnail);
-				} else {
-					$pi = pathinfo(trim($result[0]->thumbnail));
-					$res["immagine"] = str_replace("commons/thumb", "it", trim($pi["dirname"]));
-				}
-			}
-			if(isset($res["durata"]) && strlen(trim($res["durata"])) > 0) {
-				$res["durata_totale"] = gmdate("H:i:s", round($res["durata"]));
-			}
-			if(isset($res["audio"]) && strpos(trim($res["audio"]), "sonor") !== false) {
-				$res["audio"] = "si";
-			}
-			if(isset($res["colore"]) && strpos(trim($res["colore"]), "color") !== false) {
-				$res["colore"] = "si";
-			}
-			if($k !== "item" && $k !== "thumbnail") {
-				$res[$k] = preg_replace("/\*(\ |)(.*?)\:(.*?)(\n|$)/", '<dt><small>$2</small></dt><dd><small>$3</small></dd>', trim($row));
-				if(strpos($res[$k], "<dt>") !== false) {
-					$res[$k] = '<dl class="dl-horizontal collapse" id="' . $k . '_link">' . $res[$k] . "</dl>";
-				}
-			}
-		}
+			$query .= "	FILTER (" . implode(" && ", $filters) . ")\n";
+			$query .= "} LIMIT 1";
+			break;
 	}
 	if($_GET["debug"] == "true") {
-		print_r($res);
+		print "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n";
+		print "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n";
+		print "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
+		print "PREFIX dbp: <http://it.dbpedia.org/property/>\n\n";
+		print_r($query);
+		print "\n\n";
 	}
-	if($general_settings["caching"]["allow_caching"] == "true" && $general_settings["caching"]["save_semantic_data"] == "true") {
-		if($fs = @fopen($config["NAS"]["root_share_dir"] . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json", "w")) {
-			fwrite($fs, json_encode($res) . PHP_EOL);
-			fclose($fs);
+	$result = $easyrdf->query($query);
+	if($_GET["debug"] == "true") {
+		print_r($result);
+	}
+	if(count($result) > 0) {
+		foreach($result[0] as $k => $row) {
+			$reg_exUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
+			if(preg_match($reg_exUrl, $row, $url) && $k !== "immagine" && $k !== "thumbnail" && $k !== "item") {
+				$f = (pathinfo($url[0]));
+				$res[$k] = preg_replace($reg_exUrl, '<a target="_blank" href="' . str_replace("dbpedia.org/resource", "wikipedia.org/wiki", $url[0]) . '">' . str_replace(array("_", "Categoria:"), array(" ", ""), $f["basename"]) . '</a>', $row);
+			} else {
+				if(is_remote_file(trim($result[0]->immagine))) {
+					$res["immagine"] = trim($result[0]->immagine);
+				} else {
+					if(is_remote_file(trim($result[0]->thumbnail))) {
+						$res["immagine"] = trim($result[0]->thumbnail);
+					} else {
+						$pi = pathinfo(trim($result[0]->thumbnail));
+						$res["immagine"] = str_replace("commons/thumb", "it", trim($pi["dirname"]));
+					}
+				}
+				if(isset($res["durata"]) && strlen(trim($res["durata"])) > 0) {
+					$res["durata_totale"] = gmdate("H:i:s", round($res["durata"]));
+				}
+				if(isset($res["audio"]) && strpos(trim($res["audio"]), "sonor") !== false) {
+					$res["audio"] = "si";
+				}
+				if(isset($res["colore"]) && strpos(trim($res["colore"]), "color") !== false) {
+					$res["colore"] = "si";
+				}
+				if($k !== "item" && $k !== "thumbnail") {
+					$res[$k] = preg_replace("/\*(\ |)(.*?)\:(.*?)(\n|$)/", '<dt><small>$2</small></dt><dd><small>$3</small></dd>', trim($row));
+					if(strpos($res[$k], "<dt>") !== false) {
+						$res[$k] = '<dl class="dl-horizontal collapse" id="' . $k . '_link">' . $res[$k] . "</dl>";
+					}
+				}
+			}
 		}
+		if($_GET["debug"] == "true") {
+			print_r($res);
+		}
+		if($general_settings["caching"]["allow_caching"] == "true" && $general_settings["caching"]["save_semantic_data"] == "true") {
+			file_put_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json", json_encode($res) . PHP_EOL);
+		}
+	} else {
+		$res = null;
 	}
-} else {
-	$res = null;
+	print json_encode($res);
 }
-print json_encode($res);
 ?>
