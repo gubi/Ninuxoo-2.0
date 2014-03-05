@@ -16,7 +16,7 @@
 *
 * @package	Ninuxoo 2.0
 * @author		Alessandro Gubitosi <gubi.ale@iod.io>
-* @license 	http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @license 		http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
 * @access		public
 * @link		https://github.com/gubi/Ninuxoo-2.0/blob/master/common/include/classes/scan.class.php
 * @uses		rsa.class.php Rsa class
