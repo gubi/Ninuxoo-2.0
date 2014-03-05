@@ -9,10 +9,12 @@ if(count($_GET) == 0) {
 		
 		$semantic_data = new semantic_data();
 		if(isset($_GET["output"])) {
-			$semantic_data->debug_output($_GET["output"]);
+			$semantic_data->output($_GET["output"]);
 		}
 		if(isset($_GET["format"])) {
 			$semantic_data->format($_GET["format"]);
+		} else {
+			$semantic_data->format();
 		}
 		if($_GET["debug"] == "true") {
 			$semantic_data->debug(true);

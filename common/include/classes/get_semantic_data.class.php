@@ -56,6 +56,59 @@ class semantic_data{
 	}
 	
 	/**
+	* Indents a flat JSON string to make it more human-readable
+	*
+	* Taken from Dave Perrett blog
+	*
+	* @url http://www.daveperrett.com/articles/2008/03/11/format-json-with-php/
+	* @param string $json The original JSON string to process
+	* @return string Indented version of the original JSON string
+	* @access public
+	*/
+	private function indent($json) {
+		$result = "";
+		$pos	= 0;
+		$strLen = strlen($json);
+		$indentStr = "\t";
+		$newLine = "\n";
+		$prevChar	= "";
+		$outOfQuotes = true;
+
+		for ($i=0; $i<=$strLen; $i++) {
+			// Grab the next character in the string.
+			$char = substr($json, $i, 1);
+
+			// Are we inside a quoted string?
+			if ($char == '"' && $prevChar != '\\') {
+				$outOfQuotes = !$outOfQuotes;
+				// If this character is the end of an element,
+				// output a new line and indent the next line.
+			} else if(($char == '}' || $char == ']') && $outOfQuotes) {
+				$result .= $newLine;
+				$pos --;
+				$result .= str_repeat($indentStr, $pos);
+			}
+			// Add the character to the result string.
+			$result .= $char;
+			// If the last character was the beginning of an element,
+			// output a new line and indent the next line.
+			if (($char == ',' || $char == '{' || $char == '[') && $outOfQuotes) {
+				$result .= $newLine;
+				if ($char == '{' || $char == '[') {
+					$pos ++;
+				}
+
+				for ($j = 0; $j < $pos; $j++) {
+					$result .= $indentStr;
+				}
+			}
+
+			$prevChar = $char;
+		}
+		return $result;
+	}
+
+	/**
 	* Active debug status
 	*
 	* @param bool $status Is debug status (usually "true" when calling)
@@ -69,22 +122,22 @@ class semantic_data{
 	/**
 	* Set debug output
 	*
-	* @param string $out `array`, `object` or `all` for print each one (default `all`)
+	* @param string $out `array`, `object` or `all` for print each one (default `all`).<br>You can combine with format() using `html` for html output inside formatted values
 	* @global $this->output Debug output
 	* @access public
 	*/
-	public function debug_output($out = "all") {
+	public function output($out = "all") {
 		$this->output = $out;
 	}
 	
 	/**
-	* Similar to debug_output() but for API export data
+	* Similar to output() but for API export data
 	*
-	* @param string $format `json`, `array` or `html` (default depending on $this->output: if set, default is equal to $this->output | if not set default is `json`)
+	* @param string $format `array`, `json`, `jsonp` or `html` (efault is `jsonp`)
 	* @global $this->format Display format
 	* @access public
 	*/
-	public function format($format = "json") {
+	public function format($format = "jsonp") {
 		$this->format = $format;
 	}
 	
@@ -253,6 +306,8 @@ class semantic_data{
 	* Parse the output
 	*
 	* @param array $result Array of semantic query result
+	* @param string $wiki Wikipedia result
+	* @param string $query Created semantic query
 	* @see semantic_data::is_remote_file() Is remote file
 	* @see semantic_data::debug() Debug
 	* @see semantic_data::get_default_prefixes() Get default prefixes
@@ -263,12 +318,17 @@ class semantic_data{
 	* @return string|void Search result parsed
 	* @access private
 	*/
-	private function process($result) {
+	private function process($result, $wiki, $query) {
 		foreach($result[0] as $k => $row) {
 			$reg_exUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
 			if(preg_match($reg_exUrl, $row, $url) && $k !== "immagine" && $k !== "thumbnail" && $k !== "item") {
 				$f = (pathinfo($url[0]));
-				$res[$k] = preg_replace($reg_exUrl, '<a target="_blank" href="' . str_replace("dbpedia.org/resource", "wikipedia.org/wiki", $url[0]) . '">' . str_replace(array("_", "Categoria:"), array(" ", ""), $f["basename"]) . '</a>', $row);
+				if($this->output == "html") {
+					$res[$k] = preg_replace($reg_exUrl, '<a target="_blank" href="' . str_replace("dbpedia.org/resource", "wikipedia.org/wiki", $url[0]) . '">' . str_replace(array("_", "Categoria:"), array(" ", ""), $f["basename"]) . '</a>', $row);
+				} else {
+					$res[$k]["text"] = str_replace(array("_", "Categoria:"), array(" ", ""), $f["basename"]);
+					$res[$k]["link"] = str_replace("dbpedia.org/resource", "wikipedia.org/wiki", $url[0]);
+				}
 			} else {
 				if($k == "item") {
 					$res["risorsa_dbpedia"] = trim($row);
@@ -300,19 +360,35 @@ class semantic_data{
 					$res["colore"] = "si";
 				}
 				if($k !== "item" && $k !== "thumbnail") {
-					if($this->format == "json") {
-						$res[$k] = trim($row);
-					} else {
+					if($this->output == "html") {
 						$res[$k] = str_replace(array("> ", " </"), array(">", "</"), preg_replace("/\*(\ |)(.*?)\:(.*?)(\n|$)/", '<dt><small>$2</small></dt><dd><small>$3</small></dd>', trim($row)));
 						if(strpos($res[$k], "<dt>") !== false) {
 							$res[$k] = '<dl class="dl-horizontal collapse" id="' . $k . '_link">' . $res[$k] . "</dl>";
+						}
+					} else {
+						$obj = trim($row);
+						if(preg_match_all("/\*(|\s+)(.*?)\n/ms", $obj, $m)) {
+							if(is_array($m[2])) {
+								foreach($m[2] as $mmk => $mmv) {
+									if(strpos($mmv, ":") !== false) {
+										list($a, $r) = explode(":", $mmv);
+										$res[$k][trim($a)] = trim($r);
+									}
+								}
+							} else {
+								$res[$k] = $m[2];
+							}
+						} else {
+							$res[$k] = $obj;
 						}
 					}
 				}
 			}
 		}
 		if($this->debug) {
-			print "Search result in Wikipedia: " . $wiki[0]["title"] . "\n\n";
+			header("Content-type: text/plain; charset=utf-8");
+			
+			print "Search result in Wikipedia: " . $wiki . "\n\n";
 			print "dbpedia page: " . $res["risorsa_dbpedia"]. "\n\n";
 			print "SPARQL ENDPOINT:\nhttp://it.dbpedia.org/sparql\n\n";
 			print "QUERY IN ENDPOINT:\nhttp://it.dbpedia.org/sparql?query=" . urlencode($this->get_default_prefixes("semantic") . $query) . "\n\n";
@@ -323,7 +399,6 @@ class semantic_data{
 			print "QUERY RESULT:\n" . str_repeat("-", 150) . "\n\n";
 			
 			$this->output = ($this->output == "") ? "all" : $this->output;
-			print $this->output . "\n\n\n";
 			switch($this->output) {
 				case "all":
 					print_r($result);
@@ -341,7 +416,7 @@ class semantic_data{
 		} else {
 			$end_time = $this->end_time($this->startime);
 			$res["time"] = $end_time;
-			$this->format = ($this->format == "") ? (($this->output !== "") ? $this->output : "json") : $this->format;
+			$this->format = ($this->format == "") ? "jsonp" : $this->format;
 			
 			switch($this->format) {
 				case "array":
@@ -351,6 +426,10 @@ class semantic_data{
 				case "json":
 					header("Content-type: text/plain; charset=utf-8");
 					print json_encode($res);
+					break;
+				case "jsonp":
+					header("Content-type: text/plain; charset=utf-8");
+					print $this->indent(json_encode($res));
 					break;
 				case "html":
 					header("Content-type: text/html");
@@ -402,7 +481,7 @@ class semantic_data{
 			$result = $this->easyrdf->query($query);
 			
 			if(count($result) > 0) {
-				$this->process($result);
+				$this->process($result, $title, $query);
 			} else {
 				print "no results";
 				exit();
@@ -447,7 +526,7 @@ class semantic_data{
 			$result = $this->easyrdf->query($query);
 			
 			if(count($result) > 0) {
-				$this->process($result);
+				$this->process($result, $title, $query);
 			} else {
 				print "no results";
 				exit();
@@ -503,7 +582,7 @@ class semantic_data{
 			$result = $this->easyrdf->query($query);
 			
 			if(count($result) > 0) {
-				$this->process($result);
+				$this->process($result, $title, $query);
 			} else {
 				print "no results";
 				exit();
@@ -561,7 +640,7 @@ class semantic_data{
 			$result = $this->easyrdf->query($query);
 			
 			if(count($result) > 0) {
-				$this->process($result);
+				$this->process($result, $title, $query);
 			} else {
 				print "no results";
 				exit();
