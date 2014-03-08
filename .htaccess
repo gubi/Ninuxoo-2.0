@@ -17,5 +17,5 @@ RewriteCond %{REQUEST_URI} !^/doc($|/)
 RewriteCond %{REQUEST_URI} !^/API($|/)
 RewriteRule ^([^/\.]+)/([^/\.]+)/([^\./]+)/?$ /index.php?s=$1&q=$2&id=$3 [QSA]
 
-RewriteCond %{REQUEST_URI} ^/API/Semantic_data($|/)
-RewriteRule ^(.*) API/semantic_data.php
+RewriteCond %{REQUEST_URI} ^/API/v([0-9]+)/Semantic_data($|/)
+RewriteRule ^(.*) API/v%1/semantic_data.php

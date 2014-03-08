@@ -33,6 +33,7 @@ class semantic_data{
 	* @global string $this->startime The time in which the script starts
 	* @global string $this->wikipedia Wikipedia initialized class
 	* @global string $this->easyrdf EasyRdf initialized class
+	* @global string $this->regUrl Regex to parse URL
 	* @see semantic_data::start_time() Start time
 	* @see semantic_data::set_prefix() Set prefix
 	* @see wikipedia-::srlimit() Sr limit
@@ -53,6 +54,8 @@ class semantic_data{
 		
 		$this->set_prefix();
 		$this->easyrdf = new EasyRdf_Sparql_Client("http://it.dbpedia.org/sparql");
+		
+		$this->regUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
 	}
 	
 	/**
@@ -133,11 +136,11 @@ class semantic_data{
 	/**
 	* Similar to output() but for API export data
 	*
-	* @param string $format `array`, `json`, `jsonp` or `html` (efault is `jsonp`)
+	* @param string $format `array`, `json`, `jsonp` or `html` (default is `json`)
 	* @global $this->format Display format
 	* @access public
 	*/
-	public function format($format = "jsonp") {
+	public function format($format = "json") {
 		$this->format = $format;
 	}
 	
@@ -243,6 +246,17 @@ class semantic_data{
 	}
 	
 	/**
+	* Check if given string is a link
+	*
+	* @param string $url String to be examined
+	* @return bool
+	* @access private
+	*/
+	private function is_url($url) {
+		return (preg_match($this->regUrl, $url) ? true : false);
+			
+	}
+	/**
 	* Clean text for Wikipedia search
 	*
 	* @param string $text The url of file
@@ -298,8 +312,289 @@ class semantic_data{
 	private function create_sematic_query($owl, $optional = array(), $filter = "", $limit = 1) {
 		$n = ($this->debug) ? "\n" : "";
 		$nt = ($this->debug) ? "\n	" : "";
-		$query = "SELECT * WHERE {" . $nt . "?item a dbo:" . $owl . " . " . $nt . "?item rdfs:label ?label . " . $nt . "?item dbo:abstract ?abstract . " . $nt . $nt . $this->construct_optional($optional) . $nt . (!trim($filter) ? "" : 'FILTER (str(?label) = "' . $filter . '")') . $n . '} LIMIT ' . $limit . $n;
+		$query = "SELECT * WHERE {" . (trim($owl) ? $nt . "?item a dbo:" . $owl . " . " : "") . $nt . "?item rdfs:label ?label . " . $nt . "?item dbo:abstract ?abstract . " . $nt . $nt . $this->construct_optional($optional) . $nt . (!trim($filter) ? "" : 'FILTER (str(?label) = "' . $filter . '")') . $n . '} LIMIT ' . $limit . $n;
 		return $query;
+	}
+	/**
+	* Convert links to html or array
+	*
+	* @param string $item Item to be examined
+	* @param bool $html The output must be html link or array?
+	* @param string $wiki_url The link is a Wikipedia link or not?
+	* @return string|array Parsed link
+	* @access private
+	*/
+	private function get_link($item, $html, $wiki_url) {
+		if(preg_match($this->regUrl, $item, $url)) {
+			$f = (pathinfo($url[0]));
+			if($html) {
+				return preg_replace($this->regUrl, '<a target="_blank" href="' . (($wiki_url) ? str_replace("dbpedia.org/resource", "wikipedia.org/wiki", $url[0]) : $url[0]) . '">' . str_replace(array("_", "Categoria:"), array(" ", ""), $f["basename"]) . '</a>', $item);
+			} else {
+				$arr["text"] = str_replace(array("_", "Categoria:"), array(" ", ""), $f["basename"]);
+				$arr["link"] = (($wiki_url) ? str_replace("dbpedia.org/resource", "wikipedia.org/wiki", $url[0]) : $url[0]);
+				return $arr;
+			}
+		} else {
+			return $item;
+		}
+	}
+	
+	/**
+	* Start query for audio data
+	*
+	* @param string $album Album label to search
+	* @see semantic_data::clean_text() Clean text
+	* @see semantic_data::create_sematic_query() Create sematic query
+	* @see wikipedia-::search() Wikipedia > Search
+	* @see easyrdf::query() EasyRdf > Query
+	* @return string|void Search result parsed
+	* @access private
+	*/
+	public function audio($album) {
+		$wiki = $this->wikipedia->search($this->clean_text($album));
+		
+		if(count($wiki[0]) > 0) {
+			$title = str_replace("_", " ", $wiki[0]["title"]);
+			$optional = array(
+				"dbp:titolo" => "titolo",
+				"dbp:artista" => "artista",
+				"rdfs:comment" => "commento",
+				"dbp:registrato" => "registrazione",
+				"dbo:totalDiscs" => "dischi",
+				"dbo:totalTracks" => "tracce",
+				"dbp:durata" => "durata",
+				"foaf:depiction" => "immagine",
+				"dbo:thumbnail" => "thumbnail",
+				"dbp:anno" => "anno",
+				"dbp:genere" => "genere",
+				"dbp:precedente" => "disco_precedente",
+				"dbp:successivo" => "disco_successivo",
+				"dbp:tipoAlbum" => "tipo_album. ",
+				"foaf:isPrimaryTopicOf" => "pagina_Wikipedia"
+			);
+			$query = $this->create_sematic_query("Album", $optional, $title);
+			$result = $this->easyrdf->query($query);
+			
+			if(count($result) > 0) {
+				$this->ret[] = $this->process($result, $title, $query);
+			} else {
+				print "no results";
+				exit();
+			}
+		} else {
+			print "no results";
+			exit();
+		}
+	}
+	
+	/**
+	* Start query for book data
+	*
+	* @param string $libro Book title to search
+	* @see semantic_data::clean_text() Clean text
+	* @see semantic_data::create_sematic_query() Create sematic query
+	* @see wikipedia-::search() Wikipedia > Search
+	* @see easyrdf::query() EasyRdf > Query
+	* @return string|void Search result parsed
+	* @access private
+	*/
+	public function book($libro) {
+		$wiki = $this->wikipedia->search($this->clean_text($libro));
+		
+		if(count($wiki[0]) > 0) {
+			$title = str_replace("_", " ", $wiki[0]["title"]);
+			$optional = array(
+				"dbp:titolo" => "titolo",
+				"dbp:autore" => "autore",
+				"rdfs:comment" => "commento",
+				"dbp:lingua" => "lingua",
+				"dbp:annoorig" => "anno",
+				"dbo:genere" => "genere",
+				"dbp:immagine" => "immagine",
+				"dbo:thumbnail" => "thumbnail",
+				"dbp:sottogenere" => "sottogenere",
+				"dbp:protagonista" => "protagonista",
+				"dbp:tipo" => "tipo",
+				"foaf:isPrimaryTopicOf" => "pagina_Wikipedia"
+			);
+			$query = $this->create_sematic_query("Book", $optional, $title);
+			$result = $this->easyrdf->query($query);
+			
+			if(count($result) > 0) {
+				$this->ret[] = $this->process($result, $title, $query);
+			} else {
+				print "no results";
+				exit();
+			}
+		} else {
+			print "no results";
+			exit();
+		}
+	}
+	
+	/**
+	* Start query for film data
+	*
+	* @param string $film Film title to search
+	* @see semantic_data::clean_text() Clean text
+	* @see semantic_data::create_sematic_query() Create sematic query
+	* @see wikipedia-::search() Wikipedia > Search
+	* @see easyrdf::query() EasyRdf > Query
+	* @return string|void Search result parsed
+	* @access private
+	*/
+	public function film($film) {
+		$wiki = $this->wikipedia->search($this->clean_text($film));
+		
+		if(count($wiki[0]) > 0) {
+			$title = str_replace("_", " ", $wiki[0]["title"]);
+			$optional = array(
+				"dbp:titoloitaliano" => "titolo_in_italiano",
+				"dbp:titolooriginale" => "titolo_originale",
+				"dbp:attori" => "attori",
+				"rdfs:annouscita" => "anno",
+				"rdfs:comment" => "commento",
+				"dbp:casaproduzione" => "casa_di_produzione",
+				"foaf:depiction" => "immagine",
+				"dbo:thumbnail" => "thumbnail",
+				"dbp:didascalia" => "didascalia",
+				"dbp:distribuzioneitalia" => "distribuzione_in_Italia",
+				"dbp:doppiatoriitaliani" => "doppiatori",
+				"dbp:durata" => "durata",
+				"dbp:fotografo" => "fotografia",
+				"dbp:montatore" => "montaggio",
+				"dbp:produttore" => "produzione",
+				"dbp:sceneggiatore" => "sceneggiatura",
+				"dbp:scenografo" => "scenografia",
+				"dbp:soggetto" => "soggetto",
+				"dbp:regista" => "regia",
+				"dbp:tipoaudio" => "audio",
+				"dbp:tipocolore" => "colore",
+				"dbp:genere" => "genere ",
+				"foaf:isPrimaryTopicOf" => "pagina_Wikipedia"
+			);
+			$query = $this->create_sematic_query("Film", $optional, $title);
+			$result = $this->easyrdf->query($query);
+			
+			if(count($result) > 0) {
+				$this->ret[] = $this->process($result, $title, $query);
+			} else {
+				print "no results";
+				exit();
+			}
+		} else {
+			print "no results";
+			exit();
+		}
+	}
+	
+	/**
+	* Start query for artist data
+	*
+	* @param string $person Artist name to search
+	* @see semantic_data::clean_text() Clean text
+	* @see semantic_data::create_sematic_query() Create sematic query
+	* @see wikipedia-::search() Wikipedia > Search
+	* @see easyrdf::query() EasyRdf > Query
+	* @return string|void Search result parsed
+	* @access private
+	*/
+	public function person($person) {
+		$wiki = $this->wikipedia->search($this->clean_text($person));
+		if(count($wiki[0]) > 0) {
+			$title = str_replace("_", " ", $wiki[0]["title"]);
+			$optional = array(
+				"dbp:nome" => "nome",
+				"dbp:cognome" => "cognome",
+				"dbo:formerName" => "formerName",
+				"rdfs:comment" => "commento",
+				"rdfs:contenuto" => "contenuto",
+				"dbp:nazione" => "nazione",
+				"dbp:nazionalità" => "nazionalita",
+				"dbp:postnazionalità" => "postnazionalita",
+				"dbp:profession" => "professione",
+				"dbp:tipoArtista" => "tipo_di_artista",
+				"dbp:numeroAlbumLive" => "album_dal_vivo",
+				"dbp:numeroTotaleAlbumPubblicati" => "totale_album",
+				"dbp:attività" => "attivita",
+				"dbp:attivitàaltre" => "altre_attivita",
+				"dbp:immagine" => "immagine",
+				"foaf:depiction" => "depiction",
+				"dbo:thumbnail" => "thumbnail",
+				"dbp:genere" => "genere",
+				"dbp:annonascita" => "anno_di_nascita",
+				"dbp:annomorte" => "anno_di_morte",
+				"dbo:birthPlace" => "luogo_nascita",
+				"dbo:deathPlace" => "luogo_di_morte",
+				"dbp:annoInizioAttività" => "inizio_attivita",
+				"dbp:annoFineAttività" => "fine_attivita",
+				"dbp:tombeFamose" => "luogo_di_sepoltura",
+				"foaf:isPrimaryTopicOf" => "pagina_Wikipedia"
+			);
+			$query = $this->create_sematic_query("Person", $optional, $title);
+			$result = $this->easyrdf->query($query);
+			
+			if(count($result) > 0) {
+				$this->ret[] = $this->process($result, $title, $query);
+			} else {
+				print "no results";
+				exit();
+			}
+		} else {
+			print "no results";
+			exit();
+		}
+	}
+	
+	/**
+	* Start query for thing
+	*
+	* @param string $thing Something to search
+	* @see semantic_data::clean_text() Clean text
+	* @see semantic_data::create_sematic_query() Create sematic query
+	* @see wikipedia-::search() Wikipedia > Search
+	* @see easyrdf::query() EasyRdf > Query
+	* @return string|void Search result parsed
+	* @access private
+	*/
+	public function thing($thing) {
+		$wiki = $this->wikipedia->search($this->clean_text($thing));
+		if(count($wiki[0]) > 0) {
+			$title = str_replace("_", " ", $wiki[0]["title"]);
+			$optional = array(
+				"dcterms:subject" => "soggetto",
+				"dbp:tipoDiOggetto" => "oggetto",
+				"rdfs:comment" => "commento",
+				"rdfs:contenuto" => "contenuto",
+				"dbp:lingua" => "lingua",
+				"dbp:nazione" => "nazione",
+				"dbp:nazionalità" => "nazionalita",
+				"dbp:attivitàaltre" => "altre_attivita",
+				"dbp:immagine" => "immagine",
+				"foaf:depiction" => "depiction",
+				"dbo:thumbnail" => "thumbnail",
+				"dbp:annoorig" => "anno",
+				"dbp:inizioProduzione" => "anno",
+				"dbp:genere" => "genere",
+				"dbp:ingredienti" => "ingredienti",
+				"dbp:paese" => "paese",
+				"dbp:regione" => "regione",
+				"dbp:tombeFamose" => "luogo_di_sepoltura",
+				"foaf:isPrimaryTopicOf" => "pagina_Wikipedia"
+			);
+			$query = $this->create_sematic_query("", $optional, $title);
+			$result = $this->easyrdf->query($query);
+			
+			if(count($result) > 0) {
+				$this->ret[] = $this->process($result, $title, $query);
+			} else {
+				print "no results";
+				exit();
+			}
+		} else {
+			print "no results";
+			exit();
+		}
 	}
 	
 	/**
@@ -320,28 +615,25 @@ class semantic_data{
 	*/
 	private function process($result, $wiki, $query) {
 		foreach($result[0] as $k => $row) {
-			$reg_exUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
-			if(preg_match($reg_exUrl, $row, $url) && $k !== "immagine" && $k !== "thumbnail" && $k !== "item") {
-				$f = (pathinfo($url[0]));
-				if($this->output == "html") {
-					$res[$k] = preg_replace($reg_exUrl, '<a target="_blank" href="' . str_replace("dbpedia.org/resource", "wikipedia.org/wiki", $url[0]) . '">' . str_replace(array("_", "Categoria:"), array(" ", ""), $f["basename"]) . '</a>', $row);
-				} else {
-					$res[$k]["text"] = str_replace(array("_", "Categoria:"), array(" ", ""), $f["basename"]);
-					$res[$k]["link"] = str_replace("dbpedia.org/resource", "wikipedia.org/wiki", $url[0]);
-				}
+			
+			if($this->is_url($row) && $k !== "immagine" && $k !== "thumbnail" && $k !== "item") {
+				$res[$k] = $this->get_link(trim($row), (($this->output == "html") ? true : false), true);
 			} else {
 				if($k == "item") {
-					$res["risorsa_dbpedia"] = trim($row);
+					$res["risorsa_dbpedia"] = $this->get_link(trim($row), (($this->output == "html") ? true : false), false);
 				}
 				if($this->is_remote_file(trim($result[0]->immagine))) {
 					$res["immagine"] = trim($result[0]->immagine);
+					$res["depiction"] = trim($result[0]->depiction);
 				} else {
 					if($this->is_remote_file(trim($result[0]->thumbnail))) {
 						$res["thumbnail"] = trim($result[0]->thumbnail);
+						$res["depiction"] = trim($result[0]->depiction);
 					} else {
 						$pi = pathinfo(trim($result[0]->thumbnail));
 						$res["thumbnail"] = str_replace("commons", "it", trim($result[0]->thumbnail));
 						$res["immagine"] = str_replace("commons/thumb", "it", trim($pi["dirname"]));
+						$res["depiction"] = trim($result[0]->depiction);
 					}
 				}
 				if(!trim($res["thumbnail"])) {
@@ -349,6 +641,9 @@ class semantic_data{
 				}
 				if(!trim($res["immagine"])) {
 					unset($res["immagine"]);
+				}
+				if(!trim($res["depiction"])) {
+					unset($res["depiction"]);
 				}
 				if(isset($res["durata"]) && strlen(trim($res["durata"])) > 0) {
 					$res["durata_totale"] = gmdate("H:i:s", round($res["durata"]));
@@ -416,238 +711,61 @@ class semantic_data{
 		} else {
 			$end_time = $this->end_time($this->startime);
 			$res["time"] = $end_time;
-			$this->format = ($this->format == "") ? "jsonp" : $this->format;
+			$this->format = ($this->format == "") ? "json" : $this->format;
 			
-			switch($this->format) {
-				case "array":
+			$this->export[] = $res;
+		}
+	}
+	
+	/**
+	* Export the output
+	*
+	* @param string $print `true` print output, `false` return as variable
+	* @see semantic_data::indent() Indent
+	* @see semantic_data::format() Format
+	* @return string|void
+	* @access public
+	*/
+	public function export($print = true) {
+		switch($this->format) {
+			case "array":
+				if($print) {
 					header("Content-type: text/plain; charset=utf-8");
-					print_r($res);
-					break;
-				case "json":
+					print_r($this->export);
+				} else {
+					return $this->export;
+				}
+				break;
+			case "json":
+				if($print) {
 					header("Content-type: text/plain; charset=utf-8");
-					print json_encode($res);
-					break;
-				case "jsonp":
+					print json_encode($this->export);
+				} else {
+					return json_encode($this->export);
+				}
+				break;
+			case "jsonp":
+				if($print) {
 					header("Content-type: text/plain; charset=utf-8");
-					print $this->indent(json_encode($res));
-					break;
-				case "html":
-					header("Content-type: text/html");
-					
-					foreach($res as $rk => $rv) {
+					print $this->indent(json_encode($this->export));
+				} else {
+					return $this->indent(json_encode($this->export));
+				}
+				break;
+			case "html":
+				foreach($this->export as $ek => $ev) {
+					foreach($ev as $rk => $rv) {
 						$th .= "<th>" . $rk . "</th>";
 						$td .= "<td>" . $rv . "</td>";
 					}
-					print '<table border="1"><tr>' . $th . "</tr><tr>" . mb_convert_encoding($td, "HTML-ENTITIES", "UTF-8") . "</tr></table>";
-					break;
-			}
-		}
-	}
-	
-	/**
-	* Start query for audio data
-	*
-	* @param string $album Album label to search
-	* @see semantic_data::clean_text() Clean text
-	* @see semantic_data::create_sematic_query() Create sematic query
-	* @see wikipedia-::search() Wikipedia > Search
-	* @see easyrdf::query() EasyRdf > Query
-	* @return string|void Search result parsed
-	* @access private
-	*/
-	public function audio($album) {
-		$wiki = $this->wikipedia->search($this->clean_text($album));
-		
-		if(count($wiki[0]) > 0) {
-			$title = str_replace("_", " ", $wiki[0]["title"]);
-			$optional = array(
-				"dbp:titolo" => "titolo",
-				"dbp:artista" => "artista",
-				"rdfs:comment" => "commento",
-				"dbp:registrato" => "registrazione",
-				"dbo:totalDiscs" => "dischi",
-				"dbo:totalTracks" => "tracce",
-				"dbp:durata" => "durata",
-				"foaf:depiction" => "immagine",
-				"dbo:thumbnail" => "thumbnail",
-				"dbp:anno" => "anno",
-				"dbp:genere" => "genere",
-				"dbp:precedente" => "disco_precedente",
-				"dbp:successivo" => "disco_successivo",
-				"dbp:tipoAlbum" => "tipo_album. ",
-				"foaf:isPrimaryTopicOf" => "pagina_Wikipedia"
-			);
-			$query = $this->create_sematic_query("Album", $optional, $title);
-			$result = $this->easyrdf->query($query);
-			
-			if(count($result) > 0) {
-				$this->process($result, $title, $query);
-			} else {
-				print "no results";
-				exit();
-			}
-		} else {
-			print "no results";
-			exit();
-		}
-	}
-	
-	/**
-	* Start query for book data
-	*
-	* @param string $libro Book title to search
-	* @see semantic_data::clean_text() Clean text
-	* @see semantic_data::create_sematic_query() Create sematic query
-	* @see wikipedia-::search() Wikipedia > Search
-	* @see easyrdf::query() EasyRdf > Query
-	* @return string|void Search result parsed
-	* @access private
-	*/
-	public function book($libro) {
-		$wiki = $this->wikipedia->search($this->clean_text($libro));
-		
-		if(count($wiki[0]) > 0) {
-			$title = str_replace("_", " ", $wiki[0]["title"]);
-			$optional = array(
-				"dbp:titolo" => "titolo",
-				"dbp:autore" => "autore",
-				"rdfs:comment" => "commento",
-				"dbp:lingua" => "lingua",
-				"dbp:annoorig" => "anno",
-				"dbo:genere" => "genere",
-				"dbp:immagine" => "immagine",
-				"dbo:thumbnail" => "thumbnail",
-				"dbp:sottogenere" => "sottogenere",
-				"dbp:protagonista" => "protagonista",
-				"dbp:tipo" => "tipo",
-				"foaf:isPrimaryTopicOf" => "pagina_Wikipedia"
-			);
-			$query = $this->create_sematic_query("Book", $optional, $title);
-			$result = $this->easyrdf->query($query);
-			
-			if(count($result) > 0) {
-				$this->process($result, $title, $query);
-			} else {
-				print "no results";
-				exit();
-			}
-		} else {
-			print "no results";
-			exit();
-		}
-	}
-	
-	/**
-	* Start query for film data
-	*
-	* @param string $film Film title to search
-	* @see semantic_data::clean_text() Clean text
-	* @see semantic_data::create_sematic_query() Create sematic query
-	* @see wikipedia-::search() Wikipedia > Search
-	* @see easyrdf::query() EasyRdf > Query
-	* @return string|void Search result parsed
-	* @access private
-	*/
-	public function film($film) {
-		$wiki = $this->wikipedia->search($this->clean_text($film));
-		
-		if(count($wiki[0]) > 0) {
-			$title = str_replace("_", " ", $wiki[0]["title"]);
-			$optional = array(
-				"dbp:titoloitaliano" => "titolo_in_italiano",
-				"dbp:titolooriginale" => "titolo_originale",
-				"dbp:attori" => "attori",
-				"rdfs:annouscita" => "anno",
-				"rdfs:comment" => "commento",
-				"dbp:casaproduzione" => "casa_di_produzione",
-				"foaf:depiction" => "immagine",
-				"dbo:thumbnail" => "thumbnail",
-				"dbp:didascalia" => "didascalia",
-				"dbp:distribuzioneitalia" => "distribuzione_in_Italia",
-				"dbp:doppiatoriitaliani" => "doppiatori",
-				"dbp:durata" => "durata",
-				"dbp:fotografo" => "fotografia",
-				"dbp:montatore" => "montaggio",
-				"dbp:produttore" => "produzione",
-				"dbp:sceneggiatore" => "sceneggiatura",
-				"dbp:scenografo" => "scenografia",
-				"dbp:soggetto" => "soggetto",
-				"dbp:regista" => "regia",
-				"dbp:tipoaudio" => "audio",
-				"dbp:tipocolore" => "colore",
-				"dbp:genere" => "genere ",
-				"foaf:isPrimaryTopicOf" => "pagina_Wikipedia"
-			);
-			$query = $this->create_sematic_query("Film", $optional, $title);
-			$result = $this->easyrdf->query($query);
-			
-			if(count($result) > 0) {
-				$this->process($result, $title, $query);
-			} else {
-				print "no results";
-				exit();
-			}
-		} else {
-			print "no results";
-			exit();
-		}
-	}
-	
-	/**
-	* Start query for artist data
-	*
-	* @param string $person Artist name to search
-	* @see semantic_data::clean_text() Clean text
-	* @see semantic_data::create_sematic_query() Create sematic query
-	* @see wikipedia-::search() Wikipedia > Search
-	* @see easyrdf::query() EasyRdf > Query
-	* @return string|void Search result parsed
-	* @access private
-	*/
-	public function person($person) {
-		$wiki = $this->wikipedia->search($this->clean_text($person));
-		if(count($wiki[0]) > 0) {
-			$title = str_replace("_", " ", $wiki[0]["title"]);
-			$optional = array(
-				"dbp:nome" => "nome",
-				"dbp:cognome" => "cognome",
-				"dbo:formerName" => "formerName",
-				"rdfs:comment" => "commento",
-				"rdfs:contenuto" => "contenuto",
-				"dbp:nazione" => "nazione",
-				"dbp:nazionalità" => "nazionalita",
-				"dbp:postnazionalità" => "postnazionalita",
-				"dbp:profession" => "professione",
-				"dbp:tipoArtista" => "tipo_di_artista",
-				"dbp:numeroAlbumLive" => "album_dal_vivo",
-				"dbp:numeroTotaleAlbumPubblicati" => "totale_album",
-				"dbp:attività" => "attivita",
-				"dbp:attivitàaltre" => "altre_attivita",
-				"dbp:immagine" => "immagine",
-				"foaf:depiction" => "depiction",
-				"dbo:thumbnail" => "thumbnail",
-				"dbp:genere" => "genere",
-				"dbp:annonascita" => "anno_di_nascita",
-				"dbp:annomorte" => "anno_di_morte",
-				"dbo:birthPlace" => "luogo_nascita",
-				"dbo:deathPlace" => "luogo_di_morte",
-				"dbp:annoInizioAttività" => "inizio_attivita",
-				"dbp:annoFineAttività" => "fine_attivita",
-				"dbp:tombeFamose" => "luogo_di_sepoltura",
-				"foaf:isPrimaryTopicOf" => "pagina_Wikipedia"
-			);
-			$query = $this->create_sematic_query("Person", $optional, $title);
-			$result = $this->easyrdf->query($query);
-			
-			if(count($result) > 0) {
-				$this->process($result, $title, $query);
-			} else {
-				print "no results";
-				exit();
-			}
-		} else {
-			print "no results";
-			exit();
+					if($print) {
+						header("Content-type: text/html");
+						print '<table border="1"><tr>' . $th . "</tr><tr>" . mb_convert_encoding($td, "HTML-ENTITIES", "UTF-8") . "</tr></table>";
+					} else {
+						return '<table border="1"><tr>' . $th . "</tr><tr>" . mb_convert_encoding($td, "HTML-ENTITIES", "UTF-8") . "</tr></table>";
+					}
+				}
+				break;
 		}
 	}
 }

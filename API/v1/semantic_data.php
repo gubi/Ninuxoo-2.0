@@ -4,8 +4,8 @@ if(count($_GET) == 0) {
 	
 	print "Nothing to do";
 } else {
-	if(isset($_GET["album"]) || isset($_GET["book"]) || isset($_GET["film"]) || isset($_GET["person"])) {
-		require_once("../common/include/classes/get_semantic_data.class.php");
+	if(isset($_GET["album"]) || isset($_GET["book"]) || isset($_GET["film"]) || isset($_GET["person"]) || isset($_GET["thing"])) {
+		require_once("../../common/include/classes/get_semantic_data.class.php");
 		
 		$semantic_data = new semantic_data();
 		if(isset($_GET["output"])) {
@@ -20,17 +20,21 @@ if(count($_GET) == 0) {
 			$semantic_data->debug(true);
 		}
 		if(isset($_GET["album"])) {
-			print $semantic_data->audio(rawurldecode($_GET["album"]));
+			$semantic_data->audio(rawurldecode($_GET["album"]));
 		}
 		if(isset($_GET["book"])) {
-			print $semantic_data->book(rawurldecode($_GET["book"]));
+			$semantic_data->book(rawurldecode($_GET["book"]));
 		}
 		if(isset($_GET["film"])) {
-			print $semantic_data->film(rawurldecode($_GET["film"]));
+			$semantic_data->film(rawurldecode($_GET["film"]));
 		}
 		if(isset($_GET["person"])) {
-			print $semantic_data->person(rawurldecode($_GET["person"]));
+			$semantic_data->person(rawurldecode($_GET["person"]));
 		}
+		if(isset($_GET["thing"])) {
+			$semantic_data->thing(rawurldecode($_GET["thing"]));
+		}
+		$semantic_data->export();
 	} else {
 		header("Content-type: text/plain");
 		

@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1750837310"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1502611381"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1750837310" class="accordion-body collapse in">
+            <div id="namespace-1502611381" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -204,6 +204,8 @@
                                                                     <a href="../classes/semantic_data.html#method_book" class="">book()</a><br />
                                                                     <a href="../classes/semantic_data.html#method_film" class="">film()</a><br />
                                                                     <a href="../classes/semantic_data.html#method_person" class="">person()</a><br />
+                                                                    <a href="../classes/semantic_data.html#method_thing" class="">thing()</a><br />
+                                                                    <a href="../classes/semantic_data.html#method_export" class="">export()</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <em>No public properties found</em>
@@ -229,9 +231,11 @@
                                                                     <a href="../classes/semantic_data.html#method_get_default_prefixes" class="">get_default_prefixes()</a><br />
                                                                     <a href="../classes/semantic_data.html#method_set_prefix" class="">set_prefix()</a><br />
                                                                     <a href="../classes/semantic_data.html#method_is_remote_file" class="">is_remote_file()</a><br />
+                                                                    <a href="../classes/semantic_data.html#method_is_url" class="">is_url()</a><br />
                                                                     <a href="../classes/semantic_data.html#method_clean_text" class="">clean_text()</a><br />
                                                                     <a href="../classes/semantic_data.html#method_construct_optional" class="">construct_optional()</a><br />
                                                                     <a href="../classes/semantic_data.html#method_create_sematic_query" class="">create_sematic_query()</a><br />
+                                                                    <a href="../classes/semantic_data.html#method_get_link" class="">get_link()</a><br />
                                                                     <a href="../classes/semantic_data.html#method_process" class="">process()</a><br />
                                                             </section>
                             <section class="span4">
@@ -352,6 +356,7 @@
                                                                                             <p>string $this->startime The time in which the script starts</p>
                                                                                             <p>string $this->wikipedia Wikipedia initialized class</p>
                                                                                             <p>string $this->easyrdf EasyRdf initialized class</p>
+                                                                                            <p>string $this->regUrl Regex to parse URL</p>
                                                     </td>
                     </tr>
                                     <tr>
@@ -474,7 +479,7 @@
                                                     <tr>
                                 <td>string</td>
                                 <td>$format</td>
-                                <td><p><code>array</code>, <code>json</code>, <code>jsonp</code> or <code>html</code> (efault is <code>jsonp</code>)</p></td>
+                                <td><p><code>array</code>, <code>json</code>, <code>jsonp</code> or <code>html</code> (default is <code>json</code>)</p></td>
                             </tr>
                                             </table>
                 
@@ -770,6 +775,97 @@
         </aside>
     </div>
 
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_thing" name="method_thing" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">thing()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">thing(string <span class="argument">$thing</span>) : string|void</pre>
+                <p><em>Start query for thing</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$thing</td>
+                                <td><p>Something to search</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string|void
+                                            &mdash; <p>Search result parsed</p>
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="../classes/semantic_data.html#method_clean_text"><span class="namespace-wrapper">Clean text</span></a></dd>
+                                            <dd><a href="../classes/semantic_data.html#method_create_sematic_query"><span class="namespace-wrapper">Create sematic query</span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper">Wikipedia &gt; Search</span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper">EasyRdf &gt; Query</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_export" name="method_export" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">export()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">export(string <span class="argument">$print</span>) : string|void</pre>
+                <p><em>Export the output</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$print</td>
+                                <td><p><code>true</code> print output, <code>false</code> return as variable</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string|void
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="../classes/semantic_data.html#method_indent"><span class="namespace-wrapper">Indent</span></a></dd>
+                                            <dd><a href="../classes/semantic_data.html#method_format"><span class="namespace-wrapper">Format</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
                                                                     <div class="row-fluid">
         <div class="span8 content class">
             <a id="method_indent" name="method_indent" class="anchor"></a>
@@ -950,6 +1046,47 @@
 
                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="method_is_url" name="method_is_url" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">is_url()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">is_url(string <span class="argument">$url</span>) : bool</pre>
+                <p><em>Check if given string is a link</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$url</td>
+                                <td><p>String to be examined</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="method_clean_text" name="method_clean_text" class="anchor"></a>
             <article class="method">
                 <h3 class="private ">clean_text()</h3>
@@ -1094,6 +1231,58 @@
 
                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="method_get_link" name="method_get_link" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">get_link()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_link(string <span class="argument">$item</span>, bool <span class="argument">$html</span>, string <span class="argument">$wiki_url</span>) : string|array</pre>
+                <p><em>Convert links to html or array</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$item</td>
+                                <td><p>Item to be examined</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>bool</td>
+                                <td>$html</td>
+                                <td><p>The output must be html link or array?</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$wiki_url</td>
+                                <td><p>The link is a Wikipedia link or not?</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string|array
+                                            &mdash; <p>Parsed link</p>
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="method_process" name="method_process" class="anchor"></a>
             <article class="method">
                 <h3 class="private ">process()</h3>
@@ -1201,7 +1390,7 @@
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on March 5th, 2014 at 04:08.
+                    on March 8th, 2014 at 08:30.
                 </section>
             </section>
         </section>

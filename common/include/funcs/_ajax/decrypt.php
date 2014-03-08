@@ -107,8 +107,14 @@ if(isset($_GET["getPublicKey"])) {
 		case "get_page_url":
 			require_once("get_permalink.php");
 			break;
+		case "get_personal_configs":
+			require_once("editor.get_personal_configs.php");
+			break;
 		case "get_rating":
 			require_once("get_file_rating.php");
+			break;
+		case "get_seen":
+			require_once("get_seen.php");
 			break;
 		case "get_shares":
 			require_once("get_shares.php");
@@ -191,14 +197,14 @@ if(isset($_GET["getPublicKey"])) {
 		case "send_notify":
 			require_once("notifications.send.php");
 			break;
+		case "set_seen":
+			require_once("set_seen.php");
+			break;
 		case "set_socket":
 			require_once("chat.set_socket.php");
 			break;
 		case "set_rating":
 			require_once("set_file_rating.php");
-			break;
-		case "get_personal_configs":
-			require_once("editor.get_personal_configs.php");
 			break;
 		case "start_scan":
 			require_once("local_scan.php");

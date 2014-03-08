@@ -1,8 +1,9 @@
 <?php
 header("Content-type:text/plain; charset=utf-8");
+define('CHUNK_SIZE', 1024*1024); // Size (in bytes) of tiles chunk
 require_once("common/include/classes/rsa.class.php");
+
 function readfile_chunked($filename, $retbytes = true) { 
-	$chunksize = 1*(1024*1024); // how many bytes per chunk 
 	$buffer = ''; 
 	$cnt =0; 
 	$handle = fopen($filename, 'rb'); 
@@ -10,7 +11,7 @@ function readfile_chunked($filename, $retbytes = true) {
 		return false; 
 	} 
 	while (!feof($handle)) { 
-		$buffer = fread($handle, $chunksize); 
+		$buffer = fread($handle, CHUNK_SIZE); 
 		echo $buffer; 
 		ob_flush(); 
 		flush(); 
@@ -48,20 +49,15 @@ if($dest_token == $rsa->my_token()) {
 	// Non è un file interno
 	// Chiedo in mdns
 }
-$file_size = trim(@shell_exec("stat -c %s " . str_replace(" ", "\ ", escapeshellcmd($file)) . " 2>&1"));
-$info = pathinfo($file);
-$filename = $info["basename"];
 
-
-if(file_exists($file)) {
-	$locale = "it_IT.UTF-8";
+$splinfo = new SplFileInfo($file);
+if(file_exists($file) && $splinfo->isReadable()) {
+	
 	setlocale(LC_ALL, $locale);
 	putenv("LC_ALL=" . $locale);
-	$file_last_edit = trim(shell_exec("stat -c %y " . str_replace(" ", "\ ", escapeshellcmd($file)) . " | cut -d'.' -f1"));
 	
 	if(!is_file($file)) {
 		chdir($file);
-		$locale = "it_IT.UTF-8";
 		setlocale(LC_ALL, $locale);
 		putenv("LC_ALL=" . $locale);
 		$content = array_map("trim", explode(",", shell_exec("ls -m")));
@@ -71,11 +67,10 @@ if(file_exists($file)) {
 		$contents = implode(" ", $content);
 		
 		header("Content-Type: application/zip");
-		header("Content-Disposition: attachment; filename=\"" . basename($filename) . ".zip\"");
+		header("Content-Disposition: attachment; filename=\"" . basename($splinfo->getFilename()) . ".zip\"");
 		header("Content-Transfer-Encoding: binary");
 		
 		// Zip creation on the fly
-		$locale = "it_IT.UTF-8";
 		setlocale(LC_ALL, $locale);
 		putenv("LC_ALL=" . $locale);
 		$fp = popen("zip -0 -j -q -r - " . $contents, "r");
@@ -87,21 +82,21 @@ if(file_exists($file)) {
 	} else {
 		require_once("common/include/lib/mime_types.php");
 		if($view) {
-			switch($mime_type[$info["extension"]]["type"]) {
+			switch($mime_type[$splinfo->getExtension()]["type"]) {
 				case "text":
 				case "image":
 				case "ebook":
-					header("Content-type: " . $mime_type[$info["extension"]]["mime"]);
-					header("Content-disposition: inline; filename=\"" . basename($filename) . "\"");
+					header("Content-type: " . $mime_type[$splinfo->getExtension()]["mime"]);
+					header("Content-disposition: inline; filename=\"" . basename($splinfo->getFilename()) . "\"");
 					header("Content-Transfer-Encoding: binary");
-					header("Content-Length: " . $file_size);
+					header("Content-Length: " . $splinfo->getSize());
 					header("Accept-Ranges: bytes");
 					break;
 				// Add other cases of extension group
 				// that you want to view on browser
 			}
 			$text = file_get_contents($file);
-			if($mime_type[$info["extension"]]["type"] == "text" || $mime_type[$info["extension"]]["type"] == "ebook") {
+			if($mime_type[$splinfo->getExtension()]["type"] == "text" || $mime_type[$splinfo->getExtension()]["type"] == "ebook") {
 				print utf8_encode($text);
 			} else {
 				print $text;
@@ -110,12 +105,12 @@ if(file_exists($file)) {
 			header("Pragma: public"); // required
 			header("Expires: 0"); // no cache
 			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-			header("Last-Modified: " . gmdate("D, d M Y H:i:s", $file_last_edit) . " GMT");
+			header("Last-Modified: " . gmdate("D, d M Y H:i:s", $splinfo->getMTime()) . " GMT");
 			header("Cache-Control: private", false);
-			header("Content-Type: " . $mime_type[$info["extension"]]["mime"]);
-			header("Content-disposition: attachment; filename=\"" . basename($filename) . "\"");
+			header("Content-Type: " . $mime_type[$splinfo->getExtension()]["mime"]);
+			header("Content-disposition: attachment; filename=\"" . basename($splinfo->getFilename()) . "\"");
 			header("Content-Transfer-Encoding: binary");
-			header("Content-Length: " . $file_size); // provide file size
+			header("Content-Length: " . $splinfo->getSize()); // provide file size
 			header("Connection: close");
 			
 			@readfile_chunked($file);

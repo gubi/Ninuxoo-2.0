@@ -1,1 +1,1 @@
-<small class="help-block right" id="rating"></small>
+<small class="help-block right" id="rating">Caricamento dei voti...</small>

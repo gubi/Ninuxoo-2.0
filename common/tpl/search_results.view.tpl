@@ -419,6 +419,9 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 							<?php
 						}
 						break;
+					case "video":
+						require_once("common/tpl/image_gallery.tpl");
+						break;
 				}
 				?>
 			</div>
