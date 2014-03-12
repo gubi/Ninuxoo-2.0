@@ -35,9 +35,9 @@ if(file_exists("common/include/conf/general_settings.ini")) {
 	$GLOBALS["config"] = parse_ini_file("common/include/conf/config.ini", true);
 	// Regenerate caching dir
 	if($GLOBALS["general_settings"]["caching"]["allow_caching"] == "true") {
-		if(!file_exists($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache")) {
-			mkdir($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache/");
-			chmod($GLOBALS["config"]["NAS"]["root_share_dir"] . ".ninuxoo_cache/", 0777);
+		if(!file_exists($GLOBALS["config"]["NAS"]["root_share_dir"] . "/.ninuxoo_cache")) {
+			mkdir($GLOBALS["config"]["NAS"]["root_share_dir"] . "/.ninuxoo_cache/");
+			chmod($GLOBALS["config"]["NAS"]["root_share_dir"] . "/.ninuxoo_cache/", 0777);
 		}
 	}
 	if(isset($_GET["s"]) && trim($_GET["s"]) !== "") {

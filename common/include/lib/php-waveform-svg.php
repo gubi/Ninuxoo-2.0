@@ -26,8 +26,8 @@ if (isset($_GET["file"]) && trim($_GET["file"]) !== "") {
 	$rsa = new rsa();
 	$config = parse_ini_file(str_replace("/lib", "/conf", __DIR__) . "/config.ini", true);
 	$general_settings = parse_ini_file(str_replace("/lib", "/conf", __DIR__) . "/general_settings.ini", true);
-	if(file_exists($config["NAS"]["root_share_dir"] . ".ninuxoo_cache/" . $_GET["file"] . ".svg")) {
-		$svg = file_get_contents($config["NAS"]["root_share_dir"] . ".ninuxoo_cache/" . $_GET["file"] . ".svg");
+	if(file_exists($config["NAS"]["root_share_dir"] . "/.ninuxoo_cache/" . $_GET["file"] . ".svg")) {
+		$svg = file_get_contents($config["NAS"]["root_share_dir"] . "/.ninuxoo_cache/" . $_GET["file"] . ".svg");
 		header("Content-Type: image/svg+xml");
 		print $svg;
 		exit();
@@ -189,7 +189,7 @@ if (isset($_GET["file"]) && trim($_GET["file"]) !== "") {
 	
 	header("Content-Type: image/svg+xml");
 	if($general_settings["caching"]["allow_caching"] == "true" && $general_settings["caching"]["save_audio_spectum"] == "true") {
-		if($fs = @fopen($config["NAS"]["root_share_dir"] . ".ninuxoo_cache/" . $_GET["file"] . ".svg", "w")) {
+		if($fs = @fopen($config["NAS"]["root_share_dir"] . "/.ninuxoo_cache/" . $_GET["file"] . ".svg", "w")) {
 			fwrite($fs, str_replace(array("\n", "\r", "\r\n"), "", $svg) . PHP_EOL);
 			fclose($fs);
 		}

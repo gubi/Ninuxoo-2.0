@@ -8,8 +8,8 @@ function rndfunc($x){
 }
 
 $config = parse_ini_file("../../conf/config.ini", true);
-if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json")) {
-	$rates_json = json_decode(file_get_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json"), 1);
+if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . "/.ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json")) {
+	$rates_json = json_decode(file_get_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . "/.ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json"), 1);
 	if(is_array($rates_json)) {
 		$rates["total"] = count($rates_json["ratings"]);
 		$i = 0;

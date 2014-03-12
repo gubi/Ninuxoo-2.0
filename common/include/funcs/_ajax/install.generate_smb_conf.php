@@ -154,8 +154,8 @@ if($fp = @fopen($output["server_root"] . "common/include/conf/config.ini", "w"))
 			fwrite($fg, $general_settings . PHP_EOL);
 			fclose($fg);
 			$log->write("notice", "[install] The new file 'general_settings.ini' is located in 'common/include/conf/'");
-			@mkdir($output["root_share_dir"] . ".ninuxoo_cache/");
-			@chmod($output["root_share_dir"] . ".ninuxoo_cache/", 0777);
+			@mkdir($output["root_share_dir"] . "/.ninuxoo_cache/");
+			@chmod($output["root_share_dir"] . "/.ninuxoo_cache/", 0777);
 			
 			// User login file
 			if(!file_exists($output["server_root"] . "common/include/conf/user/" . sha1($output["user_username"]))) {

@@ -3,8 +3,8 @@ header("Content-type: text/plain; charset=utf-8");
 
 $config = parse_ini_file("../../conf/config.ini", true);
 $general_settings = parse_ini_file("../../conf/general_settings.ini", true);
-if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json")) {
-	$json = file_get_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json");
+if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . "/.ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json")) {
+	$json = file_get_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . "/.ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json");
 	if($_GET["debug"] == "true") {
 		print_r(json_decode($json));
 	} else {
@@ -23,7 +23,7 @@ if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . 
 	if($_GET["debug"] == "true") {
 		$semantic_data->debug(true);
 	}
-	switch($_GET["type"]) {
+	switch(strtolower($_GET["type"])) {
 		case "album":
 			$semantic_data->audio(rawurldecode($_GET["title"]));
 			break;
@@ -37,14 +37,15 @@ if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . 
 			$semantic_data->person(rawurldecode($_GET["artist"]));
 			break;
 		case "thing":
-			$semantic_data->person(rawurldecode($_GET["thing"]));
+		case "work":
+			$semantic_data->thing(rawurldecode($_GET["title"]));
 			break;
 	}
 	$result = $semantic_data->export(false);
 	unset($result[0]["time"]);
 	$res = json_encode($result);
 	
-	if(trim($res)) {
+	if(trim($res) && $res !== "null" && $res !== "no results") {
 		if($general_settings["caching"]["allow_caching"] == "true" && $general_settings["caching"]["save_semantic_data"] == "true") {
 			file_put_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . "/.ninuxoo_cache/" . base64_encode($_SERVER["QUERY_STRING"]) . ".json", $res . PHP_EOL);
 		}

@@ -14,8 +14,8 @@ unset($output["rate"]);
 
 $config = parse_ini_file("../../conf/config.ini", true);
 $general_settings = parse_ini_file("../../conf/general_settings.ini", true);
-if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json")) {
-	$rates_json = json_decode(file_get_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json"), 1);
+if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . "/.ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json")) {
+	$rates_json = json_decode(file_get_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . "/.ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json"), 1);
 	
 	if(is_array($rates_json)) {
 		$i = 0;
@@ -52,7 +52,7 @@ if(file_exists(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . 
 	$file_rates["ratings"][] = array($user_r => $rate_r);
 }
 if($general_settings["caching"]["allow_caching"] == "true" && $general_settings["caching"]["save_semantic_data"] == "true") {
-	file_put_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . ".ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json", json_encode($file_rates));
+	file_put_contents(str_replace("//", "/", $config["NAS"]["root_share_dir"] . "/") . "/.ninuxoo_cache/rating_" . base64_encode(http_build_query($output)) . ".json", json_encode($file_rates));
 }
 print json_encode($rates);
 ?>

@@ -399,7 +399,7 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 					case "image":
 						require_once("common/tpl/image_gallery.tpl");
 						?>
-						<div id="links" style="background-color: #333; padding: 2em 0;">
+						<div id="gallery" style="background-color: #333; padding: 2em 0;">
 							<a href="./Scarica:?view=true&<?php print $dhash; ?>" title="<?php print $filename; ?>" data-gallery>
 								<img src="./Scarica:?view=true&<?php print $dhash; ?>" class="img-responsive" style="margin: 0 auto;" alt="Immagine: <?php print $filename; ?>">
 							</a>
@@ -461,6 +461,7 @@ switch(strtolower($mime_type[strtolower($info["extension"])]["type"])){
 		<?php download_notify("Acquisisco dati semantici sulla regia"); ?>
 		<div class="panel col-lg-8" id="semantic_director" style="display: none;">
 			<div class="panel">
+				<small class="right"><a id="search_author_ninuxoo" class="btn btn-default" title="Cerca in Ninuxoo" href=""><span class="fa fa-search"></span></a></small>
 				<span class="lead text-primary">
 					<span class="fa fa-video-camera"></span>&nbsp;&nbsp;<span id="director_name">Regia</span><small class="help-block">Risultati semantici relativi alla regia</small>
 				</span>

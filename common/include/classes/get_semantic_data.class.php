@@ -452,7 +452,7 @@ class semantic_data{
 				"dbp:titoloitaliano" => "titolo_in_italiano",
 				"dbp:titolooriginale" => "titolo_originale",
 				"dbp:attori" => "attori",
-				"rdfs:annouscita" => "anno",
+				"dbp:annouscita" => "anno",
 				"rdfs:comment" => "commento",
 				"dbp:casaproduzione" => "casa_di_produzione",
 				"foaf:depiction" => "immagine",

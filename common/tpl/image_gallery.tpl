@@ -34,9 +34,9 @@
 <script src="common/js/Bootstrap-Image-Gallery-3.1.0/js/jquery.blueimp-gallery.min.js"></script>
 <script src="common/js/Bootstrap-Image-Gallery-3.1.0/js/bootstrap-image-gallery.js"></script>
 <script type="text/javascript">
-if($("#links").length > 0) {
+if($(".gallery").length > 0) {
 	blueimp.Gallery(
-		document.getElementById("links").getElementsByTagName("a"), {
+		$(".gallery").find("a"), {
 			container: '#blueimp-gallery',
 			carousel: true
 		}

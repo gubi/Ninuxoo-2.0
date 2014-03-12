@@ -128,6 +128,18 @@ if(isset($_GET["getPublicKey"])) {
 		case "local_search":
 			require_once("local_search.php");
 			break;
+		case "local_search.semantic_data.audio":
+			print file_get_contents("../../../js/include/local_search.semantic_data.audio.js");
+			break;
+		case "local_search.semantic_data.book":
+			print file_get_contents("../../../js/include/local_search.semantic_data.book.js");
+			break;
+		case "local_search.semantic_data.image":
+			print file_get_contents("../../../js/include/local_search.semantic_data.image.js");
+			break;
+		case "local_search.semantic_data.video":
+			print file_get_contents("../../../js/include/local_search.semantic_data.video.js");
+			break;
 		case "login":
 			require_once("login.php");
 			break;
